@@ -1,17 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "logo.svg",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "Group 511.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

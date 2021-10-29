@@ -8,30 +8,30 @@
 import UIKit
 
 class ViewController: UITabBarController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.tintColor = UIColor(rgb: 0x6F9ACD)
         let viewControllers : [UIViewController] = [
-            initTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
-            initTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "Bookmark"), tag: 2),
-            initTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
-            initTabViewController("Mypage", identifier: "MypageVC", icon: UIImage(named: "Mypage"), tag: 4),
+            initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
+            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "Bookmark"), tag: 2),
+            initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
+            initNavigationTabViewController("Mypage", identifier: "MypageVC", icon: UIImage(named: "Mypage"), tag: 4)
         ]
         self.setViewControllers(viewControllers, animated: true)
+
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if User.shared.flag == false {
-            goToApp()
-            
-        } else {
-            
-        }
-    }
-    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        if User.shared.flag == false {
+//            goToApp()
+//
+//        } else {
+//
+//        }
+//    }
+//    
     
     //MARK: Navigation
     private func goToApp() {
