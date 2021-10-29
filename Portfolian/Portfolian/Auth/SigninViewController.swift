@@ -6,11 +6,10 @@
 //
 
 import UIKit
-import GoogleSignIn
 
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
-        let view = UIImageView(image: UIImage(named: "logo"))
+        let view = UIImageView(image: UIImage(named: "Logo"))
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -33,7 +32,7 @@ class SigninViewController: UIViewController {
     
     let kakaoLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
+        button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -41,7 +40,7 @@ class SigninViewController: UIViewController {
     
     let googleLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
+        button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -49,7 +48,7 @@ class SigninViewController: UIViewController {
     
     let githubLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
+        button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -57,7 +56,7 @@ class SigninViewController: UIViewController {
     
     let appleLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
+        button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -111,7 +110,7 @@ class SigninViewController: UIViewController {
     
     //MARK: - ButtonHandler
     @objc func LoginButtonHandler(_ sender: UIButton) {
-        let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "nicknameVC")
+        let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "NicknameVC")
         nicknameVC.modalPresentationStyle = .fullScreen
         present(nicknameVC, animated: true)
     }

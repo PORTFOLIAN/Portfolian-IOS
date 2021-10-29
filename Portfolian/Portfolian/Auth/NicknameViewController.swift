@@ -7,7 +7,7 @@
 
 import UIKit
 
-class nicknameViewController: UIViewController, UITextFieldDelegate {
+class NicknameViewController: UIViewController, UITextFieldDelegate {
     let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -34,8 +34,8 @@ class nicknameViewController: UIViewController, UITextFieldDelegate {
     let nextButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .blue
-        button.setImage(UIImage(named: "nextButton"), for: .normal)
+        button.setImage(UIImage(named: "NextButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor(rgb: 0xCCCCCC)
         return button
     }()
     
@@ -63,7 +63,7 @@ class nicknameViewController: UIViewController, UITextFieldDelegate {
 
             nextButton.centerYAnchor.constraint(equalTo: nicknameTextField.centerYAnchor),
             nextButton.leftAnchor.constraint(equalTo: nicknameTextField.rightAnchor, constant: 20),
-
+            
             nextButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
@@ -71,23 +71,24 @@ class nicknameViewController: UIViewController, UITextFieldDelegate {
         nicknameTextField.delegate = self
         nextButton.addTarget(self, action: #selector(ButtonHandler(_:)), for: .touchUpInside)
         swipeRecognizer()
+        
     }
     
     //MARK: - Buttonhandler
     @objc func ButtonHandler(_ sender: UIButton) {
 //        mainVC.modalPresentationStyle = .fullScreen
         User.shared.flag = true
-        self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
-        
-        
+        if checkNickname(nicknameTextField) == true {
+            self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
         }
+        
+    }
     
     //MARK: - swipeGesture
     func swipeRecognizer() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right
         self.view.addGestureRecognizer(swipeRight)
-        
     }
     
     @objc func respondToSwipeGesture(_ gesture: UIGestureRecognizer){
@@ -101,12 +102,33 @@ class nicknameViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    //MARK: Change buttonImage
+    //MARK: Change Button TintColor
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField.text?.isEmpty != true {
-            nextButton.setImage(UIImage(named: "nextButtonHighlighted"), for: .normal)
+            guard let nicknameText = textField.text else { return }
+            nextButton.tintColor = UIColor(rgb: 0x6F9ACD)
+            if nicknameText.count >= 10 {
+                limitNicknameTenLetters(textField, nickname: nicknameText)
+            }
         } else {
-            nextButton.setImage(UIImage(named: "nextButton"), for: .normal)
+            nextButton.tintColor = UIColor(rgb: 0xCCCCCC)
+        }
+    }
+    
+    //MARK: - Limit 10 letters
+    func limitNicknameTenLetters(_ textField: UITextField, nickname: String) {
+        let nicknameCharacterLimit = 10
+        let endIndex: String.Index = nickname.index(nickname.startIndex, offsetBy: nicknameCharacterLimit)
+        textField.text = String(nickname[..<endIndex])
+        
+    }
+    
+    //MARK: - NickName Check
+    func checkNickname(_ textField: UITextField) -> Bool {
+        if textField.text?.isEmpty == true {
+            return false
+        } else {
+            return true
         }
     }
     
@@ -114,11 +136,7 @@ class nicknameViewController: UIViewController, UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-    
     }
-    
-
-    
     /*
     // MARK: - Navigation
 

@@ -26,7 +26,7 @@
         <!--Nickname View Controller-->
         <scene sceneID="UXa-Ja-8YF">
             <objects>
-                <viewController storyboardIdentifier="nicknameVC" id="rVl-GT-VXo" customClass="nicknameViewController" customModule="Portfolian" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NicknameVC" id="rVl-GT-VXo" customClass="NicknameViewController" customModule="Portfolian" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dO6-KF-IHQ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
