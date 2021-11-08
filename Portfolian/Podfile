@@ -22,6 +22,8 @@ target 'Portfolian' do
 # pod 'MessageKit'
 # pod 'InputBarAccessoryView'
 # pod 'GoogleSignIn'
+pod 'Then'
+pod 'SnapKit'
 
   # Pods for Portfolian
 
