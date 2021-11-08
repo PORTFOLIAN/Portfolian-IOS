@@ -280,8 +280,7 @@ class FilterViewController: UIViewController, TagToggleButtonDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        
-        
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     //MARK: - setupAutoLayout
     func setupAutoLayout() {
