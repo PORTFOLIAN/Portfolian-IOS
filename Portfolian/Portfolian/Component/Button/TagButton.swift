@@ -13,7 +13,7 @@ protocol TagToggleButtonDelegate {
 }
 
 class TagButton: UIButton {
-
+    
     var isClicked: Bool = false
     var delegate: TagToggleButtonDelegate?
     var subject: UIColor = ColorPortfolian.more

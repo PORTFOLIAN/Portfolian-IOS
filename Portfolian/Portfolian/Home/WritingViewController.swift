@@ -340,6 +340,7 @@ class WritingViewController: UIViewController {
     @objc private func buttonPressed(_ sender: UIButton) {
         let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
         FilterVC.modalPresentationStyle = .fullScreen
+        registrationType = .Writing
         self.navigationController?.pushViewController(FilterVC, animated: true)
     }
 

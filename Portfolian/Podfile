@@ -24,7 +24,10 @@ target 'Portfolian' do
 # pod 'GoogleSignIn'
 pod 'Then'
 pod 'SnapKit'
-
-  # Pods for Portfolian
+pod 'KakaoSDKCommon'
+pod 'KakaoSDKAuth'
+pod 'KakaoSDKUser'
+pod 'KakaoSDKTalk'
+  # Pods for Portfolian`
 
 end

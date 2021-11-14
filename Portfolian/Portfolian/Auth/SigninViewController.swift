@@ -6,7 +6,8 @@
 //
 
 import UIKit
-
+import KakaoSDKAuth
+import KakaoSDKUser
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "Logo"))
@@ -104,18 +105,83 @@ class SigninViewController: UIViewController {
         ])
         // Do any additional setup after loading the view.
         kakaoLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
+        googleLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
+        appleLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
         swipeRecognizer()
-
+        
     }
     
     //MARK: - ButtonHandler
     @objc func LoginButtonHandler(_ sender: UIButton) {
-        let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "NicknameVC")
-        nicknameVC.modalPresentationStyle = .fullScreen
-        present(nicknameVC, animated: true)
+        //do something
+        switch sender {
+        case kakaoLoginButton:
+            // 카카오톡으로 로그인
+            if (UserApi.isKakaoTalkLoginAvailable()) {
+                loginAppKakao()
+            } else {
+                loginWebKakao()
+            }
+        case appleLoginButton:
+            UserApi.shared.unlink {(error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("unlink() success.")
+                }
+            }
+        default:
+            logoutKakao()
+        }
     }
     
+    func logoutKakao() {
+        UserApi.shared.logout {(error) in
+            if let error = error {
+                print(error)
+            }
+            else {
+                print("logout() success.")
+            }
+        }
+    }
     
+    // 닉네임설정화면으로 전환
+    func setNickName() {
+        let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "NicknameVC")
+        nicknameVC.modalPresentationStyle = .fullScreen
+        self.present(nicknameVC, animated: true)
+    }
+    
+    // 카카오톡 앱으로 로그인하기
+    func loginAppKakao() {
+        UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+            if let error = error {
+                print(error)
+            }
+            else {
+                print("loginWithKakaoTalk() success.")
+                self.setNickName()
+                _ = oauthToken
+                
+            }
+        }
+    }
+    
+    // 카카오톡 웹으로 로그인하기
+    func loginWebKakao() {
+        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+            if let error = error {
+                print(error)
+            }
+            else {
+                print("loginWithKakaoAccount() success.")
+                self.setNickName()
+                _ = oauthToken
+            }
+        }
+    }
     //MARK: - SwipeGesture
     func swipeRecognizer() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
@@ -135,7 +201,7 @@ class SigninViewController: UIViewController {
             default: break
             }
         }
-    
+        
     }
-
+    
 }

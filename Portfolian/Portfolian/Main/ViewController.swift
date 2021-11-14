@@ -22,15 +22,15 @@ class ViewController: UITabBarController {
 
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        if User.shared.flag == false {
-//            goToApp()
-//
-//        } else {
-//
-//        }
-//    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if User.shared.flag == false {
+            goToApp()
+
+        } else {
+
+        }
+    }
 //    
     
     //MARK: Navigation

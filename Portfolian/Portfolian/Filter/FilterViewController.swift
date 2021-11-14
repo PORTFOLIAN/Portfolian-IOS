@@ -6,272 +6,23 @@
 //
 
 import UIKit
+import Then
+import SnapKit
 
-class FilterViewController: UIViewController, TagToggleButtonDelegate {
-    let containerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+class FilterViewController: UIViewController {
+    let identifier = "TagCollectionViewCell"
+    final let spacingRow = 20
+    final let spacingColumn = 10
     
-    let frontEndButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Front-end", fontSize: 16)
-        button.setColor(color: ColorPortfolian.frontEnd)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let backEndButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: " Back-end", fontSize: 16)
-        button.setColor(color: ColorPortfolian.backEnd)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let reactButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: " React", fontSize: 16)
-        button.setColor(color: ColorPortfolian.react)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let vueButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: " Vue", fontSize: 16)
-        button.setColor(color: ColorPortfolian.vue)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let springButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: " Spring", fontSize: 16)
-        button.setColor(color: ColorPortfolian.spring)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let djangoButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: " Django", fontSize: 16)
-        button.setColor(color: ColorPortfolian.django)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let javaScriptButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Javascript", fontSize: 16)
-        button.setColor(color: ColorPortfolian.javascript)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let typeScriptButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Typescript", fontSize: 16)
-        button.setColor(color: ColorPortfolian.typescript)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let iosButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "iOS", fontSize: 16)
-        button.setColor(color: ColorPortfolian.ios)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let androidButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Android", fontSize: 16)
-        button.setColor(color: ColorPortfolian.android)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let angularButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Angular", fontSize: 16)
-        button.setColor(color: ColorPortfolian.angular)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let htmlCssButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "HTML/CSS", fontSize: 16)
-        button.setColor(color: ColorPortfolian.htmlCss)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let flaskButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Flask", fontSize: 16)
-        button.setColor(color: ColorPortfolian.flask)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let nodeButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Node.js", fontSize: 16)
-        button.setColor(color: ColorPortfolian.nodeJs)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let javaButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Java", fontSize: 16)
-        button.setColor(color: ColorPortfolian.java)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let pythonButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Python", fontSize: 16)
-        button.setColor(color: ColorPortfolian.python)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let kotlinButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Kotlin", fontSize: 16)
-        button.setColor(color: ColorPortfolian.kotlin)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let swiftButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Swift", fontSize: 16)
-        button.setColor(color: ColorPortfolian.swift)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let goButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Go", fontSize: 16)
-        button.setColor(color: ColorPortfolian.go)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let cCppButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "C/C++", fontSize: 16)
-        button.setColor(color: ColorPortfolian.cCpp)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let cCsharpButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "C#", fontSize: 16)
-        button.setColor(color: ColorPortfolian.cCsharp)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let designButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Design", fontSize: 16)
-        button.setColor(color: ColorPortfolian.design)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let figmaButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Figma", fontSize: 16)
-        button.setColor(color: ColorPortfolian.figma)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let sketchButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Sketch", fontSize: 16)
-        button.setColor(color: ColorPortfolian.sketch)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let adobeXDButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "adobeXD", fontSize: 16)
-        button.setColor(color: ColorPortfolian.adobeXD)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let photoshopButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Photoshop", fontSize: 16)
-        button.setColor(color: ColorPortfolian.photoshop)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let illustratorButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Illustrator", fontSize: 16)
-        button.setColor(color: ColorPortfolian.illustrator)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    let firebaseButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Firebase", fontSize: 16)
-        button.setColor(color: ColorPortfolian.firebase)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let awsButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "AWS", fontSize: 16)
-        button.setColor(color: ColorPortfolian.aws)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let gcpButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "GCP", fontSize: 16)
-        button.setColor(color: ColorPortfolian.gcp)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let gitButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "Git", fontSize: 16)
-        button.setColor(color: ColorPortfolian.git)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    let etcButton: TagButton = {
-        let button = TagButton()
-        button.informTextInfo(text: "etc", fontSize: 16)
-        button.setColor(color: ColorPortfolian.etc)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    lazy var tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout()).then { UICollectionView in
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
+        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagCollectionView.delegate = self
+        tagCollectionView.dataSource = self
         self.title = "태그 필터"
         addSubview()
         setupAutoLayout()
@@ -285,160 +36,105 @@ class FilterViewController: UIViewController, TagToggleButtonDelegate {
     //MARK: - setupAutoLayout
     func setupAutoLayout() {
         definesPresentationContext = true
-        NSLayoutConstraint.activate([
-        containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-        containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        containerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-        containerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-        
-        frontEndButton.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: 20),
-        frontEndButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        backEndButton.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: 20),
-        backEndButton.leadingAnchor.constraint(equalTo: frontEndButton.trailingAnchor, constant: 20),
-        
-        reactButton.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: 20),
-        reactButton.leadingAnchor.constraint(equalTo: backEndButton.trailingAnchor, constant: 20),
-        
-        vueButton.topAnchor.constraint(equalTo: frontEndButton.bottomAnchor, constant: 20),
-        vueButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        springButton.topAnchor.constraint(equalTo: frontEndButton.bottomAnchor, constant: 20),
-        springButton.leadingAnchor.constraint(equalTo: vueButton.trailingAnchor, constant: 20),
-        
-        djangoButton.topAnchor.constraint(equalTo: frontEndButton.bottomAnchor, constant: 20),
-        djangoButton.leadingAnchor.constraint(equalTo: springButton.trailingAnchor, constant: 20),
-        
-        javaScriptButton.topAnchor.constraint(equalTo: frontEndButton.bottomAnchor, constant: 20),
-        javaScriptButton.leadingAnchor.constraint(equalTo: djangoButton.trailingAnchor, constant: 20),
-        
-        typeScriptButton.topAnchor.constraint(equalTo: vueButton.bottomAnchor, constant: 20),
-        typeScriptButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        iosButton.topAnchor.constraint(equalTo: vueButton.bottomAnchor, constant: 20),
-        iosButton.leadingAnchor.constraint(equalTo: typeScriptButton.trailingAnchor, constant: 20),
-        
-        androidButton.topAnchor.constraint(equalTo: vueButton.bottomAnchor, constant: 20),
-        androidButton.leadingAnchor.constraint(equalTo: iosButton.trailingAnchor, constant: 20),
-        
-        angularButton.topAnchor.constraint(equalTo: vueButton.bottomAnchor, constant: 20),
-        angularButton.leadingAnchor.constraint(equalTo: androidButton.trailingAnchor, constant: 20),
-        
-        htmlCssButton.topAnchor.constraint(equalTo: typeScriptButton.bottomAnchor, constant: 20),
-        htmlCssButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        flaskButton.topAnchor.constraint(equalTo: typeScriptButton.bottomAnchor, constant: 20),
-        flaskButton.leadingAnchor.constraint(equalTo: htmlCssButton.trailingAnchor, constant: 20),
-        
-        nodeButton.topAnchor.constraint(equalTo: typeScriptButton.bottomAnchor, constant: 20),
-        nodeButton.leadingAnchor.constraint(equalTo: flaskButton.trailingAnchor, constant: 20),
-        
-        javaButton.topAnchor.constraint(equalTo: typeScriptButton.bottomAnchor, constant: 20),
-        javaButton.leadingAnchor.constraint(equalTo: nodeButton.trailingAnchor, constant: 20),
-        
-        pythonButton.topAnchor.constraint(equalTo: htmlCssButton.bottomAnchor, constant: 20),
-        pythonButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        kotlinButton.topAnchor.constraint(equalTo: htmlCssButton.bottomAnchor, constant: 20),
-        kotlinButton.leadingAnchor.constraint(equalTo: pythonButton.trailingAnchor, constant: 20),
-        
-        swiftButton.topAnchor.constraint(equalTo: htmlCssButton.bottomAnchor, constant: 20),
-        swiftButton.leadingAnchor.constraint(equalTo: kotlinButton.trailingAnchor, constant: 20),
-        
-        goButton.topAnchor.constraint(equalTo: htmlCssButton.bottomAnchor, constant: 20),
-        goButton.leadingAnchor.constraint(equalTo: swiftButton.trailingAnchor, constant: 20),
-        
-        cCppButton.topAnchor.constraint(equalTo: pythonButton.bottomAnchor, constant: 20),
-        cCppButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        cCsharpButton.topAnchor.constraint(equalTo: pythonButton.bottomAnchor, constant: 20),
-        cCsharpButton.leadingAnchor.constraint(equalTo: cCppButton.trailingAnchor, constant: 20),
-        
-        designButton.topAnchor.constraint(equalTo: pythonButton.bottomAnchor, constant: 20),
-        designButton.leadingAnchor.constraint(equalTo: cCsharpButton.trailingAnchor, constant: 20),
-        
-        figmaButton.topAnchor.constraint(equalTo: pythonButton.bottomAnchor, constant: 20),
-        figmaButton.leadingAnchor.constraint(equalTo: designButton.trailingAnchor, constant: 20),
-        
-        sketchButton.topAnchor.constraint(equalTo: cCppButton.bottomAnchor, constant: 20),
-        sketchButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        adobeXDButton.topAnchor.constraint(equalTo: cCppButton.bottomAnchor, constant: 20),
-        adobeXDButton.leadingAnchor.constraint(equalTo: sketchButton.trailingAnchor, constant: 20),
-        
-        photoshopButton.topAnchor.constraint(equalTo: cCppButton.bottomAnchor, constant: 20),
-        photoshopButton.leadingAnchor.constraint(equalTo: adobeXDButton.trailingAnchor, constant: 20),
-        
-        illustratorButton.topAnchor.constraint(equalTo: sketchButton.bottomAnchor, constant: 20),
-        illustratorButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        firebaseButton.topAnchor.constraint(equalTo: sketchButton.bottomAnchor, constant: 20),
-        firebaseButton.leadingAnchor.constraint(equalTo: illustratorButton.trailingAnchor, constant: 20),
-        
-        awsButton.topAnchor.constraint(equalTo: sketchButton.bottomAnchor, constant: 20),
-        awsButton.leadingAnchor.constraint(equalTo: firebaseButton.trailingAnchor, constant: 20),
-        
-        gcpButton.topAnchor.constraint(equalTo: illustratorButton.bottomAnchor, constant: 20),
-        gcpButton.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-        
-        gitButton.topAnchor.constraint(equalTo: illustratorButton.bottomAnchor, constant: 20),
-        gitButton.leadingAnchor.constraint(equalTo: gcpButton.trailingAnchor, constant: 20),
-        
-        etcButton.topAnchor.constraint(equalTo: illustratorButton.bottomAnchor, constant: 20),
-        etcButton.leadingAnchor.constraint(equalTo: gitButton.trailingAnchor, constant: 20),
-             
-        
-        ])
+
+        tagCollectionView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
+        }
     }
     
     //MARK: - addSubview
     func addSubview() {
-        view.addSubview(containerView)
-        containerView.addSubview(frontEndButton)
-        containerView.addSubview(backEndButton)
-        containerView.addSubview(reactButton)
-        containerView.addSubview(vueButton)
-        containerView.addSubview(springButton)
-        containerView.addSubview(djangoButton)
-        containerView.addSubview(javaScriptButton)
-        containerView.addSubview(typeScriptButton)
-        containerView.addSubview(iosButton)
-        containerView.addSubview(androidButton)
-        containerView.addSubview(angularButton)
-        containerView.addSubview(htmlCssButton)
-        containerView.addSubview(flaskButton)
-        containerView.addSubview(nodeButton)
-        containerView.addSubview(javaButton)
-        containerView.addSubview(pythonButton)
-        containerView.addSubview(kotlinButton)
-        containerView.addSubview(swiftButton)
-        containerView.addSubview(goButton)
-        containerView.addSubview(cCppButton)
-        containerView.addSubview(cCsharpButton)
-        containerView.addSubview(designButton)
-        containerView.addSubview(figmaButton)
-        containerView.addSubview(sketchButton)
-        containerView.addSubview(adobeXDButton)
-        containerView.addSubview(photoshopButton)
-        containerView.addSubview(illustratorButton)
-        containerView.addSubview(firebaseButton)
-        containerView.addSubview(awsButton)
-        containerView.addSubview(gcpButton)
-        containerView.addSubview(gitButton)
-        containerView.addSubview(etcButton)
+        view.addSubview(tagCollectionView)
     }
     
     func didTouchTagButton(didClicked: Bool) {
-        frontEndButton.delegate = self
     }
-    /*
-    // MARK: - Navigation
+    
+}
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+extension FilterViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(spacingRow)
     }
-    */
 
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(spacingColumn)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        // 더비 라벨을 만들어줘서 크기를 버튼의 크기를 예상하여 넣어준다.
+        let tag = Tag.Name.allCases[indexPath.row]
+        let tagInfo = getTagInfo(tag: tag)
+        let tagName = tagInfo.name
+        let label = TagButton().then {
+            $0.informTextInfo(text: tagName, fontSize: 16)
+            $0.sizeToFit()
+        }
+        let size = label.frame.size
+        
+        return CGSize(width: size.width, height: size.height + 10)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
+        //        TagCOllectionViewCell에서 contentView.isUserInteractionEnabled = true 해주면 함수 동작함. 대신 색이 안 나옴.
+    }
+}
+
+extension FilterViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return Tag.Name.allCases.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+        let tag = Tag.Name.allCases[indexPath.row]
+        let tagInfo = getTagInfo(tag: tag)
+        let tagName = tagInfo.name
+        let tagColor = tagInfo.color
+        cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
+        return cell
+    }
+    
+    func getTagInfo(tag: Tag.Name) -> TagInfo {
+        switch tag {
+        case .frontEnd  : return TagInfo(name: "Front-end", color: ColorPortfolian.frontEnd)
+        case .backEnd   : return TagInfo(name: "Back-end", color: ColorPortfolian.backEnd)
+        case .react     : return TagInfo(name: "React", color: ColorPortfolian.react)
+        case .spring    : return TagInfo(name: "Spring", color: ColorPortfolian.spring)
+        case .django    : return TagInfo(name: "Django", color: ColorPortfolian.django)
+        case .javascript: return TagInfo(name: "Javascript", color: ColorPortfolian.javascript)
+        case .typescript: return TagInfo(name: "Typescript", color: ColorPortfolian.typescript)
+        case .ios       : return TagInfo(name: "iOS", color: ColorPortfolian.ios)
+        case .android   : return TagInfo(name: "Andriod", color: ColorPortfolian.android)
+        case .angular   : return TagInfo(name: "Angular", color: ColorPortfolian.angular)
+        case .htmlCss   : return TagInfo(name: "HTML/CSS", color: ColorPortfolian.htmlCss)
+        case .flask     : return TagInfo(name: "Flask", color: ColorPortfolian.flask)
+        case .nodeJs    : return TagInfo(name: "Node.js", color: ColorPortfolian.nodeJs)
+        case .java      : return TagInfo(name: "Java", color: ColorPortfolian.java)
+        case .python    : return TagInfo(name: "Python", color: ColorPortfolian.python)
+        case .kotlin    : return TagInfo(name: "Kotlin", color: ColorPortfolian.kotlin)
+        case .swift     : return TagInfo(name: "Swift", color: ColorPortfolian.swift)
+        case .go        : return TagInfo(name: "Go", color: ColorPortfolian.go)
+        case .cCpp      : return TagInfo(name: "C/C++", color: ColorPortfolian.cCpp)
+        case .cCsharp   : return TagInfo(name: "C#", color: ColorPortfolian.cCsharp)
+        case .design    : return TagInfo(name: "Design", color: ColorPortfolian.design)
+        case .figma     : return TagInfo(name: "Figma", color: ColorPortfolian.figma)
+        case .sketch    : return TagInfo(name: "Sketch", color: ColorPortfolian.sketch)
+        case .adobeXD   : return TagInfo(name: "adobeXD", color: ColorPortfolian.adobeXD)
+        case .photoshop : return TagInfo(name: "Photoshop", color: ColorPortfolian.photoshop)
+        case .illustrator: return TagInfo(name: "Illustrator", color: ColorPortfolian.illustrator)
+        case .firebase  : return TagInfo(name: "Firebase", color: ColorPortfolian.firebase)
+        case .aws       : return TagInfo(name: "AWS", color: ColorPortfolian.aws)
+        case .gcp       : return TagInfo(name: "GCP", color: ColorPortfolian.gcp)
+        case .git       : return TagInfo(name: "Git", color: ColorPortfolian.git)
+        case .etc       : return TagInfo(name: "etc", color: ColorPortfolian.etc)
+        }
+    }
+}
+
+struct TagInfo {
+    let name: String
+    let color: UIColor
 }

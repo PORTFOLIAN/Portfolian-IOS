@@ -88,6 +88,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         case 3: // filter
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             FilterVC.modalPresentationStyle = .fullScreen
+            registrationType = .Searching
             self.navigationController?.pushViewController(FilterVC, animated: true)
         case 4: // push
             print(4)
