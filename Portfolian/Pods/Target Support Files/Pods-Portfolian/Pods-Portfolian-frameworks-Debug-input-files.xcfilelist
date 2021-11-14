@@ -1,3 +1,9 @@
 ${PODS_ROOT}/Target Support Files/Pods-Portfolian/Pods-Portfolian-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/KakaoSDKAuth/KakaoSDKAuth.framework
+${BUILT_PRODUCTS_DIR}/KakaoSDKCommon/KakaoSDKCommon.framework
+${BUILT_PRODUCTS_DIR}/KakaoSDKTalk/KakaoSDKTalk.framework
+${BUILT_PRODUCTS_DIR}/KakaoSDKTemplate/KakaoSDKTemplate.framework
+${BUILT_PRODUCTS_DIR}/KakaoSDKUser/KakaoSDKUser.framework
 ${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework
 ${BUILT_PRODUCTS_DIR}/Then/Then.framework
