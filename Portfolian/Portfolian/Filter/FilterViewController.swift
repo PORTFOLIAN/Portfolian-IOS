@@ -11,11 +11,8 @@ import SnapKit
 
 class FilterViewController: UIViewController {
     let identifier = "TagCollectionViewCell"
-    final let spacingRow = 20
-    final let spacingColumn = 10
     
-    lazy var tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout()).then { UICollectionView in
-    }
+    lazy var tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +24,6 @@ class FilterViewController: UIViewController {
         addSubview()
         setupAutoLayout()
         // Do any additional setup after loading the view.
-        didTouchTagButton(didClicked: true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -35,7 +31,7 @@ class FilterViewController: UIViewController {
     }
     //MARK: - setupAutoLayout
     func setupAutoLayout() {
-        definesPresentationContext = true
+//        definesPresentationContext = true
 
         tagCollectionView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -47,8 +43,7 @@ class FilterViewController: UIViewController {
         view.addSubview(tagCollectionView)
     }
     
-    func didTouchTagButton(didClicked: Bool) {
-    }
+    
     
 }
 
@@ -83,6 +78,7 @@ extension FilterViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FilterViewController: UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return Tag.Name.allCases.count
     }

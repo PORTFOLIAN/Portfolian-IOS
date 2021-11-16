@@ -9,24 +9,42 @@ import UIKit
 
 protocol TagToggleButtonDelegate {
     func didTouchTagButton(didClicked: Bool)
-    
 }
 
 class TagButton: UIButton {
-    
     var isClicked: Bool = false
     var delegate: TagToggleButtonDelegate?
     var subject: UIColor = ColorPortfolian.more
     @objc func tagButtonHandler(_ sender: UIButton) {
-        isClicked.toggle()
-        delegate?.didTouchTagButton(didClicked: isClicked)
-        if isClicked {
+        switch registrationType {
+        case .Writing:
+            if self.backgroundColor == ColorPortfolian.more {
+                if writingTag.names.count < 7 {
+                    isClicked.toggle()
+                    delegate?.didTouchTagButton(didClicked: isClicked)
+                    self.backgroundColor = subject
+                } else if writingTag.names.count == 7 {
+                    self.alpha = 0.5
+                    let time = DispatchTime.now() + .milliseconds(300)
+                    DispatchQueue.main.asyncAfter(deadline: time) {
+                        self.alpha = 1
+                    }
+                    print(writingTag.names)
+                }
+            } else {
+                isClicked.toggle()
+                delegate?.didTouchTagButton(didClicked: isClicked)
+                // 회색(기본)
+                self.backgroundColor = ColorPortfolian.more
+            }
+        case .Searching:
+            isClicked.toggle()
+            delegate?.didTouchTagButton(didClicked: isClicked)
             self.backgroundColor = subject
-            
-        } else {
-            // 회색(기본)
-            self.backgroundColor = ColorPortfolian.more
+        default:
+            break
         }
+        
     }
     
     override init(frame: CGRect) {

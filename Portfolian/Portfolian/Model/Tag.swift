@@ -9,7 +9,6 @@ import Foundation
 
 struct Tag {
     // 개체들
-    
     enum Name: String, CaseIterable {
         case frontEnd
         case backEnd
@@ -42,7 +41,7 @@ struct Tag {
         case gcp
         case git
         case etc
-    
+
         // 각 case의 인덱스
         var index: Self.AllCases.Index! {
             return Self.allCases.firstIndex { self == $0 }
@@ -93,6 +92,4 @@ struct Tag {
 //    let name: String
 //    let color: String
 }
-var searching = Tag()
-var writing = Tag()
 
