@@ -41,6 +41,7 @@ class TagCollectionViewCell: UICollectionViewCell {
         
         guard let clickedTags = initState() else { return }
         if clickedTags {
+            tagButton.isClicked = true
             tagButton.currentColor(color: tagColor)
         }
     }
@@ -91,17 +92,19 @@ class TagCollectionViewCell: UICollectionViewCell {
         print(searchingTag.names)
 
     }
+    
 }
 
 extension TagCollectionViewCell: TagToggleButtonDelegate {
+    
     func didTouchTagButton(didClicked: Bool) {
-        switch registrationType {
-        case .Writing:
-            storeWritingData(didClicked: didClicked)
-        case .Searching:
-            storeSearchingData(didClicked: didClicked)
-        default:
-            break
+            switch registrationType {
+            case .Writing:
+                storeWritingData(didClicked: didClicked)
+            case .Searching:
+                storeSearchingData(didClicked: didClicked)
+            default:
+                break
         }
     }
 }

@@ -7,7 +7,8 @@
 
 import Foundation
 import UIKit
-
+let spacingRow = 20
+let spacingColumn = 10
 struct ColorPortfolian {
     
     // MARK: - TagColor
