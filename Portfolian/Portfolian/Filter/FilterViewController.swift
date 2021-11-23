@@ -130,7 +130,4 @@ extension FilterViewController: UICollectionViewDataSource {
     }
 }
 
-struct TagInfo {
-    let name: String
-    let color: UIColor
-}
+

@@ -21,13 +21,16 @@ target 'Portfolian' do
 
 # pod 'MessageKit'
 # pod 'InputBarAccessoryView'
-# pod 'GoogleSignIn'
+pod 'GoogleSignIn'
 pod 'Then'
 pod 'SnapKit'
 pod 'KakaoSDKCommon'
 pod 'KakaoSDKAuth'
 pod 'KakaoSDKUser'
 pod 'KakaoSDKTalk'
+pod 'Alamofire'
+pod 'Toast-Swift'
+
   # Pods for Portfolian`
 
 end

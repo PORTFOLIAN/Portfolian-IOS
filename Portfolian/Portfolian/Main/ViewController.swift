@@ -19,7 +19,6 @@ class ViewController: UITabBarController {
             initNavigationTabViewController("Mypage", identifier: "MypageVC", icon: UIImage(named: "Mypage"), tag: 4)
         ]
         self.setViewControllers(viewControllers, animated: true)
-
     }
     
     override func viewDidAppear(_ animated: Bool) {

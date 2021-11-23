@@ -7,8 +7,20 @@
 
 import Foundation
 import UIKit
+import GoogleSignIn
 let spacingRow = 20
 let spacingColumn = 10
+
+enum API {
+    static let BASE_URL : String = "https://api.unsplash.com/"
+    static let CLIENT_ID : String = "hoPWOQifuIYQJDykNVfg124DZOcBimFSyDBbXAn_sc0"
+}
+
+enum NOTIFICATION {
+    enum API {
+        static let AUTH_FAIL = "authentication_fail"
+    }
+}
 struct ColorPortfolian {
     
     // MARK: - TagColor
