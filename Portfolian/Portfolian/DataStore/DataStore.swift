@@ -18,21 +18,20 @@ struct DataStore {
     var user: User?
 }
 
+
 struct TagDataStore {
     
     var names: [Tag.Name]
-    var colors: [Tag.Color]
     
     init() {
         self.names = [Tag.Name]()
-        self.colors = [Tag.Color]()
     }
     
     init(names: [Tag.Name], colors: [Tag.Color]) {
         self.names = names
-        self.colors = colors
     }
 }
+
 
 var writingTag = TagDataStore()
 var searchingTag = TagDataStore()

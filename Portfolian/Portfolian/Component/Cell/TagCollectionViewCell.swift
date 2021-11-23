@@ -30,16 +30,18 @@ class TagCollectionViewCell: UICollectionViewCell {
             make.width.height.equalToSuperview()
         }
         tagButton.delegate = self // 버튼 클릭했을때 데이터를 넘겨받아야 함
-    }
+    }    
     
     func configure(tagName: String, tagColor: UIColor, index: Int) {
+        print("configure")
         // tag들의 이름을 지정해줌
         tagButton.informTextInfo(text: tagName, fontSize: 16)
         // tag의 색을 지정해줌
         tagButton.setColor(color: tagColor)
         self.index = index
-        
+        print(writingTag.names)
         guard let clickedTags = initState() else { return }
+        
         if clickedTags {
             tagButton.isClicked = true
             tagButton.currentColor(color: tagColor)
@@ -52,10 +54,9 @@ class TagCollectionViewCell: UICollectionViewCell {
         switch registrationType {
         case .Writing:
             clickedTags = writingTag.names.contains(Tag.Name.allCases[index])
-
         case .Searching:
             clickedTags = searchingTag.names.contains(Tag.Name.allCases[index])
-
+           
         default:
             return nil
         }
@@ -65,35 +66,43 @@ class TagCollectionViewCell: UICollectionViewCell {
 
     
     func storeWritingData(didClicked: Bool) {
+        print(didClicked)
         if didClicked {
             writingTag.names.append(Tag.Name.allCases[self.index])
-            writingTag.colors.append(Tag.Color.allCases[self.index])
+            
         } else {
-            guard let index = writingTag.names
+            guard let nameIndex = writingTag.names
                     .firstIndex(of: Tag.Name.allCases[self.index])
             else { return }
-            writingTag.names.remove(at: index)
-            writingTag.colors.remove(at: index)
+            
+            writingTag.names.remove(at: nameIndex)
+            
         }
         print(writingTag.names)
     }
     
     func storeSearchingData(didClicked: Bool) {
+        
         if didClicked {
             searchingTag.names.append(Tag.Name.allCases[self.index])
-            searchingTag.colors.append(Tag.Color.allCases[self.index])
+            
         } else {
-            guard let index = searchingTag.names
+            guard let nameIndex = writingTag.names
                     .firstIndex(of: Tag.Name.allCases[self.index])
             else { return }
-            searchingTag.names.remove(at: index)
-            searchingTag.colors.remove(at: index)
+            
+            searchingTag.names.remove(at: nameIndex)
+            
         }
         print(searchingTag.names)
 
     }
     
+    
 }
+
+
+
 
 extension TagCollectionViewCell: TagToggleButtonDelegate {
     

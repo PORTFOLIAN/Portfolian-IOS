@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Toast_Swift
 protocol TagToggleButtonDelegate {
     func didTouchTagButton(didClicked: Bool)
 }
@@ -20,19 +20,21 @@ class TagButton: UIButton {
         case .Writing:
             if self.backgroundColor == ColorPortfolian.more {
                 if writingTag.names.count < 7 {
-                    isClicked.toggle()
+                    isClicked = true
                     delegate?.didTouchTagButton(didClicked: isClicked)
                     self.backgroundColor = subject
                 } else if writingTag.names.count == 7 {
                     self.alpha = 0.5
                     let time = DispatchTime.now() + .milliseconds(300)
+                    
+                    window?.rootViewController?.view.makeToast("😅 태그는 최대 7개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
                     DispatchQueue.main.asyncAfter(deadline: time) {
                         self.alpha = 1
                     }
-                    print(writingTag.names)
+            
                 }
             } else {
-                isClicked.toggle()
+                isClicked = false
                 delegate?.didTouchTagButton(didClicked: isClicked)
                 // 회색(기본)
                 self.backgroundColor = ColorPortfolian.more

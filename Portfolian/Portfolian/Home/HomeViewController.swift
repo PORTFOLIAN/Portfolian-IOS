@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
     lazy var logo: UIBarButtonItem = {
@@ -54,8 +55,8 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-//        self.navigationController?.navigationBar.prefersLargeTitles = true
-//        self.navigationItem.largeTitleDisplayMode = .automatic
+        //        self.navigationController?.navigationBar.prefersLargeTitles = true
+        //        self.navigationItem.largeTitleDisplayMode = .automatic
         setUpLogo()
         setUpItem()
         tableView.delegate = self
@@ -105,7 +106,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     
     
     
-     //MARK: - Search bar
+    //MARK: - Search bar
     func configureSearchController(){
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.delegate = self
@@ -141,63 +142,90 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     func updateSearchResults(for searchController: UISearchController) {
         
     }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        
     }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        //        let url  = API.BASE_URL + "search/photos"
+        guard let userInput = searchBar.text else { return }
+        //        let queryParam = ["query" : userInput,  "client_id" : API.CLIENT_ID]
+        
+        //        AF.request(url, method:  .get, parameters: queryParam).responseJSON { response in
+        //            debugPrint(response)
+        var urlToCall : URLRequestConvertible?
+        urlToCall = MySearchRouter.searchPhotos(term: userInput)
+        if let urlConvertible = urlToCall {
+            MyAlamofireManager
+                .shared
+                .session
+                .request(urlConvertible)
+                .validate(statusCode: 200..<401) // Auth 검증
+                .responseJSON  { response in
+                    debugPrint(response)
+                }
+        }
+        
+    }
+}
+    
     
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-extension HomeViewController: BookmarkButtonDelegate {
-    func didTouchBookmarkButton(didClicked: Bool) {
-        print("success")
-    }
-}
-
-extension HomeViewController {
-    func subview() {
-        view.addSubview(tableView)
-        view.addSubview(writeButton)
-    }
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
     
-    func constraints() {
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+    extension HomeViewController: BookmarkButtonDelegate {
+        func didTouchBookmarkButton(didClicked: Bool) {
             
-            writeButton.bottomAnchor.constraint(equalTo: tableView.frameLayoutGuide.bottomAnchor, constant: -20),
-            writeButton.trailingAnchor.constraint(equalTo: tableView.frameLayoutGuide.trailingAnchor, constant: -20),
-        ])
-    }
-}
-
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    // 셀의 개수
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
-        cell.cellDelegate = self
-        return cell
+            
+        }
     }
     
-    // 셀이 선택 되었을 때
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
+    extension HomeViewController {
+        func subview() {
+            view.addSubview(tableView)
+            view.addSubview(writeButton)
+        }
+        
+        func constraints() {
+            NSLayoutConstraint.activate([
+                tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                
+                writeButton.bottomAnchor.constraint(equalTo: tableView.frameLayoutGuide.bottomAnchor, constant: -20),
+                writeButton.trailingAnchor.constraint(equalTo: tableView.frameLayoutGuide.trailingAnchor, constant: -20),
+            ])
+        }
     }
     
-    // 셀의 크기 지정
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150.0;//Choose your custom row height
+    extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+        // 셀의 개수
+        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return 10
+        }
+        
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
+            cell.cellDelegate = self
+            return cell
+        }
+        
+        // 셀이 선택 되었을 때
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            print(indexPath)
+        }
+        
+        
+        // 셀의 크기 지정
+        func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            return 150.0;//Choose your custom row height
+        }
+        
     }
-    
-}

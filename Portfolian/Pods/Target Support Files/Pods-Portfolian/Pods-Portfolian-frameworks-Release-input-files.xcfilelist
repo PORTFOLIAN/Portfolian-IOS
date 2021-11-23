@@ -1,5 +1,9 @@
 ${PODS_ROOT}/Target Support Files/Pods-Portfolian/Pods-Portfolian-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework
+${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework
+${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework
+${BUILT_PRODUCTS_DIR}/GoogleSignIn/GoogleSignIn.framework
 ${BUILT_PRODUCTS_DIR}/KakaoSDKAuth/KakaoSDKAuth.framework
 ${BUILT_PRODUCTS_DIR}/KakaoSDKCommon/KakaoSDKCommon.framework
 ${BUILT_PRODUCTS_DIR}/KakaoSDKTalk/KakaoSDKTalk.framework
@@ -7,3 +11,4 @@ ${BUILT_PRODUCTS_DIR}/KakaoSDKTemplate/KakaoSDKTemplate.framework
 ${BUILT_PRODUCTS_DIR}/KakaoSDKUser/KakaoSDKUser.framework
 ${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework
 ${BUILT_PRODUCTS_DIR}/Then/Then.framework
+${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework

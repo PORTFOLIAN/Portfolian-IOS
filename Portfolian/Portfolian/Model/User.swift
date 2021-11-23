@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import Alamofire
+
 class User {
-    var flag: Bool = false
     static let shared = User()
-    
+
+    var flag: Bool = false
+    var bookmark: [Int]?
     
 }

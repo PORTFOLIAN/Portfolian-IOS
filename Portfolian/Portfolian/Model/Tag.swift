@@ -5,7 +5,7 @@
 //  Created by 이상현 on 2021/11/11.
 //
 
-import Foundation
+import UIKit
 
 struct Tag {
     // 개체들
@@ -88,8 +88,9 @@ struct Tag {
             return Self.allCases.firstIndex { self == $0 }
         }
     }
-    
-//    let name: String
-//    let color: String
 }
 
+struct TagInfo {
+    let name: String
+    let color: UIColor
+}
