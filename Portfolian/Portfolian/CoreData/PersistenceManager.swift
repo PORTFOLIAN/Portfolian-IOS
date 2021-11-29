@@ -10,7 +10,8 @@ import CoreData
 struct Person {
     var title: String?
     var tags: [String]?
-    var recruit: Int
+    var teamTags: [String]?
+    var recruit: Int?
     var period: String?
     var explain: String?
     var option: String?
@@ -19,8 +20,7 @@ struct Person {
 }
 
 class PersistenceManager {
-    
-    
+
     static var shared: PersistenceManager = PersistenceManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -56,6 +56,7 @@ class PersistenceManager {
             let managedObject = NSManagedObject(entity: entity, insertInto: self.context)
             managedObject.setValue(person.title, forKey: "title")
             managedObject.setValue(person.tags, forKey: "tags")
+            managedObject.setValue(person.teamTags, forKey: "teamTags")
             managedObject.setValue(person.recruit, forKey: "recruit")
             managedObject.setValue(person.period, forKey: "period")
             managedObject.setValue(person.explain, forKey: "explain")

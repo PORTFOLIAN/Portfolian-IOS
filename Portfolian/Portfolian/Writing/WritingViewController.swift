@@ -9,23 +9,49 @@ import UIKit
 import SnapKit
 import Then
 import CoreData
-
+import Alamofire
 
 class WritingViewController: UIViewController {
     let identifier = "TagCollectionViewCell"
+
+    let periodInit = "예시: 3개월, 2021.09 ~ 2021.11"
+    let explainInit = "프로젝트에 대한 간단한 설명을 적어주세요."
+    let optionInit = "프로젝트에 필요한 기술 역량에 대해 알려주세요."
+    let proceedInit = "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다."
+    let detailInit = "프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
     lazy var saveBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(buttonPressed(_:)))
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
+
+    lazy var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     
     lazy var titleTextField = UITextField().then({ UITextField in
         UITextField.placeholder = "제목을 입력하세요."
         UITextField.font = UIFont(name: "NotoSansKR-Bold", size: 24)
     })
-    
     lazy var configuration: UIButton.Configuration = {
+        var configuration = UIButton.Configuration.plain()
+        let title = "본인의 사용 기술을 선택해주세요(최대 2개)"
+        let icon = UIImage(systemName: "chevron.right")
+        configuration.title = title
+        configuration.image = icon
+        //        configuration.imagePadding = 30
+        configuration.imagePlacement = .trailing
+        configuration.baseForegroundColor = .black
+        configuration.buttonSize = .medium
+        configuration.baseBackgroundColor = .white
+        return configuration
+    }()
+    
+    lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    }
+    
+    
+    lazy var teamConfiguration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
         let title = "사용 기술을 선택해주세요. (최대 7개)"
         let icon = UIImage(systemName: "chevron.right")
@@ -39,7 +65,7 @@ class WritingViewController: UIViewController {
         return configuration
     }()
     
-    lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
+    lazy var teamStackButton = UIButton(configuration: teamConfiguration, primaryAction: nil).then { UIButton in
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
     
@@ -60,35 +86,35 @@ class WritingViewController: UIViewController {
     })
     
     lazy var periodTextView = UITextView().then({ UITextView in
-        UITextView.text = "예시: 3개월, 2021.09 ~ 2021.11"
+        UITextView.text = periodInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 2
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     
     lazy var explainTextView = UITextView().then({ UITextView in
-        UITextView.text = "프로젝트에 대한 간단한 설명을 적어주세요."
+        UITextView.text = explainInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     
     lazy var optionTextView = UITextView().then({ UITextView in
-        UITextView.text = "프로젝트에 필요한 기술 역량에 대해 알려주세요"
+        UITextView.text = optionInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     
     lazy var proceedTextView = UITextView().then({ UITextView in
-        UITextView.text = "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다."
+        UITextView.text = proceedInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     
     lazy var detailTextView = UITextView().then({ UITextView in
-        UITextView.text = "프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
+        UITextView.text = detailInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 15
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
@@ -159,31 +185,39 @@ class WritingViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
+        registrationType = .Writing
+
         if isMovingToParent == true {
             fetchWriting()
         }
-        print(1)
+        
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
-            print(3)
-            let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+            self.tagsCollectionView.reloadData()
+
+            var height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
             self.tagCollectionView.snp.updateConstraints {
                 $0.height.equalTo(height)
             }
-            self.view.setNeedsLayout()
+            
+            height = self.tagsCollectionView.collectionViewLayout.collectionViewContentSize.height
+            self.tagsCollectionView.snp.updateConstraints {
+                $0.height.equalTo(height)
+            }
         }
-        print(2)
+        self.view.setNeedsLayout()
+
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        registrationType = .Writing
         navigationItem.title = "글쓰기"
         navigationItem.rightBarButtonItem = saveBarButtonItem
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        scrollView.addSubview(tagCollectionView)
+        contentView.addSubview(tagCollectionView)
+        contentView.addSubview(tagsCollectionView)
         contentView.addSubview(titleTextField)
         contentView.addSubview(lineViewFirst)
         contentView.addSubview(lineViewSecond)
@@ -194,6 +228,7 @@ class WritingViewController: UIViewController {
         contentView.addSubview(lineViewSeventh)
         contentView.addSubview(lineViewEight)
         contentView.addSubview(stackButton)
+        contentView.addSubview(teamStackButton)
         contentView.addSubview(recruitTextField)
         contentView.addSubview(recruitLabel)
         contentView.addSubview(periodLabel)
@@ -218,6 +253,10 @@ class WritingViewController: UIViewController {
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
+
+        tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagsCollectionView.delegate = self
+        tagsCollectionView.dataSource = self
         
         
         scrollView.snp.makeConstraints { make in
@@ -240,20 +279,31 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(1)
         }
-        
+//
         stackButton.snp.makeConstraints { make in
             make.top.equalTo(lineViewFirst).offset(10)
             make.leading.equalTo(lineViewFirst)
         }
-        
+
         tagCollectionView.snp.makeConstraints { make in
             make.top.equalTo(stackButton.snp.bottom).offset(10)
             make.leading.trailing.equalTo(lineViewFirst)
             make.height.equalTo(0)
         }
         
-        lineViewSecond.snp.makeConstraints { make in
+        teamStackButton.snp.makeConstraints { make in
             make.top.equalTo(tagCollectionView.snp.bottom).offset(10)
+            make.leading.equalTo(lineViewFirst)
+        }
+        
+        tagsCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(teamStackButton.snp.bottom).offset(10)
+            make.leading.trailing.equalTo(lineViewFirst)
+            make.height.equalTo(0)
+        }
+                                               
+        lineViewSecond.snp.makeConstraints { make in
+            make.top.equalTo(tagsCollectionView.snp.bottom).offset(10)
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(1)
         }
@@ -363,11 +413,11 @@ class WritingViewController: UIViewController {
     
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-//        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColor.black]
+        //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColor.black]
         let saveAction = UIAlertAction(title: "저장", style: .default) { _ in
             self.saveWriting()
             self.navigationController?.popViewController(animated: true)
-
+            
         }
         
         let refuseAction = UIAlertAction(title: "저장하지않고 나가기", style: .destructive) { _ in
@@ -383,12 +433,18 @@ class WritingViewController: UIViewController {
     }
     
     func saveWriting() {
-        let numRecruit = Int(recruitTextField.text!) ?? 0
+        let numRecruit = Int(recruitTextField.text!)
         var stringTags: [String] = []
-        for tag in writingTag.names {
+        for tag in writingOwnerTag.names {
             stringTags.append(tag.rawValue)
         }
-        let myWriting = Person(title: titleTextField.text ,tags: stringTags, recruit: numRecruit, period: periodTextView.text, explain: explainTextView.text, option: optionTextView.text, proceed: proceedTextView.text, detail: detailTextView.text)
+        
+        var stringTeamTags: [String] = []
+        for tag in writingTeamTag.names {
+            stringTeamTags.append(tag.rawValue)
+        }
+        
+        let myWriting = Person(title: titleTextField.text, tags: stringTags, teamTags: stringTeamTags, recruit: numRecruit, period: periodTextView.text, explain: explainTextView.text, option: optionTextView.text, proceed: proceedTextView.text, detail: detailTextView.text)
         PersistenceManager.shared.insertPerson(person: myWriting)
     }
     
@@ -400,63 +456,70 @@ class WritingViewController: UIViewController {
             if $0.title != nil {
                 titleTextField.text = $0.title
             }
-            
             if $0.tags != nil {
-                writingTag.names = []
-
+                writingOwnerTag.names = []
                 for tag in $0.tags! {
-                    writingTag.names.append(Tag.Name(rawValue: tag)!)
+                    writingOwnerTag.names.append(Tag.Name(rawValue: tag)!)
                 }
             } else {
-                writingTag.names = []
+                writingOwnerTag.names = []
             }
-            
+            print("writingTag: \(writingOwnerTag.names)")
+
+            if $0.teamTags != nil {
+                writingTeamTag.names = []
+                for tag in $0.teamTags! {
+                    writingTeamTag.names.append(Tag.Name(rawValue: tag)!)
+                }
+            } else {
+                writingTeamTag.names = []
+            }
+            print("writingTeamTag: \(writingTeamTag.names)")
             recruitTextField.text = String($0.recruit)
             
-            if $0.period != "예시: 3개월, 2021.09 ~ 2021.11" {
+            
+            if $0.period != periodInit {
                 periodTextView.text = $0.period
                 periodTextView.textColor = .black
             } else {
-                periodTextView.text = "예시: 3개월, 2021.09 ~ 2021.11"
+                periodTextView.text = periodInit
                 periodTextView.textColor = ColorPortfolian.gray2
             }
             
-            if $0.explain != "프로젝트에 대한 간단한 설명을 적어주세요." {
+            if $0.explain != explainInit {
                 explainTextView.text = $0.explain
                 explainTextView.textColor = .black
             } else {
-                explainTextView.text = "프로젝트에 대한 간단한 설명을 적어주세요."
+                explainTextView.text = explainInit
                 explainTextView.textColor = ColorPortfolian.gray2
             }
             
-            if $0.option != "프로젝트에 필요한 기술 역량에 대해 알려주세요." {
+            if $0.option != optionInit {
                 optionTextView.text = $0.option
                 optionTextView.textColor = .black
             } else {
-                optionTextView.text = "프로젝트에 필요한 기술 역량에 대해 알려주세요."
+                optionTextView.text = optionInit
                 optionTextView.textColor = ColorPortfolian.gray2
             }
             
-            if $0.proceed != "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다." {
+            if $0.proceed != proceedInit {
                 proceedTextView.text = $0.proceed
                 proceedTextView.textColor = .black
             } else {
-                proceedTextView.text = "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다."
+                proceedTextView.text = proceedInit
                 proceedTextView.textColor = ColorPortfolian.gray2
             }
             
-            if $0.detail != "프로젝트에 대한 설명을 자유롭게 적어주세요 :)" {
+            if $0.detail != detailInit {
                 detailTextView.text = $0.detail
                 detailTextView.textColor = .black
             } else {
-                detailTextView.text = "프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
+                detailTextView.text = detailInit
                 detailTextView.textColor = ColorPortfolian.gray2
             }
-            
-            
         }
     }
-
+    
     func deleteWriting() {
         let request: NSFetchRequest<Writing> = Writing.fetchRequest()
         PersistenceManager.shared.deleteAll(request: request)
@@ -464,22 +527,71 @@ class WritingViewController: UIViewController {
         if arr.isEmpty {
             print("clean")
         }
-        writingTag.names = []
+        writingTeamTag.names = []
+        writingOwnerTag.names = []
     }
     
     // MARK: - Navigation
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender {
         case saveBarButtonItem:
-            print("저장된 화면으로 이동")
-
+            //            guard let userInput = searchBar.text else { return }
+            let numRecruit = Int(recruitTextField.text!)
+            var stringTags: [String] = []
+            for tag in writingTeamTag.names {
+                stringTags.append(tag.rawValue)
+            }
+            if explainTextView.text == explainInit {
+                optionTextView.text = ""
+            }
+            if periodTextView.text == periodInit {
+                periodTextView.text = ""
+            }
+            if optionTextView.text == optionInit {
+                optionTextView.text = ""
+            }
+            if proceedTextView.text == proceedInit {
+                proceedTextView.text = ""
+            }
+            if detailTextView.text == detailInit {
+                detailTextView.text = ""
+            }
+            
+            var urlToCall : URLRequestConvertible?
+            let project = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
+            urlToCall = MyProjectRouter.createProject(term: project)
+            if let urlConvertible = urlToCall {
+                MyAlamofireManager
+                    .shared
+                    .session
+                    .request(urlConvertible)
+                    .validate(statusCode: 200..<401) // Auth 검증
+                    .responseJSON  { response in
+                        debugPrint(response)
+                    }
+            }
+//            let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+//            WritingSaveVC.modalPresentationStyle = .fullScreen
+//            guard let pvc = self.presentingViewController else { return }
+//            self.navigationController?.popToRootViewController(animated: false)
+//            pvc.pushViewController(WritingSaveVC, animated: true)
+            
         case cancelBarButtonItem:
             self.alert("임시 저장하시겠습니까?")
-
-        default:
+        case stackButton:
+            registrationType = .WritingOwner
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             FilterVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(FilterVC, animated: true)
+            print(1)
+        case teamStackButton:
+            registrationType = .WritingTeam
+            let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
+            FilterVC.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(FilterVC, animated: true)
+            print(2)
+        default:
+            print("error?")
         }
         
     }
@@ -523,18 +635,31 @@ extension WritingViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         // 더비 라벨을 만들어줘서 크기를 버튼의 크기를 예상하여 넣어준다.
-        
-        let tag = writingTag.names[indexPath.row]
-        let tagInfo = getTagInfo(tag: tag)
-        let tagName = tagInfo.name
-        let label = TagButton().then {
-            $0.informTextInfo(text: tagName, fontSize: 16)
-            $0.sizeToFit()
+        switch collectionView {
+        case tagCollectionView:
+            let tag = writingOwnerTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let label = TagButton().then {
+                $0.informTextInfo(text: tagName, fontSize: 16)
+                $0.sizeToFit()
+            }
+            let size = label.frame.size
+            return CGSize(width: size.width, height: size.height + 10)
+        default:
+            let tag = writingTeamTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let label = TagButton().then {
+                $0.informTextInfo(text: tagName, fontSize: 16)
+                $0.sizeToFit()
+            }
+            let size = label.frame.size
+            return CGSize(width: size.width, height: size.height + 10)
         }
-        let size = label.frame.size
-        return CGSize(width: size.width, height: size.height + 10)
+        
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath)
         //        TagCOllectionViewCell에서 contentView.isUserInteractionEnabled = true 해주면 함수 동작함. 대신 색이 안 나옴.
@@ -545,55 +670,33 @@ extension WritingViewController: UICollectionViewDelegateFlowLayout {
 extension WritingViewController: UICollectionViewDataSource {
     // 한 섹션에 몇개의 컬렉션 셀을 보여줄지
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return writingTag.names.count
+        if collectionView == tagCollectionView {
+            return writingOwnerTag.names.count
+        } else {
+            return writingTeamTag.names.count
+        }
     }
     // 셀을 어떻게 보여줄지
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("cellforat")
-        let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
-        let tag = writingTag.names[indexPath.row]
-        let tagInfo = getTagInfo(tag: tag)
-        let tagName = tagInfo.name
-        let tagColor = tagInfo.color
-        cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
-        return cell
-    }
-    
-    
-    func getTagInfo(tag: Tag.Name?) -> TagInfo {
-        switch tag {
-        case .frontEnd  : return TagInfo(name: "Front-end", color: ColorPortfolian.frontEnd)
-        case .backEnd   : return TagInfo(name: "Back-end", color: ColorPortfolian.backEnd)
-        case .react     : return TagInfo(name: "React", color: ColorPortfolian.react)
-        case .spring    : return TagInfo(name: "Spring", color: ColorPortfolian.spring)
-        case .django    : return TagInfo(name: "Django", color: ColorPortfolian.django)
-        case .javascript: return TagInfo(name: "Javascript", color: ColorPortfolian.javascript)
-        case .typescript: return TagInfo(name: "Typescript", color: ColorPortfolian.typescript)
-        case .ios       : return TagInfo(name: "iOS", color: ColorPortfolian.ios)
-        case .android   : return TagInfo(name: "Andriod", color: ColorPortfolian.android)
-        case .angular   : return TagInfo(name: "Angular", color: ColorPortfolian.angular)
-        case .htmlCss   : return TagInfo(name: "HTML/CSS", color: ColorPortfolian.htmlCss)
-        case .flask     : return TagInfo(name: "Flask", color: ColorPortfolian.flask)
-        case .nodeJs    : return TagInfo(name: "Node.js", color: ColorPortfolian.nodeJs)
-        case .java      : return TagInfo(name: "Java", color: ColorPortfolian.java)
-        case .python    : return TagInfo(name: "Python", color: ColorPortfolian.python)
-        case .kotlin    : return TagInfo(name: "Kotlin", color: ColorPortfolian.kotlin)
-        case .swift     : return TagInfo(name: "Swift", color: ColorPortfolian.swift)
-        case .go        : return TagInfo(name: "Go", color: ColorPortfolian.go)
-        case .cCpp      : return TagInfo(name: "C/C++", color: ColorPortfolian.cCpp)
-        case .cCsharp   : return TagInfo(name: "C#", color: ColorPortfolian.cCsharp)
-        case .design    : return TagInfo(name: "Design", color: ColorPortfolian.design)
-        case .figma     : return TagInfo(name: "Figma", color: ColorPortfolian.figma)
-        case .sketch    : return TagInfo(name: "Sketch", color: ColorPortfolian.sketch)
-        case .adobeXD   : return TagInfo(name: "adobeXD", color: ColorPortfolian.adobeXD)
-        case .photoshop : return TagInfo(name: "Photoshop", color: ColorPortfolian.photoshop)
-        case .illustrator: return TagInfo(name: "Illustrator", color: ColorPortfolian.illustrator)
-        case .firebase  : return TagInfo(name: "Firebase", color: ColorPortfolian.firebase)
-        case .aws       : return TagInfo(name: "AWS", color: ColorPortfolian.aws)
-        case .gcp       : return TagInfo(name: "GCP", color: ColorPortfolian.gcp)
-        case .git       : return TagInfo(name: "Git", color: ColorPortfolian.git)
-        case .etc       : return TagInfo(name: "etc", color: ColorPortfolian.etc)
-        default         : return TagInfo(name: "", color: ColorPortfolian.more)
+        switch collectionView {
+        case tagCollectionView:
+            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let tag = writingOwnerTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let tagColor = tagInfo.color
+            cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
+            return cell
+        default:
+            let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let tag = writingTeamTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let tagColor = tagInfo.color
+            cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
+            return cell
         }
+        
     }
+    
 }

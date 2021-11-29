@@ -15,3 +15,4 @@ class User {
     var bookmark: [Int]?
     
 }
+

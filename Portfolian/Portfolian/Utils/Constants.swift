@@ -12,8 +12,8 @@ let spacingRow = 20
 let spacingColumn = 10
 
 enum API {
-    static let BASE_URL : String = "https://api.unsplash.com/"
-    static let CLIENT_ID : String = "hoPWOQifuIYQJDykNVfg124DZOcBimFSyDBbXAn_sc0"
+    static let BASE_URL : String = "http://3.36.84.11:3000/"
+    static let USER_ID : String = "test1"
 }
 
 enum NOTIFICATION {

@@ -8,9 +8,10 @@
         <attribute name="proceed" optional="YES" attributeType="String"/>
         <attribute name="recruit" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[String]"/>
+        <attribute name="teamTags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[String]"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Writing" positionX="-63" positionY="-18" width="128" height="149"/>
+        <element name="Writing" positionX="-63" positionY="-18" width="128" height="164"/>
     </elements>
 </model>

@@ -50,7 +50,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
+    }() 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -146,24 +146,8 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        //        let url  = API.BASE_URL + "search/photos"
-        guard let userInput = searchBar.text else { return }
-        //        let queryParam = ["query" : userInput,  "client_id" : API.CLIENT_ID]
+    
         
-        //        AF.request(url, method:  .get, parameters: queryParam).responseJSON { response in
-        //            debugPrint(response)
-        var urlToCall : URLRequestConvertible?
-        urlToCall = MySearchRouter.searchPhotos(term: userInput)
-        if let urlConvertible = urlToCall {
-            MyAlamofireManager
-                .shared
-                .session
-                .request(urlConvertible)
-                .validate(statusCode: 200..<401) // Auth 검증
-                .responseJSON  { response in
-                    debugPrint(response)
-                }
-        }
         
     }
 }
