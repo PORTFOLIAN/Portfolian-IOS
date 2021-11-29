@@ -209,8 +209,9 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoTalk() success.")
+                print(oauthToken)
                 self.setNickName()
-                _ = oauthToken
+                
                 
             }
         }
@@ -224,8 +225,10 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoAccount() success.")
+                
+                
+                print(oauthToken)
                 self.setNickName()
-                _ = oauthToken
             }
         }
     }

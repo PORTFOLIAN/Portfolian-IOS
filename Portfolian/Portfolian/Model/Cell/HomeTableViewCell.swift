@@ -168,8 +168,6 @@ class HomeTableViewCell: UITableViewCell {
         isClicked.toggle()
         if isClicked == true{
             sender.setImage(UIImage(named: "BookmarkFill"), for: .normal)
-            
-            
         }else{
             sender.setImage(UIImage(named: "Bookmark2"), for: .normal)
             }

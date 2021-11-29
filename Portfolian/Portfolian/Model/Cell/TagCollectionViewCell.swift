@@ -33,87 +33,83 @@ class TagCollectionViewCell: UICollectionViewCell {
     }    
     
     func configure(tagName: String, tagColor: UIColor, index: Int) {
-        print("configure")
         // tag들의 이름을 지정해줌
         tagButton.informTextInfo(text: tagName, fontSize: 16)
         // tag의 색을 지정해줌
         tagButton.setColor(color: tagColor)
         self.index = index
-        print(writingTag.names)
+        // 데이터스토어에 저장된 태그 init.
         guard let clickedTags = initState() else { return }
-        
         if clickedTags {
             tagButton.isClicked = true
-            tagButton.currentColor(color: tagColor)
         }
+        
+        
     }
     
     // 등록 타입별로 상태 초기화
     func initState() -> Bool? {
         let clickedTags: Bool?
         switch registrationType {
-        case .Writing:
-            clickedTags = writingTag.names.contains(Tag.Name.allCases[index])
+        case .WritingTeam:
+            clickedTags = writingTeamTag.names.contains(Tag.Name.allCases[index])
+        case .WritingOwner:
+            clickedTags = writingOwnerTag.names.contains(Tag.Name.allCases[index])
         case .Searching:
             clickedTags = searchingTag.names.contains(Tag.Name.allCases[index])
-           
         default:
-            return nil
+            return true
         }
-        
         return clickedTags
     }
 
-    
     func storeWritingData(didClicked: Bool) {
-        print(didClicked)
         if didClicked {
-            writingTag.names.append(Tag.Name.allCases[self.index])
-            
+            writingOwnerTag.names.append(Tag.Name.allCases[self.index])
         } else {
-            guard let nameIndex = writingTag.names
+            guard let nameIndex = writingOwnerTag.names
                     .firstIndex(of: Tag.Name.allCases[self.index])
             else { return }
-            
-            writingTag.names.remove(at: nameIndex)
-            
+            writingOwnerTag.names.remove(at: nameIndex)
         }
-        print(writingTag.names)
+    }
+    
+    func storeWritingTeamData(didClicked: Bool) {
+        if didClicked {
+            writingTeamTag.names.append(Tag.Name.allCases[self.index])
+
+        } else {
+            guard let nameIndex = writingTeamTag.names
+                    .firstIndex(of: Tag.Name.allCases[self.index])
+            else { return }
+            writingTeamTag.names.remove(at: nameIndex)
+        }
     }
     
     func storeSearchingData(didClicked: Bool) {
-        
         if didClicked {
             searchingTag.names.append(Tag.Name.allCases[self.index])
-            
         } else {
-            guard let nameIndex = writingTag.names
+            guard let nameIndex = searchingTag.names
                     .firstIndex(of: Tag.Name.allCases[self.index])
             else { return }
-            
             searchingTag.names.remove(at: nameIndex)
-            
         }
-        print(searchingTag.names)
-
     }
-    
-    
 }
 
-
-
-
 extension TagCollectionViewCell: TagToggleButtonDelegate {
-    
     func didTouchTagButton(didClicked: Bool) {
             switch registrationType {
-            case .Writing:
+            case .WritingTeam:
+                storeWritingTeamData(didClicked: didClicked)
+            case .WritingOwner:
                 storeWritingData(didClicked: didClicked)
             case .Searching:
                 storeSearchingData(didClicked: didClicked)
             default:
-                break
+                storeWritingData(didClicked: didClicked)
+                storeWritingTeamData(didClicked: didClicked)
         }
     }
 }

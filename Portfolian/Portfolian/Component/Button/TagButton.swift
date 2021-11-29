@@ -12,37 +12,47 @@ protocol TagToggleButtonDelegate {
 }
 
 class TagButton: UIButton {
-    var isClicked: Bool = false
+    var isClicked: Bool = false {
+        didSet {
+            if isClicked == true {
+                self.backgroundColor = subject
+            } else {
+                self.backgroundColor = ColorPortfolian.more
+            }
+        }
+    }
     var delegate: TagToggleButtonDelegate?
     var subject: UIColor = ColorPortfolian.more
     @objc func tagButtonHandler(_ sender: UIButton) {
+        isClicked.toggle()
+        delegate?.didTouchTagButton(didClicked: isClicked)
         switch registrationType {
-        case .Writing:
-            if self.backgroundColor == ColorPortfolian.more {
-                if writingTag.names.count < 7 {
-                    isClicked = true
-                    delegate?.didTouchTagButton(didClicked: isClicked)
-                    self.backgroundColor = subject
-                } else if writingTag.names.count == 7 {
-                    self.alpha = 0.5
-                    let time = DispatchTime.now() + .milliseconds(300)
-                    
-                    window?.rootViewController?.view.makeToast("😅 태그는 최대 7개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
-                    DispatchQueue.main.asyncAfter(deadline: time) {
-                        self.alpha = 1
-                    }
-            
-                }
-            } else {
-                isClicked = false
+        case .WritingOwner:
+            if writingOwnerTag.names.count > 1 {
+                isClicked.toggle()
                 delegate?.didTouchTagButton(didClicked: isClicked)
-                // 회색(기본)
-                self.backgroundColor = ColorPortfolian.more
+
+                self.alpha = 0.5
+                let time = DispatchTime.now() + .milliseconds(300)
+                window?.rootViewController?.view.makeToast("😅 태그는 최대 1개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
+                DispatchQueue.main.asyncAfter(deadline: time) {
+                    self.alpha = 1
+                }
+            }
+        case .WritingTeam:
+            if writingTeamTag.names.count > 7 {
+                isClicked.toggle()
+                delegate?.didTouchTagButton(didClicked: isClicked)
+
+                self.alpha = 0.5
+                let time = DispatchTime.now() + .milliseconds(300)
+                window?.rootViewController?.view.makeToast("😅 태그는 최대 7개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
+                DispatchQueue.main.asyncAfter(deadline: time) {
+                    self.alpha = 1
+                }
             }
         case .Searching:
-            isClicked.toggle()
-            delegate?.didTouchTagButton(didClicked: isClicked)
-            self.backgroundColor = subject
+            print("searching")
         default:
             break
         }
@@ -64,7 +74,7 @@ class TagButton: UIButton {
         self.layer.cornerRadius = 15
         self.backgroundColor = ColorPortfolian.more
         self.addTarget(self, action: #selector(tagButtonHandler(_:)), for: .touchUpInside)
-//        informTextInfo(text: "default", fontSize: 30)
+        //        informTextInfo(text: "default", fontSize: 30)
     }
     
     func informTextInfo(text: String, fontSize: Int) {

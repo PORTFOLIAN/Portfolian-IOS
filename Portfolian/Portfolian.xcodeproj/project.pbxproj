@@ -15,16 +15,18 @@
 		2A17B8812721E6CD00A0D598 /* Filter.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A17B8802721E6CD00A0D598 /* Filter.storyboard */; };
 		2A17B8852722099300A0D598 /* TagButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A17B8842722099300A0D598 /* TagButton.swift */; };
 		2A17B88827220B7100A0D598 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A17B88727220B7100A0D598 /* Constants.swift */; };
+		2A28E0C7275552E300061B11 /* WritingSave.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A28E0C6275552E300061B11 /* WritingSave.storyboard */; };
+		2A28E0CB2755532700061B11 /* WritingSaveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A28E0CA2755532700061B11 /* WritingSaveViewController.swift */; };
 		2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A561611272A7B4300C08793 /* UIImage+resize.swift */; };
-		2A947C55274BC99B00331586 /* MySearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C54274BC99B00331586 /* MySearchRouter.swift */; };
+		2A947C55274BC99B00331586 /* MyProjectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C54274BC99B00331586 /* MyProjectRouter.swift */; };
 		2A947C59274BFA3D00331586 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C57274BFA3D00331586 /* Model.xcdatamodeld */; };
 		2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C66274C11D400331586 /* PersistenceManager.swift */; };
+		2AAD320D275382F00090D26F /* Writing+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD320B275382EF0090D26F /* Writing+CoreDataClass.swift */; };
+		2AAD320E275382F00090D26F /* Writing+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD320C275382F00090D26F /* Writing+CoreDataProperties.swift */; };
 		2ABBF3AF273C6049005A09D0 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3AE273C6049005A09D0 /* Tag.swift */; };
 		2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */; };
 		2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B3273C7A95005A09D0 /* DataStore.swift */; };
 		2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */; };
-		2ACBD3FC274D3B5300264503 /* Writing+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACBD3FA274D3B5300264503 /* Writing+CoreDataClass.swift */; };
-		2ACBD3FD274D3B5300264503 /* Writing+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACBD3FB274D3B5300264503 /* Writing+CoreDataProperties.swift */; };
 		2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD02A78272C3A5100945DC5 /* Writing.storyboard */; };
 		2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */; };
 		2AFB53E5271C0EC900B6FFC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB53E4271C0EC900B6FFC6 /* AppDelegate.swift */; };
@@ -62,16 +64,18 @@
 		2A17B8802721E6CD00A0D598 /* Filter.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Filter.storyboard; sourceTree = "<group>"; };
 		2A17B8842722099300A0D598 /* TagButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagButton.swift; sourceTree = "<group>"; };
 		2A17B88727220B7100A0D598 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		2A28E0C6275552E300061B11 /* WritingSave.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = WritingSave.storyboard; sourceTree = "<group>"; };
+		2A28E0CA2755532700061B11 /* WritingSaveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingSaveViewController.swift; sourceTree = "<group>"; };
 		2A561611272A7B4300C08793 /* UIImage+resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+resize.swift"; sourceTree = "<group>"; };
-		2A947C54274BC99B00331586 /* MySearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySearchRouter.swift; sourceTree = "<group>"; };
+		2A947C54274BC99B00331586 /* MyProjectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProjectRouter.swift; sourceTree = "<group>"; };
 		2A947C58274BFA3D00331586 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		2A947C66274C11D400331586 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		2AAD320B275382EF0090D26F /* Writing+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataClass.swift"; sourceTree = "<group>"; };
+		2AAD320C275382F00090D26F /* Writing+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		2ABBF3AE273C6049005A09D0 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
 		2ABBF3B3273C7A95005A09D0 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
-		2ACBD3FA274D3B5300264503 /* Writing+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataClass.swift"; sourceTree = "<group>"; };
-		2ACBD3FB274D3B5300264503 /* Writing+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		2AD02A78272C3A5100945DC5 /* Writing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Writing.storyboard; sourceTree = "<group>"; };
 		2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingViewController.swift; sourceTree = "<group>"; };
 		2AFB53E1271C0EC900B6FFC6 /* Portfolian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Portfolian.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,7 +135,7 @@
 				2A112729274AD4D700B9564C /* MyAlamofireManager.swift */,
 				2A11272D274ADBF500B9564C /* MyLogger.swift */,
 				2A11272B274AD5D800B9564C /* BaseInterceptor.swift */,
-				2A947C54274BC99B00331586 /* MySearchRouter.swift */,
+				2A947C54274BC99B00331586 /* MyProjectRouter.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -149,7 +153,6 @@
 		2A17B8822722096300A0D598 /* Component */ = {
 			isa = PBXGroup;
 			children = (
-				2A0AA57A27254B0800C36186 /* Cell */,
 				2A17B8832722097700A0D598 /* Button */,
 			);
 			path = Component;
@@ -169,6 +172,17 @@
 				2A17B88727220B7100A0D598 /* Constants.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		2A28E0C52755529C00061B11 /* Writing */ = {
+			isa = PBXGroup;
+			children = (
+				2AD02A78272C3A5100945DC5 /* Writing.storyboard */,
+				2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */,
+				2A28E0C6275552E300061B11 /* WritingSave.storyboard */,
+				2A28E0CA2755532700061B11 /* WritingSaveViewController.swift */,
+			);
+			path = Writing;
 			sourceTree = "<group>";
 		};
 		2A947C56274BFA1C00331586 /* CoreData */ = {
@@ -191,8 +205,8 @@
 		2AFB53D8271C0EC900B6FFC6 = {
 			isa = PBXGroup;
 			children = (
-				2ACBD3FA274D3B5300264503 /* Writing+CoreDataClass.swift */,
-				2ACBD3FB274D3B5300264503 /* Writing+CoreDataProperties.swift */,
+				2AAD320B275382EF0090D26F /* Writing+CoreDataClass.swift */,
+				2AAD320C275382F00090D26F /* Writing+CoreDataProperties.swift */,
 				2AFB53E3271C0EC900B6FFC6 /* Portfolian */,
 				2AFB53E2271C0EC900B6FFC6 /* Products */,
 				F697464534A9263C7212223C /* Pods */,
@@ -224,6 +238,7 @@
 				2AFB53F8271C0F8D00B6FFC6 /* Main */,
 				2AFB53FF271C11D400B6FFC6 /* Auth */,
 				2AFB5412271E2F7300B6FFC6 /* Home */,
+				2A28E0C52755529C00061B11 /* Writing */,
 				2AFB5413271E2F8200B6FFC6 /* Bookmark */,
 				2AFB5410271E2F5A00B6FFC6 /* Chat */,
 				2AFB5414271E2FC100B6FFC6 /* Mypage */,
@@ -259,6 +274,7 @@
 			children = (
 				2AFB540E271C92B200B6FFC6 /* User.swift */,
 				2ABBF3AE273C6049005A09D0 /* Tag.swift */,
+				2A0AA57A27254B0800C36186 /* Cell */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -287,8 +303,6 @@
 			children = (
 				2AFB541D271E302000B6FFC6 /* Home.storyboard */,
 				2AFB5415271E2FE100B6FFC6 /* HomeViewController.swift */,
-				2AD02A78272C3A5100945DC5 /* Writing.storyboard */,
-				2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -410,6 +424,7 @@
 				2A17B8812721E6CD00A0D598 /* Filter.storyboard in Resources */,
 				2AFB5409271C7B2F00B6FFC6 /* NotoSansKR-Regular.otf in Resources */,
 				2AFB5422271E303B00B6FFC6 /* Chat.storyboard in Resources */,
+				2A28E0C7275552E300061B11 /* WritingSave.storyboard in Resources */,
 				2AFB541E271E302000B6FFC6 /* Home.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,7 +478,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A947C55274BC99B00331586 /* MySearchRouter.swift in Sources */,
+				2A947C55274BC99B00331586 /* MyProjectRouter.swift in Sources */,
 				2A11272E274ADBF500B9564C /* MyLogger.swift in Sources */,
 				2AFB53FC271C0FEF00B6FFC6 /* SigninViewController.swift in Sources */,
 				2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */,
@@ -475,13 +490,14 @@
 				2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */,
 				2AFB53E5271C0EC900B6FFC6 /* AppDelegate.swift in Sources */,
 				2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */,
+				2A28E0CB2755532700061B11 /* WritingSaveViewController.swift in Sources */,
 				2A17B88827220B7100A0D598 /* Constants.swift in Sources */,
 				2AFB5418271E2FEE00B6FFC6 /* BookmarkViewController.swift in Sources */,
 				2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,
 				2A17B8852722099300A0D598 /* TagButton.swift in Sources */,
 				2AFB541C271E300200B6FFC6 /* MypageViewController.swift in Sources */,
 				2A17B87F2721E6C200A0D598 /* FilterViewController.swift in Sources */,
-				2ACBD3FC274D3B5300264503 /* Writing+CoreDataClass.swift in Sources */,
+				2AAD320D275382F00090D26F /* Writing+CoreDataClass.swift in Sources */,
 				2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */,
 				2ABBF3AF273C6049005A09D0 /* Tag.swift in Sources */,
 				2AFB53E7271C0EC900B6FFC6 /* SceneDelegate.swift in Sources */,
@@ -489,7 +505,7 @@
 				2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */,
 				2AFB541A271E2FF800B6FFC6 /* ChatViewController.swift in Sources */,
 				2A0AA58127254C4A00C36186 /* HomeTableViewCell.swift in Sources */,
-				2ACBD3FD274D3B5300264503 /* Writing+CoreDataProperties.swift in Sources */,
+				2AAD320E275382F00090D26F /* Writing+CoreDataProperties.swift in Sources */,
 				2AFB5404271C478500B6FFC6 /* NicknameViewController.swift in Sources */,
 				2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */,
 				2A11272A274AD4D700B9564C /* MyAlamofireManager.swift in Sources */,

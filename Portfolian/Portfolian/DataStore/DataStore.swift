@@ -11,6 +11,8 @@ var registrationType: RegistrationType?
 
 enum RegistrationType {
     case Searching
+    case WritingTeam
+    case WritingOwner
     case Writing
 }
 
@@ -26,14 +28,9 @@ struct TagDataStore {
     init() {
         self.names = [Tag.Name]()
     }
-    
-    init(names: [Tag.Name], colors: [Tag.Color]) {
-        self.names = names
-    }
 }
-
-
-var writingTag = TagDataStore()
+var writingOwnerTag = TagDataStore()
+var writingTeamTag = TagDataStore()
 var searchingTag = TagDataStore()
 
 
