@@ -10,6 +10,8 @@ import SnapKit
 import Then
 import CoreData
 import Alamofire
+import SwiftyJSON
+import KakaoSDKCommon
 
 class WritingViewController: UIViewController {
     let identifier = "TagCollectionViewCell"
@@ -34,7 +36,7 @@ class WritingViewController: UIViewController {
     })
     lazy var configuration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
-        let title = "본인의 사용 기술을 선택해주세요(최대 2개)"
+        let title = "본인의 사용 기술을 선택해주세요."
         let icon = UIImage(systemName: "chevron.right")
         configuration.title = title
         configuration.image = icon
@@ -541,53 +543,40 @@ class WritingViewController: UIViewController {
             for tag in writingTeamTag.names {
                 stringTags.append(tag.rawValue)
             }
-            if explainTextView.text == explainInit {
-                optionTextView.text = ""
+            
+            let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
+            
+            MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.deleteWriting()
+                    let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                    WritingSaveVC.modalPresentationStyle = .fullScreen
+                    self.navigationController?.popToRootViewController(animated: true)
+                    self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
+                case .failure(let error):
+                    self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
             }
-            if periodTextView.text == periodInit {
-                periodTextView.text = ""
-            }
-            if optionTextView.text == optionInit {
-                optionTextView.text = ""
-            }
-            if proceedTextView.text == proceedInit {
-                proceedTextView.text = ""
-            }
-            if detailTextView.text == detailInit {
-                detailTextView.text = ""
             }
             
-            var urlToCall : URLRequestConvertible?
-            let project = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
-            urlToCall = MyProjectRouter.createProject(term: project)
-            if let urlConvertible = urlToCall {
-                MyAlamofireManager
-                    .shared
-                    .session
-                    .request(urlConvertible)
-                    .validate(statusCode: 200..<401) // Auth 검증
-                    .responseJSON  { response in
-                        debugPrint(response)
-                    }
-            }
-//            let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-//            WritingSaveVC.modalPresentationStyle = .fullScreen
-//            guard let pvc = self.presentingViewController else { return }
-//            self.navigationController?.popToRootViewController(animated: false)
-//            pvc.pushViewController(WritingSaveVC, animated: true)
+
+            
+            
+            
             
         case cancelBarButtonItem:
             self.alert("임시 저장하시겠습니까?")
         case stackButton:
             registrationType = .WritingOwner
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-            FilterVC.modalPresentationStyle = .fullScreen
+//            FilterVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(FilterVC, animated: true)
             print(1)
         case teamStackButton:
             registrationType = .WritingTeam
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-            FilterVC.modalPresentationStyle = .fullScreen
+//            FilterVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(FilterVC, animated: true)
             print(2)
         default:

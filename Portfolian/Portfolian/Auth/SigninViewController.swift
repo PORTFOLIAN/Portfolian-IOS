@@ -209,10 +209,21 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoTalk() success.")
-                print(oauthToken)
+                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
+                    return
+                }
+                let url = URL(string: "http://3.36.84.11:3000/auth/kakao/access")!
+                var request = URLRequest(url: url)
+                request.httpMethod = "post"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+                let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
+                    // Handle response from your backend.
+                    
+                }
+                task.resume()
                 self.setNickName()
-                
-                
+
             }
         }
     }
@@ -225,9 +236,18 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoAccount() success.")
-                
-                
-                print(oauthToken)
+                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
+                    return
+                }
+                let url = URL(string: "http://3.36.84.11:3000/auth/kakao/access")!
+                var request = URLRequest(url: url)
+                request.httpMethod = "post"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+                let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
+                    // Handle response from your backend.
+                }
+                task.resume()
                 self.setNickName()
             }
         }
