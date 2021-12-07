@@ -41,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // If not handled by this app, return false.
         return false
+        
     }
     
     // MARK: UISceneSession Lifecycle

@@ -12,7 +12,7 @@ class BaseInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("BaseInterceptor - adapt() called")
 //        var request = urlRequest
-//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.addValue("application/json; charset = utf-8", forHTTPHeaderField: "Content-Type")
         // 공통 파라매터 추가
 //        var dictionary = [String : String]()
 //        dictionary.updateValue(API.USER_ID, forKey: "user_id")

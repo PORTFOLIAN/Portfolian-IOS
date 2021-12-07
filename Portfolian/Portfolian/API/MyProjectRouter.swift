@@ -9,28 +9,10 @@ import Foundation
 import Alamofire
 import UIKit
 
-
-struct ProjectArticle: Codable {
-    let title: String?
-    let stackList: [String]?
-    let subjectDescription: String?
-    let projectTime: String?
-    let condition: String?
-    let progress: String?
-    let description: String?
-    let capacity: Int?
-}
-
 enum MyProjectRouter: URLRequestConvertible {
     // 검색 관련 api
-    struct Project: Codable {
-        let article: ProjectArticle
-        let userId: String
-        let ownerStack: String
-    }
-    
     case createProject(term: ProjectArticle)
-//    case searchUsers(term: String)
+    case enterProject(projectID: String)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "projects/")!
     }
@@ -39,41 +21,61 @@ enum MyProjectRouter: URLRequestConvertible {
         switch self {
         case .createProject:
             return .post
-//        case .searchUsers:
-//            return .get
+        case .enterProject:
+            return .get
         }
     }
+    
     var endPoint: String {
         switch self {
         case .createProject:
             return ""
-//        case .searchUsers:
-//            return "users/"
+        case .enterProject:
+            return ""
         }
     }
-    
-    var parameter : ProjectArticle {
+    var parameter: ProjectArticle? {
         switch self {
         case let .createProject(term):
             return term
+        default:
+            return nil
         }
     }
     
-    var parameters : Project {
-        let stringTag = writingOwnerTag.names[0].rawValue
+    var parameters: Any {
+        switch self {
+        case .createProject:
+            if writingOwnerTag.names == [] {
+                return Project(article: parameter!, userId: "testUser1", ownerStack: "")
+            } else {
+                let stringTag = writingOwnerTag.names[0].rawValue
+                return Project(article: parameter!, userId: "testUser1", ownerStack: stringTag)
+            }
+        case .enterProject(let projectID):
+            return projectID
         
-        return Project(article: parameter, userId: "testUser1", ownerStack: stringTag)
+        }
     }
+    
+    
     
     func asURLRequest() throws -> URLRequest {
         let url  = baseURL.appendingPathComponent(endPoint)
         print("MyProjectRouter - asURLRequest() url : \(url)")
         var request = URLRequest(url: url)
         request.method = method
-        
-
-        request = try JSONParameterEncoder().encode(parameters, into: request)
+        switch self {
+        case .createProject:
+            
+            request = try JSONParameterEncoder().encode(parameters as? Project, into: request)
+        case .enterProject:
+            request = try JSONParameterEncoder().encode(parameters as? String, into: request)
+        }
+    
         return request
     }
 }
+
+
 

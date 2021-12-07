@@ -61,6 +61,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         setUpItem()
         tableView.delegate = self
         tableView.dataSource = self
+        
         subview()
         constraints()
     }
@@ -87,9 +88,8 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             configureSearchController()
             
         case 3: // filter
-            let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-            FilterVC.modalPresentationStyle = .fullScreen
             registrationType = .Searching
+            let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
         case 4: // push
             print(4)

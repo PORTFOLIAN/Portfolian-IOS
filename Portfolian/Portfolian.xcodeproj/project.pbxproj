@@ -21,12 +21,15 @@
 		2A947C55274BC99B00331586 /* MyProjectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C54274BC99B00331586 /* MyProjectRouter.swift */; };
 		2A947C59274BFA3D00331586 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C57274BFA3D00331586 /* Model.xcdatamodeld */; };
 		2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C66274C11D400331586 /* PersistenceManager.swift */; };
+		2A99DC962755EE04007A28FC /* MyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A99DC952755EE04007A28FC /* MyError.swift */; };
+		2A99DC982755F06B007A28FC /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A99DC972755F06B007A28FC /* Project.swift */; };
 		2AAD320D275382F00090D26F /* Writing+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD320B275382EF0090D26F /* Writing+CoreDataClass.swift */; };
 		2AAD320E275382F00090D26F /* Writing+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD320C275382F00090D26F /* Writing+CoreDataProperties.swift */; };
 		2ABBF3AF273C6049005A09D0 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3AE273C6049005A09D0 /* Tag.swift */; };
 		2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */; };
 		2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B3273C7A95005A09D0 /* DataStore.swift */; };
 		2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */; };
+		2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */; };
 		2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD02A78272C3A5100945DC5 /* Writing.storyboard */; };
 		2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */; };
 		2AFB53E5271C0EC900B6FFC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB53E4271C0EC900B6FFC6 /* AppDelegate.swift */; };
@@ -45,11 +48,11 @@
 		2AFB5416271E2FE100B6FFC6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5415271E2FE100B6FFC6 /* HomeViewController.swift */; };
 		2AFB5418271E2FEE00B6FFC6 /* BookmarkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5417271E2FEE00B6FFC6 /* BookmarkViewController.swift */; };
 		2AFB541A271E2FF800B6FFC6 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5419271E2FF800B6FFC6 /* ChatViewController.swift */; };
-		2AFB541C271E300200B6FFC6 /* MypageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB541B271E300200B6FFC6 /* MypageViewController.swift */; };
+		2AFB541C271E300200B6FFC6 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB541B271E300200B6FFC6 /* SettingViewController.swift */; };
 		2AFB541E271E302000B6FFC6 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB541D271E302000B6FFC6 /* Home.storyboard */; };
 		2AFB5420271E302C00B6FFC6 /* Bookmark.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB541F271E302C00B6FFC6 /* Bookmark.storyboard */; };
 		2AFB5422271E303B00B6FFC6 /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5421271E303B00B6FFC6 /* Chat.storyboard */; };
-		2AFB5424271E304700B6FFC6 /* Mypage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5423271E304700B6FFC6 /* Mypage.storyboard */; };
+		2AFB5424271E304700B6FFC6 /* Setting.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5423271E304700B6FFC6 /* Setting.storyboard */; };
 		2AFB5427271E372C00B6FFC6 /* UITabBarController+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5426271E372C00B6FFC6 /* UITabBarController+Tag.swift */; };
 		2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */; };
 		D0C6B329B04EBFFED90F7703 /* Pods_Portfolian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7595C32F23E5C0DE034A2AA8 /* Pods_Portfolian.framework */; };
@@ -70,12 +73,15 @@
 		2A947C54274BC99B00331586 /* MyProjectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProjectRouter.swift; sourceTree = "<group>"; };
 		2A947C58274BFA3D00331586 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		2A947C66274C11D400331586 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		2A99DC952755EE04007A28FC /* MyError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyError.swift; sourceTree = "<group>"; };
+		2A99DC972755F06B007A28FC /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		2AAD320B275382EF0090D26F /* Writing+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataClass.swift"; sourceTree = "<group>"; };
 		2AAD320C275382F00090D26F /* Writing+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Writing+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		2ABBF3AE273C6049005A09D0 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
 		2ABBF3B3273C7A95005A09D0 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTableViewCell.swift; sourceTree = "<group>"; };
 		2AD02A78272C3A5100945DC5 /* Writing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Writing.storyboard; sourceTree = "<group>"; };
 		2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingViewController.swift; sourceTree = "<group>"; };
 		2AFB53E1271C0EC900B6FFC6 /* Portfolian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Portfolian.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,11 +102,11 @@
 		2AFB5415271E2FE100B6FFC6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		2AFB5417271E2FEE00B6FFC6 /* BookmarkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkViewController.swift; sourceTree = "<group>"; };
 		2AFB5419271E2FF800B6FFC6 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
-		2AFB541B271E300200B6FFC6 /* MypageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MypageViewController.swift; sourceTree = "<group>"; };
+		2AFB541B271E300200B6FFC6 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		2AFB541D271E302000B6FFC6 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		2AFB541F271E302C00B6FFC6 /* Bookmark.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Bookmark.storyboard; sourceTree = "<group>"; };
 		2AFB5421271E303B00B6FFC6 /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
-		2AFB5423271E304700B6FFC6 /* Mypage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Mypage.storyboard; sourceTree = "<group>"; };
+		2AFB5423271E304700B6FFC6 /* Setting.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Setting.storyboard; sourceTree = "<group>"; };
 		2AFB5426271E372C00B6FFC6 /* UITabBarController+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Tag.swift"; sourceTree = "<group>"; };
 		2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		3EE9E46654FFC37768B95F34 /* Pods-Portfolian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Portfolian.debug.xcconfig"; path = "Target Support Files/Pods-Portfolian/Pods-Portfolian.debug.xcconfig"; sourceTree = "<group>"; };
@@ -125,6 +131,7 @@
 			children = (
 				2A0AA57F27254C4A00C36186 /* HomeTableViewCell.swift */,
 				2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */,
+				2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -170,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				2A17B88727220B7100A0D598 /* Constants.swift */,
+				2A99DC952755EE04007A28FC /* MyError.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -241,7 +249,7 @@
 				2A28E0C52755529C00061B11 /* Writing */,
 				2AFB5413271E2F8200B6FFC6 /* Bookmark */,
 				2AFB5410271E2F5A00B6FFC6 /* Chat */,
-				2AFB5414271E2FC100B6FFC6 /* Mypage */,
+				2AFB5414271E2FC100B6FFC6 /* Setting */,
 				2A17B87D2721E69800A0D598 /* Filter */,
 				2AFB53ED271C0EC900B6FFC6 /* Assets.xcassets */,
 				2AFB53EF271C0EC900B6FFC6 /* LaunchScreen.storyboard */,
@@ -274,6 +282,7 @@
 			children = (
 				2AFB540E271C92B200B6FFC6 /* User.swift */,
 				2ABBF3AE273C6049005A09D0 /* Tag.swift */,
+				2A99DC972755F06B007A28FC /* Project.swift */,
 				2A0AA57A27254B0800C36186 /* Cell */,
 			);
 			path = Model;
@@ -316,13 +325,13 @@
 			path = Bookmark;
 			sourceTree = "<group>";
 		};
-		2AFB5414271E2FC100B6FFC6 /* Mypage */ = {
+		2AFB5414271E2FC100B6FFC6 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
-				2AFB5423271E304700B6FFC6 /* Mypage.storyboard */,
-				2AFB541B271E300200B6FFC6 /* MypageViewController.swift */,
+				2AFB5423271E304700B6FFC6 /* Setting.storyboard */,
+				2AFB541B271E300200B6FFC6 /* SettingViewController.swift */,
 			);
-			path = Mypage;
+			path = Setting;
 			sourceTree = "<group>";
 		};
 		2AFB5425271E367E00B6FFC6 /* Extension */ = {
@@ -417,7 +426,7 @@
 				2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */,
 				2AFB53F1271C0EC900B6FFC6 /* LaunchScreen.storyboard in Resources */,
 				2AFB540B271C7B2F00B6FFC6 /* NotoSansKR-Medium.otf in Resources */,
-				2AFB5424271E304700B6FFC6 /* Mypage.storyboard in Resources */,
+				2AFB5424271E304700B6FFC6 /* Setting.storyboard in Resources */,
 				2AFB53EE271C0EC900B6FFC6 /* Assets.xcassets in Resources */,
 				2AFB53EC271C0EC900B6FFC6 /* Main.storyboard in Resources */,
 				2AFB540A271C7B2F00B6FFC6 /* NotoSansKR-Bold.otf in Resources */,
@@ -495,17 +504,20 @@
 				2AFB5418271E2FEE00B6FFC6 /* BookmarkViewController.swift in Sources */,
 				2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,
 				2A17B8852722099300A0D598 /* TagButton.swift in Sources */,
-				2AFB541C271E300200B6FFC6 /* MypageViewController.swift in Sources */,
+				2AFB541C271E300200B6FFC6 /* SettingViewController.swift in Sources */,
+				2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */,
 				2A17B87F2721E6C200A0D598 /* FilterViewController.swift in Sources */,
 				2AAD320D275382F00090D26F /* Writing+CoreDataClass.swift in Sources */,
 				2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */,
 				2ABBF3AF273C6049005A09D0 /* Tag.swift in Sources */,
 				2AFB53E7271C0EC900B6FFC6 /* SceneDelegate.swift in Sources */,
 				2AFB5416271E2FE100B6FFC6 /* HomeViewController.swift in Sources */,
+				2A99DC962755EE04007A28FC /* MyError.swift in Sources */,
 				2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */,
 				2AFB541A271E2FF800B6FFC6 /* ChatViewController.swift in Sources */,
 				2A0AA58127254C4A00C36186 /* HomeTableViewCell.swift in Sources */,
 				2AAD320E275382F00090D26F /* Writing+CoreDataProperties.swift in Sources */,
+				2A99DC982755F06B007A28FC /* Project.swift in Sources */,
 				2AFB5404271C478500B6FFC6 /* NicknameViewController.swift in Sources */,
 				2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */,
 				2A11272A274AD4D700B9564C /* MyAlamofireManager.swift in Sources */,

@@ -6,30 +6,52 @@
 //
 
 import UIKit
-
+import KakaoSDKAuth
+import KakaoSDKUser
+import KakaoSDKCommon
 class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        self.view.tintColor = UIColor(rgb: 0x6F9ACD)
-        let viewControllers : [UIViewController] = [
-            initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
-            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "Bookmark"), tag: 2),
-            initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
-            initNavigationTabViewController("Mypage", identifier: "MypageVC", icon: UIImage(named: "Mypage"), tag: 4)
-        ]
-        self.setViewControllers(viewControllers, animated: true)
+        view.backgroundColor = .white
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if User.shared.flag == false {
-//            goToApp()
-
+        kakaoAutoLogin()
+    }
+    private func kakaoAutoLogin() {
+        let viewControllers : [UIViewController] = [
+            initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
+            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "Bookmark"), tag: 2),
+            initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
+            initNavigationTabViewController("Setting", identifier: "SettingVC", icon: UIImage(named: "Mypage"), tag: 4)
+        ]
+        print("가")
+        if (AuthApi.hasToken()) {
+            UserApi.shared.accessTokenInfo { (_, error) in
+                if let error = error {
+                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
+                        //로그인 필요
+                        self.goToApp()
+                    }
+                    else {
+                        //기타 에러
+                        print("에러 : \(error)")
+                    }
+                }
+                else {
+                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                    self.setViewControllers(viewControllers, animated: true)
+                }
+            }
         } else {
-
+            //로그인 필요
+            self.goToApp()
         }
     }
+    
 
     
     //MARK: Navigation

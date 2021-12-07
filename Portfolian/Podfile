@@ -30,7 +30,7 @@ pod 'KakaoSDKUser'
 pod 'KakaoSDKTalk'
 pod 'Alamofire'
 pod 'Toast-Swift'
-
+pod 'SwiftyJSON'
   # Pods for Portfolian`
 
 end
