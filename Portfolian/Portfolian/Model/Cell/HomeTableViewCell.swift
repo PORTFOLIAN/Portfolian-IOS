@@ -89,7 +89,7 @@ class HomeTableViewCell: UITableViewCell {
     
     lazy var NumberOftagsLabel: UILabel = {
         let label = UILabel()
-        label.text = "+ 4"
+        label.text = ""
         label.font = UIFont(name: "NotoSansKR-Bold", size: 16)
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false

@@ -13,7 +13,7 @@ struct Tag {
         case frontEnd
         case backEnd
         case react
-        case spring
+        case spring, Spring
         case django
         case javascript
         case typescript
@@ -96,7 +96,7 @@ struct Tag {
         case .frontEnd  : return TagInfo(name: "Front-end", color: ColorPortfolian.frontEnd)
         case .backEnd   : return TagInfo(name: "Back-end", color: ColorPortfolian.backEnd)
         case .react     : return TagInfo(name: "React", color: ColorPortfolian.react)
-        case .spring    : return TagInfo(name: "Spring", color: ColorPortfolian.spring)
+        case .spring, .Spring    : return TagInfo(name: "Spring", color: ColorPortfolian.spring)
         case .django    : return TagInfo(name: "Django", color: ColorPortfolian.django)
         case .javascript: return TagInfo(name: "Javascript", color: ColorPortfolian.javascript)
         case .typescript: return TagInfo(name: "Typescript", color: ColorPortfolian.typescript)

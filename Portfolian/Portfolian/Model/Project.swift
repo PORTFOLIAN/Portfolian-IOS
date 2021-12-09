@@ -12,6 +12,12 @@ struct Project: Codable {
     let ownerStack: String
 }
 
+struct ProjectSearch: Codable{
+    let stackList: String
+    let sort: String
+    let keyword: String
+}
+
 struct ProjectArticle: Codable {
         var title: String?
         var stackList: [String]?
@@ -55,4 +61,25 @@ struct ProjectInfo {
     let userId: String
     let photo: String
 }
+
+struct ProjectListInfo {
+    var articleList: [Article]
+    init() {
+        self.articleList = [Article]()
+    }
+}
+
+struct Article {
+    let projectId: String
+    let title: String
+    let stackList: [String]
+    let description: String
+    let capacity: Int
+    let view: Int
+    let bookMark: Bool
+    let status: Int
+    let userId: String
+    let photo: String
+}
 var recruitWriting = RecruitWriting()
+var projectListInfo = ProjectListInfo()

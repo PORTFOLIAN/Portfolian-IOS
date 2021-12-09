@@ -551,19 +551,17 @@ class WritingViewController: UIViewController {
                 switch result {
                 case .success:
                     self.deleteWriting()
+                    
                     let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                     WritingSaveVC.modalPresentationStyle = .fullScreen
                     self.navigationController?.popToRootViewController(animated: true)
                     self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
+                
                 case .failure(let error):
+                    print(error)
                     self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
             }
             }
-            
-
-            
-            
-            
             
         case cancelBarButtonItem:
             self.alert("임시 저장하시겠습니까?")

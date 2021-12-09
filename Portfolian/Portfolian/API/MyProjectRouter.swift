@@ -13,27 +13,27 @@ enum MyProjectRouter: URLRequestConvertible {
     // 검색 관련 api
     case createProject(term: ProjectArticle)
     case enterProject(projectID: String)
+    case arrangeProject(searchOption: ProjectSearch)
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "projects/")!
+        return URL(string: API.BASE_URL + "projects")!
     }
     
     var method: HTTPMethod {
         switch self {
         case .createProject:
             return .post
-        case .enterProject:
+        case .enterProject, .arrangeProject:
             return .get
         }
     }
     
     var endPoint: String {
         switch self {
-        case .createProject:
-            return ""
-        case .enterProject:
+        case .createProject, .enterProject, .arrangeProject:
             return ""
         }
     }
+    
     var parameter: ProjectArticle? {
         switch self {
         case let .createProject(term):
@@ -54,7 +54,8 @@ enum MyProjectRouter: URLRequestConvertible {
             }
         case .enterProject(let projectID):
             return projectID
-        
+        case .arrangeProject(let searchOption):
+            return searchOption
         }
     }
     
@@ -71,11 +72,12 @@ enum MyProjectRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameters as? Project, into: request)
         case .enterProject:
             request = try JSONParameterEncoder().encode(parameters as? String, into: request)
+        case .arrangeProject:
+            request = try URLEncodedFormParameterEncoder().encode(parameters as? ProjectSearch, into: request)
         }
     
         return request
     }
 }
-
 
 

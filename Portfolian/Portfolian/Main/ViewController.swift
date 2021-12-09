@@ -14,7 +14,15 @@ class ViewController: UITabBarController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
-        
+        let projectSearch = ProjectSearch(stackList: "default", sort: "default", keyword: "default")
+        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+            switch result {
+            case .success(let articleList):
+                let articleList = articleList
+            case .failure:
+                print("error?")
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,6 +54,7 @@ class ViewController: UITabBarController {
                 else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                     print("다")
+                    
                     self.setViewControllers(viewControllers, animated: true)
                 }
             }
@@ -55,11 +64,10 @@ class ViewController: UITabBarController {
             self.goToApp()
         }
     }
-    
 
-    
     //MARK: Navigation
     private func goToApp() {
+        
         let authView = UIStoryboard.init(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "SigninVC")
         authView.modalPresentationStyle = .fullScreen
         self.present(authView, animated: true, completion: nil)

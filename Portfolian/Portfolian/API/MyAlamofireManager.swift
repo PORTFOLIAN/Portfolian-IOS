@@ -34,22 +34,21 @@ final class MyAlamofireManager {
         self.session
             .request(MyProjectRouter.createProject(term: projectArticle))
             .validate(statusCode: 200..<401) // Au th 검증
-            .responseJSON  { [weak self] response in
-                guard let self = self else { return }
+            .responseJSON  { response in
+//                guard let self = self else { return }
                 
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-                
-                // 데이터 파싱
-                let code = responseJson["code"].intValue
-                guard let projectID = responseJson["newProjectID"].string,
-                      let message = responseJson["message"].string else { return }
-                recruitWriting.code = code
-                recruitWriting.newProjectID = projectID
-                recruitWriting.message = message
 
+                // 데이터 파싱
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
                 if code == 1 {
+                    guard let projectID = responseJson["newProjectID"].string else { return }
+                    recruitWriting.code = code
+                    recruitWriting.newProjectID = projectID
+                    recruitWriting.message = message
                     completion(.success(recruitWriting))
                     
                 } else {
@@ -86,7 +85,6 @@ final class MyAlamofireManager {
                       let detail = contents["detail"].string,
                       let bookMark = contents["bookMarks"].bool,
                       
-
                       let userId = leader["userId"].string,
                       let nickName = leader["nickName"].string,
                       let leaderDescription = leader["description"].string,
@@ -97,4 +95,44 @@ final class MyAlamofireManager {
             }
     }
     
+    func getProjectList(searchOption: ProjectSearch, completion: @escaping (Result<ProjectListInfo, MyError>) -> Void) {
+        self.session
+            .request(MyProjectRouter.arrangeProject(searchOption: searchOption))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON  { response in
+                guard let responseValue = response.value else { return }
+                let responseJson = JSON(responseValue)
+                let code = responseJson["code"]
+
+                var articleList: [Article] = []
+                for articleInArray in responseJson["articleList"] {
+                    let articleJson = articleInArray.1
+                    var stackList: [String] = []
+                    for stringInArray in articleJson["stackList"] {
+                        stackList.append(stringInArray.1.stringValue)
+                    }
+                    let leader = articleJson["leader"]
+                    guard let projectId = articleJson["projectId"].string,
+                          let title = articleJson["title"].string,
+                          let description = articleJson["description"].string,
+                          let capacity = articleJson["capacity"].int,
+                          let view = articleJson["view"].int,
+                          let bookMark = articleJson["bookMark"].bool,
+                          let status = articleJson["status"].int,
+                          let userId = leader["userId"].string,
+                          let photo = leader["photo"].string
+                    else {return}
+                    let article = Article(projectId: projectId, title: title, stackList: stackList, description: description, capacity: capacity, view: view, bookMark: bookMark, status: status, userId:  userId, photo: photo)
+                    articleList.append(article)
+                }
+                
+                if code == 1 {
+                    projectListInfo.articleList = articleList
+                    print("#########################")
+                    completion(.success(projectListInfo))
+                } else {
+                    completion(.failure(.getProjectListError))
+                }
+            }
+    }
 }

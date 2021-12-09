@@ -50,8 +50,14 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }() 
+    }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -59,6 +65,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         //        self.navigationItem.largeTitleDisplayMode = .automatic
         setUpLogo()
         setUpItem()
+        
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -93,6 +100,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             self.navigationController?.pushViewController(FilterVC, animated: true)
         case 4: // push
             print(4)
+            
         default:
             print("error")
         }
@@ -146,70 +154,133 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    
+        
         
         
     }
 }
+
+
+/*
+ // MARK: - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+ // Get the new view controller using segue.destination.
+ // Pass the selected object to the new view controller.
+ }
+ */
+
+extension HomeViewController: BookmarkButtonDelegate {
+    func didTouchBookmarkButton(didClicked: Bool) {
+        
+        
+    }
+}
+
+extension HomeViewController {
+    func subview() {
+        view.addSubview(tableView)
+        view.addSubview(writeButton)
+    }
     
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
-    extension HomeViewController: BookmarkButtonDelegate {
-        func didTouchBookmarkButton(didClicked: Bool) {
+    func constraints() {
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
+            writeButton.bottomAnchor.constraint(equalTo: tableView.frameLayoutGuide.bottomAnchor, constant: -20),
+            writeButton.trailingAnchor.constraint(equalTo: tableView.frameLayoutGuide.trailingAnchor, constant: -20),
+        ])
+    }
+}
+
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    // 셀의 개수
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return projectListInfo.articleList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
+        cell.cellDelegate = self
+        let articleInfo = projectListInfo.articleList[indexPath[1]]
+        cell.titleLabel.text = articleInfo.title
+        let lenStackList = articleInfo.stackList.count
+        let stringTag = articleInfo.stackList
+        var labelStackCount: Int = 0
+        var tagInfo1, tagInfo2, tagInfo3: TagInfo
+        
+        cell.IllustratorButton.informTextInfo(text: "", fontSize: 16)
+        cell.IllustratorButton.currentColor(color: .white)
+        cell.iosButton.informTextInfo(text: "", fontSize: 16)
+        cell.iosButton.currentColor(color: .white)
+        cell.typescriptButton.informTextInfo(text: "", fontSize: 16)
+        cell.typescriptButton.currentColor(color: .white)
+        print(stringTag)
+        cell.NumberOftagsLabel.text = ""
+        switch lenStackList {
+        case 1:
+            tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
+            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.IllustratorButton.currentColor(color: tagInfo1.color)
             
+        case 2:
+            tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
+            tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
+            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.IllustratorButton.currentColor(color: tagInfo1.color)
+            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.iosButton.currentColor(color: tagInfo2.color)
+            
+        case 3:
+            tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
+            tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
+            tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
+            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.IllustratorButton.currentColor(color: tagInfo1.color)
+            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.iosButton.currentColor(color: tagInfo2.color)
+            cell.typescriptButton.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.typescriptButton.currentColor(color: tagInfo3.color)
+            
+        default:
+            labelStackCount = lenStackList - 3
+            tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
+            tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
+            tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
+            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.IllustratorButton.currentColor(color: tagInfo1.color)
+            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.iosButton.currentColor(color: tagInfo2.color)
+            cell.typescriptButton.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.typescriptButton.currentColor(color: tagInfo3.color)
+            cell.NumberOftagsLabel.text = "+ \(labelStackCount)"
         }
+//        북마크 버튼을 눌렀을 때 값을 변경해주는 메소드를 구현하고 넣기
+        
+//        if articleInfo.bookMark == false {
+//            cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill"), for: .highlighted)
+//        } else {
+//            cell.bookmarkButton.setImage(UIImage(named: "Bookmark2"), for: .normal)
+//        }
+        cell.viewsLabel.text = "조회 \(articleInfo.view)"
+        
+        return cell
     }
     
-    extension HomeViewController {
-        func subview() {
-            view.addSubview(tableView)
-            view.addSubview(writeButton)
-        }
-        
-        func constraints() {
-            NSLayoutConstraint.activate([
-                tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-                tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                
-                writeButton.bottomAnchor.constraint(equalTo: tableView.frameLayoutGuide.bottomAnchor, constant: -20),
-                writeButton.trailingAnchor.constraint(equalTo: tableView.frameLayoutGuide.trailingAnchor, constant: -20),
-            ])
-        }
+    // 셀이 선택 되었을 때
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(indexPath)
     }
     
-    extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-        // 셀의 개수
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return 10
-        }
-        
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
-            cell.cellDelegate = self
-            return cell
-        }
-        
-        // 셀이 선택 되었을 때
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            print(indexPath)
-        }
-        
-        
-        // 셀의 크기 지정
-        func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            return 150.0;//Choose your custom row height
-        }
-        
+    
+    // 셀의 크기 지정
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150.0;//Choose your custom row height
     }
+    
+}
