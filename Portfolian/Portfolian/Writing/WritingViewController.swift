@@ -14,8 +14,6 @@ import SwiftyJSON
 import KakaoSDKCommon
 
 class WritingViewController: UIViewController {
-    let identifier = "TagCollectionViewCell"
-
     let periodInit = "예시: 3개월, 2021.09 ~ 2021.11"
     let explainInit = "프로젝트에 대한 간단한 설명을 적어주세요."
     let optionInit = "프로젝트에 필요한 기술 역량에 대해 알려주세요."
@@ -286,7 +284,7 @@ class WritingViewController: UIViewController {
             make.top.equalTo(lineViewFirst).offset(10)
             make.leading.equalTo(lineViewFirst)
         }
-
+        
         tagCollectionView.snp.makeConstraints { make in
             make.top.equalTo(stackButton.snp.bottom).offset(10)
             make.leading.trailing.equalTo(lineViewFirst)
@@ -563,6 +561,7 @@ class WritingViewController: UIViewController {
             }
             }
             
+            
         case cancelBarButtonItem:
             self.alert("임시 저장하시겠습니까?")
         case stackButton:
@@ -596,15 +595,15 @@ extension WritingViewController: UITextViewDelegate {
         if textView.text == "" {
             switch textView {
             case periodTextView:
-                textView.text = "예시: 3개월, 2021.09 ~ 2021.11"
+                textView.text = periodInit
             case explainTextView:
-                textView.text = "프로젝트에 대한 간단한 설명을 적어주세요."
+                textView.text = explainInit
             case optionTextView:
-                textView.text = "프로젝트에 필요한 기술 역량에 대해 알려주세요."
+                textView.text = optionInit
             case proceedTextView:
-                textView.text = "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다."
+                textView.text = proceedInit
             default:
-                textView.text = "프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
+                textView.text = detailInit
             }
             textView.textColor = ColorPortfolian.gray2
         }
@@ -663,6 +662,7 @@ extension WritingViewController: UICollectionViewDataSource {
             return writingTeamTag.names.count
         }
     }
+    
     // 셀을 어떻게 보여줄지
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {

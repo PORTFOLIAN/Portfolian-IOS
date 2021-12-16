@@ -10,6 +10,7 @@ import UIKit
 import GoogleSignIn
 let spacingRow = 20
 let spacingColumn = 10
+let identifier = "TagCollectionViewCell"
 
 enum API {
     static let BASE_URL : String = "http://3.36.84.11:3000/"

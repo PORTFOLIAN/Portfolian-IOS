@@ -12,6 +12,7 @@ import Toast_Swift
 import KakaoSDKAuth
 import KakaoSDKUser
 class SettingViewController: UIViewController {
+
     lazy var tableView = UITableView().then { make in
         make.register(BasicTableViewCell.self, forCellReuseIdentifier: "BasicTableViewCell")
     }
@@ -51,9 +52,7 @@ extension SettingViewController: UITableViewDelegate {
         switch (indexPath.row) {
         case 0:
             print("화면이동 1")
-//            let vc = initViewController(MyInfoViewController.bundleName, identfire: MyInfoViewController.identfireName)
-//            vc.navigationItem.title = settingMenu[indexPath.row]
-//            self.navigationController?.pushViewController(vc, animated: true)
+            
            
         case 1:
             print("화면이동 2")
@@ -125,7 +124,9 @@ extension SettingViewController: UITableViewDataSource {
 }
     //MARK: - setupAutoLayout
     
-    
+
+
+
     
     
 

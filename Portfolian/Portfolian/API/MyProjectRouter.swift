@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import UIKit
+import SwiftyJSON
 
 enum MyProjectRouter: URLRequestConvertible {
     // 검색 관련 api
@@ -15,7 +16,7 @@ enum MyProjectRouter: URLRequestConvertible {
     case enterProject(projectID: String)
     case arrangeProject(searchOption: ProjectSearch)
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "projects")!
+        return URL(string: API.BASE_URL + "projects/")!
     }
     
     var method: HTTPMethod {
@@ -29,8 +30,10 @@ enum MyProjectRouter: URLRequestConvertible {
     
     var endPoint: String {
         switch self {
-        case .createProject, .enterProject, .arrangeProject:
+        case .createProject, .arrangeProject:
             return ""
+        case .enterProject(let projectId):
+            return projectId
         }
     }
     
@@ -43,7 +46,7 @@ enum MyProjectRouter: URLRequestConvertible {
         }
     }
     
-    var parameters: Any {
+    var parameters: Any? {
         switch self {
         case .createProject:
             if writingOwnerTag.names == [] {
@@ -52,14 +55,12 @@ enum MyProjectRouter: URLRequestConvertible {
                 let stringTag = writingOwnerTag.names[0].rawValue
                 return Project(article: parameter!, userId: "testUser1", ownerStack: stringTag)
             }
-        case .enterProject(let projectID):
-            return projectID
+        case .enterProject:
+            return nil
         case .arrangeProject(let searchOption):
             return searchOption
         }
     }
-    
-    
     
     func asURLRequest() throws -> URLRequest {
         let url  = baseURL.appendingPathComponent(endPoint)
@@ -68,14 +69,13 @@ enum MyProjectRouter: URLRequestConvertible {
         request.method = method
         switch self {
         case .createProject:
-            
             request = try JSONParameterEncoder().encode(parameters as? Project, into: request)
         case .enterProject:
-            request = try JSONParameterEncoder().encode(parameters as? String, into: request)
+            return request
         case .arrangeProject:
             request = try URLEncodedFormParameterEncoder().encode(parameters as? ProjectSearch, into: request)
+            
         }
-    
         return request
     }
 }

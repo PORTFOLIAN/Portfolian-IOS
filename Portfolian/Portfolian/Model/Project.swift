@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KakaoSDKTalk
 struct Project: Codable {
     let article: ProjectArticle
     let userId: String
@@ -27,7 +28,6 @@ struct ProjectArticle: Codable {
         var progress: String?
         var description: String?
         var capacity: Int?
-
 }
 
 struct RecruitWriting {
@@ -41,45 +41,59 @@ struct RecruitWriting {
     }
 }
 
-struct ProjectInfo {
+struct ProjectInfo : Codable {
     let code: Int
     let projectId: String
     let title: String
-    let stackList: [String]
-    let subjectDescription: String
-    let projectTime: String
-    let recruitmentCondition: String
-    let progress: String
-    let description: String
-    let detail: String
     let capacity: Int
     let view: Int
-    let bookMark: Bool
+    let bookMark: Int
     let status: Int
-    let NickName: String
-    let leaderDescription: String
-    let userId: String
-    let photo: String
-}
-
-struct ProjectListInfo {
-    var articleList: [Article]
-    init() {
-        self.articleList = [Article]()
+    let stackList: [String]
+    let contents: Contents
+    let leader: Leader
+    struct Contents: Codable {
+        let subjectDescription: String
+        let projectTime: String
+        let recruitmentCondition: String
+        let progress: String
+        let description: String
+    }
+    struct Leader: Codable {
+        let userId: String
+        let nickName: String
+        let description: String
+        let photo: String
     }
 }
 
-struct Article {
-    let projectId: String
-    let title: String
-    let stackList: [String]
-    let description: String
-    let capacity: Int
-    let view: Int
-    let bookMark: Bool
-    let status: Int
-    let userId: String
-    let photo: String
+struct ProjectListInfo : Codable {
+    var articleList: [Article]
+    var code: Int
+    init() {
+        self.articleList = [Article]()
+        self.code = Int()
+    }
+    
+    struct Article: Codable {
+        let projectId: String
+        let title: String
+        let stackList: [String]
+        let description: String
+        let capacity: Int
+        let view: Int
+        let bookMark: Bool
+        let status: Int
+        
+        let leader: Leader
+        struct Leader: Codable {
+            let userId: String
+            let photo: String
+        }
+    }
 }
+
+
 var recruitWriting = RecruitWriting()
 var projectListInfo = ProjectListInfo()
+

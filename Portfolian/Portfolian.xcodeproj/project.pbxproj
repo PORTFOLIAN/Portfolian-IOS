@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A0676A8276328B800E42E9F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0676A7276328B800E42E9F /* ProfileViewController.swift */; };
 		2A0AA58127254C4A00C36186 /* HomeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0AA57F27254C4A00C36186 /* HomeTableViewCell.swift */; };
 		2A11272A274AD4D700B9564C /* MyAlamofireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A112729274AD4D700B9564C /* MyAlamofireManager.swift */; };
 		2A11272C274AD5D800B9564C /* BaseInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A11272B274AD5D800B9564C /* BaseInterceptor.swift */; };
@@ -18,6 +19,7 @@
 		2A28E0C7275552E300061B11 /* WritingSave.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A28E0C6275552E300061B11 /* WritingSave.storyboard */; };
 		2A28E0CB2755532700061B11 /* WritingSaveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A28E0CA2755532700061B11 /* WritingSaveViewController.swift */; };
 		2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A561611272A7B4300C08793 /* UIImage+resize.swift */; };
+		2A7F82FA27667629004735B4 /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7F82F927667629004735B4 /* MyPageViewController.swift */; };
 		2A947C55274BC99B00331586 /* MyProjectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C54274BC99B00331586 /* MyProjectRouter.swift */; };
 		2A947C59274BFA3D00331586 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C57274BFA3D00331586 /* Model.xcdatamodeld */; };
 		2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A947C66274C11D400331586 /* PersistenceManager.swift */; };
@@ -52,13 +54,14 @@
 		2AFB541E271E302000B6FFC6 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB541D271E302000B6FFC6 /* Home.storyboard */; };
 		2AFB5420271E302C00B6FFC6 /* Bookmark.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB541F271E302C00B6FFC6 /* Bookmark.storyboard */; };
 		2AFB5422271E303B00B6FFC6 /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5421271E303B00B6FFC6 /* Chat.storyboard */; };
-		2AFB5424271E304700B6FFC6 /* Setting.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5423271E304700B6FFC6 /* Setting.storyboard */; };
+		2AFB5424271E304700B6FFC6 /* MyPage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AFB5423271E304700B6FFC6 /* MyPage.storyboard */; };
 		2AFB5427271E372C00B6FFC6 /* UITabBarController+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5426271E372C00B6FFC6 /* UITabBarController+Tag.swift */; };
 		2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */; };
 		D0C6B329B04EBFFED90F7703 /* Pods_Portfolian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7595C32F23E5C0DE034A2AA8 /* Pods_Portfolian.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A0676A7276328B800E42E9F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		2A0AA57F27254C4A00C36186 /* HomeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTableViewCell.swift; sourceTree = "<group>"; };
 		2A112729274AD4D700B9564C /* MyAlamofireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAlamofireManager.swift; sourceTree = "<group>"; };
 		2A11272B274AD5D800B9564C /* BaseInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterceptor.swift; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 		2A28E0C6275552E300061B11 /* WritingSave.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = WritingSave.storyboard; sourceTree = "<group>"; };
 		2A28E0CA2755532700061B11 /* WritingSaveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingSaveViewController.swift; sourceTree = "<group>"; };
 		2A561611272A7B4300C08793 /* UIImage+resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+resize.swift"; sourceTree = "<group>"; };
+		2A7F82F927667629004735B4 /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		2A947C54274BC99B00331586 /* MyProjectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProjectRouter.swift; sourceTree = "<group>"; };
 		2A947C58274BFA3D00331586 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		2A947C66274C11D400331586 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
@@ -106,7 +110,7 @@
 		2AFB541D271E302000B6FFC6 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		2AFB541F271E302C00B6FFC6 /* Bookmark.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Bookmark.storyboard; sourceTree = "<group>"; };
 		2AFB5421271E303B00B6FFC6 /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
-		2AFB5423271E304700B6FFC6 /* Setting.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Setting.storyboard; sourceTree = "<group>"; };
+		2AFB5423271E304700B6FFC6 /* MyPage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MyPage.storyboard; sourceTree = "<group>"; };
 		2AFB5426271E372C00B6FFC6 /* UITabBarController+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Tag.swift"; sourceTree = "<group>"; };
 		2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		3EE9E46654FFC37768B95F34 /* Pods-Portfolian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Portfolian.debug.xcconfig"; path = "Target Support Files/Pods-Portfolian/Pods-Portfolian.debug.xcconfig"; sourceTree = "<group>"; };
@@ -249,7 +253,7 @@
 				2A28E0C52755529C00061B11 /* Writing */,
 				2AFB5413271E2F8200B6FFC6 /* Bookmark */,
 				2AFB5410271E2F5A00B6FFC6 /* Chat */,
-				2AFB5414271E2FC100B6FFC6 /* Setting */,
+				2AFB5414271E2FC100B6FFC6 /* MyPage */,
 				2A17B87D2721E69800A0D598 /* Filter */,
 				2AFB53ED271C0EC900B6FFC6 /* Assets.xcassets */,
 				2AFB53EF271C0EC900B6FFC6 /* LaunchScreen.storyboard */,
@@ -325,13 +329,15 @@
 			path = Bookmark;
 			sourceTree = "<group>";
 		};
-		2AFB5414271E2FC100B6FFC6 /* Setting */ = {
+		2AFB5414271E2FC100B6FFC6 /* MyPage */ = {
 			isa = PBXGroup;
 			children = (
-				2AFB5423271E304700B6FFC6 /* Setting.storyboard */,
+				2AFB5423271E304700B6FFC6 /* MyPage.storyboard */,
+				2A0676A7276328B800E42E9F /* ProfileViewController.swift */,
 				2AFB541B271E300200B6FFC6 /* SettingViewController.swift */,
+				2A7F82F927667629004735B4 /* MyPageViewController.swift */,
 			);
-			path = Setting;
+			path = MyPage;
 			sourceTree = "<group>";
 		};
 		2AFB5425271E367E00B6FFC6 /* Extension */ = {
@@ -426,7 +432,7 @@
 				2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */,
 				2AFB53F1271C0EC900B6FFC6 /* LaunchScreen.storyboard in Resources */,
 				2AFB540B271C7B2F00B6FFC6 /* NotoSansKR-Medium.otf in Resources */,
-				2AFB5424271E304700B6FFC6 /* Setting.storyboard in Resources */,
+				2AFB5424271E304700B6FFC6 /* MyPage.storyboard in Resources */,
 				2AFB53EE271C0EC900B6FFC6 /* Assets.xcassets in Resources */,
 				2AFB53EC271C0EC900B6FFC6 /* Main.storyboard in Resources */,
 				2AFB540A271C7B2F00B6FFC6 /* NotoSansKR-Bold.otf in Resources */,
@@ -506,6 +512,7 @@
 				2A17B8852722099300A0D598 /* TagButton.swift in Sources */,
 				2AFB541C271E300200B6FFC6 /* SettingViewController.swift in Sources */,
 				2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */,
+				2A7F82FA27667629004735B4 /* MyPageViewController.swift in Sources */,
 				2A17B87F2721E6C200A0D598 /* FilterViewController.swift in Sources */,
 				2AAD320D275382F00090D26F /* Writing+CoreDataClass.swift in Sources */,
 				2A947C67274C11D400331586 /* PersistenceManager.swift in Sources */,
@@ -519,6 +526,7 @@
 				2AAD320E275382F00090D26F /* Writing+CoreDataProperties.swift in Sources */,
 				2A99DC982755F06B007A28FC /* Project.swift in Sources */,
 				2AFB5404271C478500B6FFC6 /* NicknameViewController.swift in Sources */,
+				2A0676A8276328B800E42E9F /* ProfileViewController.swift in Sources */,
 				2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */,
 				2A11272A274AD4D700B9564C /* MyAlamofireManager.swift in Sources */,
 			);

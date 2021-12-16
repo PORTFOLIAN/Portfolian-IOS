@@ -61,36 +61,10 @@ final class MyAlamofireManager {
         self.session
             .request(MyProjectRouter.enterProject(projectID: projectID))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON  { response in
-                guard let responseValue = response.value else { return }
-                let responseJson = JSON(responseValue)
-                // 데이터 파싱
-                let contents = responseJson["contents"]
-                let leader = responseJson["leader"]
-                let capacity = contents["capacity"].intValue
-                let view = contents["view"].intValue
-                let status = contents["status"].intValue
-                let code = responseJson["code"].intValue
-                var stackList:[String] = []
-                for stringInArray in responseJson["stackList"] {
-                    stackList.append(stringInArray.1.stringValue)
-                }
-                guard let projectId = responseJson["projectID"].string,
-                      let title = responseJson["title"].string,
-                      let subjectDescription = contents["subjectDescription"].string,
-                      let projectTime = contents["projectTime"].string,
-                      let recruitmentCondition = contents["recruitmentConditon"].string,
-                      let progress = contents["progress"].string,
-                      let description = contents["description"].string,
-                      let detail = contents["detail"].string,
-                      let bookMark = contents["bookMarks"].bool,
-                      
-                      let userId = leader["userId"].string,
-                      let nickName = leader["nickName"].string,
-                      let leaderDescription = leader["description"].string,
-                      let photo = leader["photo"].string else { return }
-                let projectInfo = ProjectInfo(code: code, projectId: projectId, title: title, stackList: stackList, subjectDescription: subjectDescription, projectTime: projectTime, recruitmentCondition: recruitmentCondition, progress: progress, description: description, detail: detail, capacity: capacity, view: view, bookMark: bookMark, status: status, NickName: nickName, leaderDescription: leaderDescription, userId: userId, photo: photo)
-                print(projectInfo.stackList)
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let projectInfo = try? JSONDecoder().decode(ProjectInfo.self, from: responseData) else { return }
+
                 completion(.success(projectInfo))
             }
     }
@@ -99,36 +73,12 @@ final class MyAlamofireManager {
         self.session
             .request(MyProjectRouter.arrangeProject(searchOption: searchOption))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON  { response in
-                guard let responseValue = response.value else { return }
-                let responseJson = JSON(responseValue)
-                let code = responseJson["code"]
-
-                var articleList: [Article] = []
-                for articleInArray in responseJson["articleList"] {
-                    let articleJson = articleInArray.1
-                    var stackList: [String] = []
-                    for stringInArray in articleJson["stackList"] {
-                        stackList.append(stringInArray.1.stringValue)
-                    }
-                    let leader = articleJson["leader"]
-                    guard let projectId = articleJson["projectId"].string,
-                          let title = articleJson["title"].string,
-                          let description = articleJson["description"].string,
-                          let capacity = articleJson["capacity"].int,
-                          let view = articleJson["view"].int,
-                          let bookMark = articleJson["bookMark"].bool,
-                          let status = articleJson["status"].int,
-                          let userId = leader["userId"].string,
-                          let photo = leader["photo"].string
-                    else {return}
-                    let article = Article(projectId: projectId, title: title, stackList: stackList, description: description, capacity: capacity, view: view, bookMark: bookMark, status: status, userId:  userId, photo: photo)
-                    articleList.append(article)
-                }
+            .responseData { response in
                 
+                guard let responseData = response.data else { return }
+                projectListInfo = try! JSONDecoder().decode(ProjectListInfo.self, from: responseData)
+                let code = projectListInfo.code
                 if code == 1 {
-                    projectListInfo.articleList = articleList
-                    print("#########################")
                     completion(.success(projectListInfo))
                 } else {
                     completion(.failure(.getProjectListError))

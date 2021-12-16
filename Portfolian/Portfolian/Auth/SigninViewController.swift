@@ -9,6 +9,7 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKUser
 import GoogleSignIn
+import SwiftyJSON
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "Logo"))
@@ -209,17 +210,24 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoTalk() success.")
-                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
+                guard let accessToken = oauthToken?.accessToken else { return }
+                print(accessToken)
+                let responseJson = JSON(accessToken)
+//                let a = responseJson["token"]
+//                print(a)
+//                a.rawData()
+//                print(a)
+                guard let authData = try? JSONEncoder().encode(["token": accessToken]) else {
                     return
                 }
-                let url = URL(string: "http://3.36.84.11:3000/auth/kakao/access")!
+//                print(a)
+
+                let url = URL(string: "http://3.36.84.11:3000/oauth/kakao/access")!
                 var request = URLRequest(url: url)
                 request.httpMethod = "post"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
                 let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-                    // Handle response from your backend.
-                    
+//                     Handle response from your backend.
                 }
                 task.resume()
                 self.setNickName()
@@ -236,16 +244,23 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoAccount() success.")
-                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
-                    return
-                }
-                let url = URL(string: "http://3.36.84.11:3000/auth/kakao/access")!
+                
+                
+//                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
+//                    return
+//                }
+                
+
+                guard let accessToken = oauthToken?.accessToken else { return }
+                let responseJson = JSON(["token":accessToken])
+                
+                guard let authData = try? responseJson.rawData() else { return }
+                let url = URL(string: "http://3.36.84.11:3000/oauth/kakao/access")!
                 var request = URLRequest(url: url)
                 request.httpMethod = "post"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
                 let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-                    // Handle response from your backend.
+//                     Handle response from your backend.
                 }
                 task.resume()
                 self.setNickName()

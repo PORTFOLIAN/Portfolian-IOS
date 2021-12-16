@@ -54,7 +54,16 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        let projectSearch = ProjectSearch(stackList: "default", sort: "default", keyword: "default")
+        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+            switch result {
+            case .success(let articleList):
+                let articleList = articleList
+            case .failure:
+                print("error?")
+            }
+        }
+        tableView.reloadData()
         
         
     }
@@ -71,6 +80,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         
         subview()
         constraints()
+//        self.tableView.separatorStyle = .none
     }
     
     // Mark: SetupLogo
@@ -198,6 +208,7 @@ extension HomeViewController {
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    
     // 셀의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -207,58 +218,59 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
         cell.cellDelegate = self
-        let articleInfo = projectListInfo.articleList[indexPath[1]]
+        var articleList = projectListInfo.articleList
+        articleList.reverse()
+        let articleInfo = articleList[indexPath[1]]
         cell.titleLabel.text = articleInfo.title
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
         var labelStackCount: Int = 0
         var tagInfo1, tagInfo2, tagInfo3: TagInfo
         
-        cell.IllustratorButton.informTextInfo(text: "", fontSize: 16)
-        cell.IllustratorButton.currentColor(color: .white)
-        cell.iosButton.informTextInfo(text: "", fontSize: 16)
-        cell.iosButton.currentColor(color: .white)
-        cell.typescriptButton.informTextInfo(text: "", fontSize: 16)
-        cell.typescriptButton.currentColor(color: .white)
-        print(stringTag)
-        cell.NumberOftagsLabel.text = ""
+        cell.tagButton1.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton1.currentColor(color: .clear)
+        cell.tagButton2.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton2.currentColor(color: .clear)
+        cell.tagButton3.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton3.currentColor(color: .clear)
+        cell.numberOftagsLabel.text = ""
         switch lenStackList {
         case 1:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
-            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
-            cell.IllustratorButton.currentColor(color: tagInfo1.color)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.currentColor(color: tagInfo1.color)
             
         case 2:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
-            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
-            cell.IllustratorButton.currentColor(color: tagInfo1.color)
-            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
-            cell.iosButton.currentColor(color: tagInfo2.color)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.currentColor(color: tagInfo1.color)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.currentColor(color: tagInfo2.color)
             
         case 3:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
-            cell.IllustratorButton.currentColor(color: tagInfo1.color)
-            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
-            cell.iosButton.currentColor(color: tagInfo2.color)
-            cell.typescriptButton.informTextInfo(text: tagInfo3.name, fontSize: 16)
-            cell.typescriptButton.currentColor(color: tagInfo3.color)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.currentColor(color: tagInfo1.color)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.currentColor(color: tagInfo2.color)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.currentColor(color: tagInfo3.color)
             
         default:
             labelStackCount = lenStackList - 3
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.IllustratorButton.informTextInfo(text: tagInfo1.name, fontSize: 16)
-            cell.IllustratorButton.currentColor(color: tagInfo1.color)
-            cell.iosButton.informTextInfo(text: tagInfo2.name, fontSize: 16)
-            cell.iosButton.currentColor(color: tagInfo2.color)
-            cell.typescriptButton.informTextInfo(text: tagInfo3.name, fontSize: 16)
-            cell.typescriptButton.currentColor(color: tagInfo3.color)
-            cell.NumberOftagsLabel.text = "+ \(labelStackCount)"
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.currentColor(color: tagInfo1.color)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.currentColor(color: tagInfo2.color)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.currentColor(color: tagInfo3.color)
+            cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
 //        북마크 버튼을 눌렀을 때 값을 변경해주는 메소드를 구현하고 넣기
         
@@ -274,13 +286,33 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
+        
+        var articleList = projectListInfo.articleList
+        articleList.reverse()
+        let articleInfo = articleList[indexPath[1]]
+        let projectId = articleInfo.projectId
+        recruitWriting.newProjectID = projectId
+        MyAlamofireManager.shared.getProject(projectID: projectId) { result in
+            switch result {
+            case .success(let projectInfo):
+                for tag in projectInfo.stackList{
+                    writingTeamTag.names.append(Tag.Name(rawValue: tag)!)
+                }
+                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                WritingSaveVC.modalPresentationStyle = .fullScreen
+                self.navigationController?.pushViewController(WritingSaveVC, animated: true)
+            case .failure(let error):
+//                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
+                print("\(error)######")
+        }
+        }
+        
     }
     
     
     // 셀의 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150.0;//Choose your custom row height
+        return 175.0;//Choose your custom row height
     }
     
 }

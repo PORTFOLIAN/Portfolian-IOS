@@ -18,6 +18,7 @@ class ViewController: UITabBarController {
         MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
             switch result {
             case .success(let articleList):
+                print(12341234)
                 let articleList = articleList
             case .failure:
                 print("error?")
@@ -34,7 +35,7 @@ class ViewController: UITabBarController {
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
             initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "Bookmark"), tag: 2),
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
-            initNavigationTabViewController("Setting", identifier: "SettingVC", icon: UIImage(named: "Mypage"), tag: 4)
+            initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "Mypage"), tag: 4)
         ]
         print("가")
         if (AuthApi.hasToken()) {
@@ -42,7 +43,7 @@ class ViewController: UITabBarController {
                 if let error = error {
                     if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
                         //로그인 필요
-                        print("가")
+                        print("나")
                         self.goToApp()
                     }
                     else {

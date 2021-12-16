@@ -62,11 +62,11 @@ extension FilterViewController: UICollectionViewDelegateFlowLayout {
         let tag = Tag.Name.allCases[indexPath.row]
         let tagInfo = Tag.shared.getTagInfo(tag: tag)
         let tagName = tagInfo.name
-        let label = TagButton().then {
+        let button = TagButton().then {
             $0.informTextInfo(text: tagName, fontSize: 16)
             $0.sizeToFit()
         }
-        let size = label.frame.size
+        let size = button.frame.size
         
         return CGSize(width: size.width, height: size.height + 10)
     }

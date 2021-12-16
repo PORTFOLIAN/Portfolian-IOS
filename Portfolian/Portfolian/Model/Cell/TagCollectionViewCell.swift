@@ -57,6 +57,8 @@ class TagCollectionViewCell: UICollectionViewCell {
             clickedTags = writingOwnerTag.names.contains(Tag.Name.allCases[index])
         case .Searching:
             clickedTags = searchingTag.names.contains(Tag.Name.allCases[index])
+        case .MyPage:
+            clickedTags = myTag.names.contains(Tag.Name.allCases[index])
         default:
             return true
         }
@@ -95,6 +97,20 @@ class TagCollectionViewCell: UICollectionViewCell {
             else { return }
             searchingTag.names.remove(at: nameIndex)
         }
+        
+        
+    }
+    func storeMyPageData(didClicked: Bool) {
+        if didClicked {
+            myTag.names.append(Tag.Name.allCases[self.index])
+        } else {
+            guard let nameIndex = myTag.names
+                    .firstIndex(of: Tag.Name.allCases[self.index])
+            else { return }
+            myTag.names.remove(at: nameIndex)
+        }
+        
+        
     }
 }
 
@@ -107,9 +123,12 @@ extension TagCollectionViewCell: TagToggleButtonDelegate {
                 storeWritingData(didClicked: didClicked)
             case .Searching:
                 storeSearchingData(didClicked: didClicked)
-            default:
+            case .Writing:
                 storeWritingData(didClicked: didClicked)
                 storeWritingTeamData(didClicked: didClicked)
+            default:
+                storeMyPageData(didClicked: didClicked)
+                
         }
     }
 }

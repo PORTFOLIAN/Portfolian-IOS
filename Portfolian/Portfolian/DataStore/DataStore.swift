@@ -14,6 +14,7 @@ enum RegistrationType {
     case WritingTeam
     case WritingOwner
     case Writing
+    case MyPage
 }
 
 struct DataStore {
@@ -32,5 +33,4 @@ struct TagDataStore {
 var writingOwnerTag = TagDataStore()
 var writingTeamTag = TagDataStore()
 var searchingTag = TagDataStore()
-
-
+var myTag = TagDataStore()

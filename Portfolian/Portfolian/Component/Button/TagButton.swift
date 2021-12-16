@@ -54,7 +54,17 @@ class TagButton: UIButton {
         case .Searching:
             print("searching")
         default:
-            break
+            if myTag.names.count > 7 {
+                isClicked.toggle()
+                delegate?.didTouchTagButton(didClicked: isClicked)
+
+                self.alpha = 0.5
+                let time = DispatchTime.now() + .milliseconds(300)
+                window?.rootViewController?.view.makeToast("😅 태그는 최대 7개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
+                DispatchQueue.main.asyncAfter(deadline: time) {
+                    self.alpha = 1
+                }
+            }
         }
         
     }

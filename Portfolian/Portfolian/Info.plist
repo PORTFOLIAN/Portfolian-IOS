@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string></string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -10,7 +14,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao8ab6cd6b8425d701ee369a5b461275a8</string>
-                <string>com.googleusercontent.apps.1054867154719-j2mrdj2q26n5vhr4rd5auc612e19n2rd</string>
+				<string>com.googleusercontent.apps.1054867154719-j2mrdj2q26n5vhr4rd5auc612e19n2rd</string>
 			</array>
 		</dict>
 		<dict>
