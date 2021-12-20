@@ -42,7 +42,7 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.addSubview(containerView)
         containerView.addSubview(requestNicknameLabel)
         containerView.addSubview(nicknameTextField)
@@ -71,18 +71,27 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         nicknameTextField.delegate = self
         nextButton.addTarget(self, action: #selector(ButtonHandler(_:)), for: .touchUpInside)
         swipeRecognizer()
-        
     }
     
     //MARK: - Buttonhandler
     @objc func ButtonHandler(_ sender: UIButton) {
 //        mainVC.modalPresentationStyle = .fullScreen
-        User.shared.flag = true
         if checkNickname(nicknameTextField) == true {
-            self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
+            MyAlamofireManager.shared.patchNickName(nickName: nicknameTextField.text!) { result in
+                switch result{
+                case .success:
+                    self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
+                    
+                case .failure(let error):
+                    print(error)
+                }
+                
+            }
+            }
+            
         }
         
-    }
+    
     
     //MARK: - swipeGesture
     func swipeRecognizer() {

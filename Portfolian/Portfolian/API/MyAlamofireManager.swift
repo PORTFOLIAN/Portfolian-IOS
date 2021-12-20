@@ -85,4 +85,38 @@ final class MyAlamofireManager {
                 }
             }
     }
+    func postKaKaoToken(token: String, completion: @escaping (Result<Jwt, MyError>) -> Void) {
+        self.session
+            .request(MyOauthRouter.postKaKaoToken(token: token))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let jwt = try? JSONDecoder().decode(Jwt.self, from: responseData) else { return }
+                let code = jwt.code
+                if code == 1 {
+                    completion(.success(jwt))
+                } else {
+                    completion(.failure(.getProjectListError))
+                }
+            }
+    }
+    func patchNickName(nickName: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.patchNickName(nickName: nickName))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
+                if code == 1 {
+                    
+                    completion(.success(code))
+                    
+                } else {
+                    completion(.failure(.testError))
+                }
+            }
+    }
 }

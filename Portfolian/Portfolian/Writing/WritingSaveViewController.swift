@@ -14,7 +14,7 @@ class WritingSaveViewController: UIViewController {
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
     lazy var shareBarButtonItem = UIBarButtonItem(image: UIImage(named: "Share"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
-    lazy var bookmarkBarButtonItem = UIBarButtonItem(image: UIImage(named: "Bookmark"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
+    
 
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
 //    lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
@@ -75,17 +75,17 @@ class WritingSaveViewController: UIViewController {
         UILabel.sizeToFit()
     })
     
-    lazy var proceedTitleLabel = UILabel().then({ UILabel in
+    lazy var proceedTitleLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 진행 방식"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
-    })
-    lazy var proceedLabel = UILabel().then({ UILabel in
+    }
+    
+    lazy var proceedLabel = UILabel().then { UILabel in
         UILabel.text = "주 1회 정해진 요일에 구글 미팅을 통해 회상 회의를 진행합니다.\n한달에 최소 1회는 오프라인 미팅을 합니다.\n장소는 인천, 안양, 건대, 구리 중 랜덤입니다"
         UILabel.numberOfLines = 0
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UILabel.sizeToFit()
-
-    })
+    }
     
     lazy var detailTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "프로젝트 상세 설명"
@@ -104,7 +104,9 @@ class WritingSaveViewController: UIViewController {
         UITextView.delegate = self
         
     })
-    
+    lazy var footerView = UIView().then { UIView in
+    }
+
     lazy var lineViewFirst = UIView().then({ UIView in
         UIView.backgroundColor = ColorPortfolian.gray2
     })
@@ -134,7 +136,7 @@ class WritingSaveViewController: UIViewController {
                 self.periodLabel.text = projectInfo.contents.projectTime
                 self.optionLabel.text = projectInfo.contents.recruitmentCondition
                 self.proceedLabel.text = projectInfo.contents.progress
-                let md = SwiftyMarkdown(string: projectInfo.contents.description)
+                let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
                 self.detailTextView.attributedText = md.attributedString()
                 self.configureLabel(md: md)
                 
@@ -145,7 +147,7 @@ class WritingSaveViewController: UIViewController {
         }
         DispatchQueue.main.async {
             self.tagsCollectionView.reloadData()
-            var height = self.tagsCollectionView.collectionViewLayout.collectionViewContentSize.height
+            let height = self.tagsCollectionView.collectionViewLayout.collectionViewContentSize.height
             self.tagsCollectionView.snp.updateConstraints {
                 $0.height.equalTo(height)
             }
@@ -159,7 +161,7 @@ class WritingSaveViewController: UIViewController {
         
         tagsCollectionView.isUserInteractionEnabled = false
         
-        navigationItem.rightBarButtonItems = [bookmarkBarButtonItem, shareBarButtonItem]
+        navigationItem.rightBarButtonItems = [shareBarButtonItem]
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(scrollView)
@@ -169,6 +171,7 @@ class WritingSaveViewController: UIViewController {
         view.addSubview(lineViewFirst)
         view.addSubview(lineViewSecond)
         view.addSubview(lineViewThird)
+        view.addSubview(footerView)
         scrollView.addSubview(contentView)
         contentView.addSubview(explainTitleLabel)
         contentView.addSubview(periodTitleLabel)
@@ -219,7 +222,8 @@ class WritingSaveViewController: UIViewController {
 
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(lineViewSecond.snp.bottom)
-            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(footerView.snp.top)
         }
         contentView.snp.makeConstraints { make in
             make.top.bottom.equalTo(scrollView)
@@ -230,10 +234,12 @@ class WritingSaveViewController: UIViewController {
             make.top.equalTo(contentView)
             make.leading.equalTo(leftUIView)
         }
+        
         explainLabel.snp.makeConstraints { make in
             make.top.equalTo(explainTitleLabel.snp.bottom)
             make.leading.trailing.equalTo(contentView)
         }
+        
         periodTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(explainLabel.snp.bottom).offset(50)
             make.leading.equalTo(leftUIView)
@@ -272,7 +278,12 @@ class WritingSaveViewController: UIViewController {
             make.top.equalTo(detailTextView.snp.bottom).offset(50)
             make.leading.trailing.equalTo(view).inset(10)
             make.height.equalTo(1)
-            make.bottom.equalTo(contentView.snp.bottom)
+            make.bottom.equalTo(contentView)
+        }
+        footerView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(view).inset(10)
+            make.height.equalTo(100)
+            make.bottom.equalTo(view.snp.bottom)
         }
         // Do any additional setup after loading the view.
 //        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
@@ -293,22 +304,6 @@ class WritingSaveViewController: UIViewController {
         
     }
     
-    @objc func dynamicLabelTapped(_ sender: UITapGestureRecognizer) {
-//        let point = sender.location(in: detailTextView)
-//        guard let selectedIndex = detailTextView.textIndex(at: point) else { return }
-//        print(point)
-//        guard let attr = detailTextView.attributedText?.attributes(
-//            at: selectedIndex,
-//            effectiveRange: nil
-//        ) else { return }
-//        if let url = attr[.link] as? String {
-//            UIApplication.shared.open(URL(string: url)!, options: [:])
-//        }
-//        if let url = attr[.attachment] as? URL {
-//            UIApplication.shared.open(URL(string: url.absoluteString)!, options: [:])
-//        }
-    }
-    
     private func configureLabel(md: SwiftyMarkdown) {
       guard let messageText = detailTextView.text else { return }
       let mutableString = NSMutableAttributedString()
@@ -318,6 +313,7 @@ class WritingSaveViewController: UIViewController {
         .underlineStyle: NSUnderlineStyle.single.rawValue,
         .font: UIFont.italicSystemFont(ofSize: 16)
       ]
+        
         // swiftyMarkdown
         let normalText = md.attributedString()
       mutableString.append(normalText)
@@ -365,7 +361,6 @@ extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
             let size = label.frame.size
             return CGSize(width: size.width, height: size.height)
 //        }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

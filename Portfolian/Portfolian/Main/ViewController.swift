@@ -9,6 +9,10 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKUser
 import KakaoSDKCommon
+import simd
+import CoreData
+
+
 class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,25 +47,33 @@ class ViewController: UITabBarController {
                 if let error = error {
                     if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
                         //로그인 필요
-                        print("나")
+                        
                         self.goToApp()
                     }
                     else {
                         //기타 에러
-                        print("나")
                         print("에러 : \(error)")
                     }
                 }
                 else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    print("다")
-                    
                     self.setViewControllers(viewControllers, animated: true)
+                    
+
+                    let request: NSFetchRequest<Token> = Token.fetchRequest()
+                    let fetchResult = PersistenceManager.shared.fetch(request: request)
+                    fetchResult.forEach {
+                        guard let accessToken = $0.accessToken else {return}
+                        Jwt.shared.accessToken = accessToken
+                        guard let refreshToken = $0.refreshToken else {return}
+                        Jwt.shared.refreshToken = refreshToken
+                        }
+                    print("afafaa"+Jwt.shared.refreshToken)
+
                 }
             }
         } else {
             //로그인 필요
-            print("라")
             self.goToApp()
         }
     }

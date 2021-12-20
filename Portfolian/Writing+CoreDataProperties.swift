@@ -2,7 +2,7 @@
 //  Writing+CoreDataProperties.swift
 //  Portfolian
 //
-//  Created by 이상현 on 2021/11/28.
+//  Created by 이상현 on 2021/12/21.
 //
 //
 
@@ -23,8 +23,8 @@ extension Writing {
     @NSManaged public var proceed: String?
     @NSManaged public var recruit: Int16
     @NSManaged public var tags: [String]?
-    @NSManaged public var title: String?
     @NSManaged public var teamTags: [String]?
+    @NSManaged public var title: String?
 
 }
 

@@ -450,6 +450,8 @@ class WritingViewController: UIViewController {
     
     func fetchWriting() {
         print("fetchWriting - start")
+        
+
         let request: NSFetchRequest<Writing> = Writing.fetchRequest()
         let fetchResult = PersistenceManager.shared.fetch(request: request)
         fetchResult.forEach {

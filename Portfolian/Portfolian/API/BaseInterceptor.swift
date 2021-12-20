@@ -11,7 +11,9 @@ class BaseInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("BaseInterceptor - adapt() called")
-//        var request = urlRequest
+        var request = urlRequest
+        request.setValue("Bearer " + Jwt.shared.accessToken, forHTTPHeaderField: "Authorization")
+        print(request)
 //        request.addValue("application/json; charset = utf-8", forHTTPHeaderField: "Content-Type")
         // 공통 파라매터 추가
 //        var dictionary = [String : String]()
@@ -22,7 +24,7 @@ class BaseInterceptor: RequestInterceptor {
 //        } catch {
 //            print(error)
 //        }
-        completion(.success(urlRequest))
+        completion(.success(request))
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {

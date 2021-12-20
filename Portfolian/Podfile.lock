@@ -13,6 +13,9 @@ PODS:
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.7.0)
+  - InputBarAccessoryView (5.4.0):
+    - InputBarAccessoryView/Core (= 5.4.0)
+  - InputBarAccessoryView/Core (5.4.0)
   - KakaoSDKAuth (2.8.2):
     - KakaoSDKCommon (= 2.8.2)
   - KakaoSDKCommon (2.8.2):
@@ -29,6 +32,8 @@ PODS:
     - KakaoSDKCommon/Common (= 2.8.2)
   - KakaoSDKUser (2.8.2):
     - KakaoSDKAuth (= 2.8.2)
+  - MessageKit (3.7.0):
+    - InputBarAccessoryView (~> 5.4.0)
   - SnapKit (5.0.1)
   - SwiftyJSON (5.0.1)
   - SwiftyMarkdown (1.2.3)
@@ -42,6 +47,7 @@ DEPENDENCIES:
   - KakaoSDKCommon
   - KakaoSDKTalk
   - KakaoSDKUser
+  - MessageKit
   - SnapKit
   - SwiftyJSON
   - SwiftyMarkdown
@@ -55,11 +61,13 @@ SPEC REPOS:
     - GoogleSignIn
     - GTMAppAuth
     - GTMSessionFetcher
+    - InputBarAccessoryView
     - KakaoSDKAuth
     - KakaoSDKCommon
     - KakaoSDKTalk
     - KakaoSDKTemplate
     - KakaoSDKUser
+    - MessageKit
     - SnapKit
     - SwiftyJSON
     - SwiftyMarkdown
@@ -72,17 +80,19 @@ SPEC CHECKSUMS:
   GoogleSignIn: fd381840dbe7c1137aa6dc30849a5c3e070c034a
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
+  InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
   KakaoSDKAuth: 2b7e6998d7028cabd037ef8d0d2f987b4eec9f89
   KakaoSDKCommon: 1b5dc1c785688bed6d6747d05f2c8e08420f09ff
   KakaoSDKTalk: ce1e863c3fa689745192caf36b30a3e4c34afbca
   KakaoSDKTemplate: a5b84073ce3fa521d26c2531346bf866e7775025
   KakaoSDKUser: 937f1acc1380192d38483480d5bf01b141471829
+  MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   SwiftyMarkdown: be01b2905694bd7bfd95330cd43704bfdb978aec
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
 
-PODFILE CHECKSUM: c81813961b6b6925863e16fae5fc58c839e5d88d
+PODFILE CHECKSUM: 8f5bc3e7554ff0b7996bcfc50cd30218778a27bb
 
 COCOAPODS: 1.11.2

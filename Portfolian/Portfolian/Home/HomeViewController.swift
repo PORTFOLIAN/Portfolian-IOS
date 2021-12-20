@@ -296,7 +296,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             switch result {
             case .success(let projectInfo):
                 for tag in projectInfo.stackList{
-                    writingTeamTag.names.append(Tag.Name(rawValue: tag)!)
+                    guard let tagName = Tag.Name(rawValue: tag) else { return }
+                    writingTeamTag.names.append(tagName)
                 }
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                 WritingSaveVC.modalPresentationStyle = .fullScreen

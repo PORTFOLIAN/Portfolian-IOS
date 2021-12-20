@@ -10,6 +10,8 @@ import KakaoSDKAuth
 import KakaoSDKUser
 import GoogleSignIn
 import SwiftyJSON
+import AVFoundation
+import MapKit
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "Logo"))
@@ -138,7 +140,7 @@ class SigninViewController: UIViewController {
         case githubLoginButton:
             // 구글 로그아웃
               GIDSignIn.sharedInstance.signOut()
-        
+            
         case appleLoginButton:
             UserApi.shared.unlink {(error) in
                 if let error = error {
@@ -209,29 +211,29 @@ class SigninViewController: UIViewController {
                 print(error)
             }
             else {
-                print("loginWithKakaoTalk() success.")
+                print("loginWithKakaoAccount() success.")
                 guard let accessToken = oauthToken?.accessToken else { return }
-                print(accessToken)
-                let responseJson = JSON(accessToken)
-//                let a = responseJson["token"]
-//                print(a)
-//                a.rawData()
-//                print(a)
-                guard let authData = try? JSONEncoder().encode(["token": accessToken]) else {
-                    return
-                }
-//                print(a)
+                let responseJson = JSON(["token":accessToken])
+                
+                guard let authData = try? responseJson.rawData() else { return }
+                MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
+                    switch result {
+                    case .success(let jwtInfo):
+                        Jwt.shared = jwtInfo
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken)
+                        PersistenceManager.shared.insertToken(token: myToken)
+                        if Jwt.shared.isNew == false {
+                            self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
 
-                let url = URL(string: "http://3.36.84.11:3000/oauth/kakao/access")!
-                var request = URLRequest(url: url)
-                request.httpMethod = "post"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-//                     Handle response from your backend.
-                }
-                task.resume()
-                self.setNickName()
-
+                        } else {
+                            self.setNickName()
+                        }
+                    case .failure(let error):
+                        print("\(error)######")
+                    }
+                })
+                                                         
+                                                        
             }
         }
     }
@@ -244,26 +246,29 @@ class SigninViewController: UIViewController {
             }
             else {
                 print("loginWithKakaoAccount() success.")
-                
-                
-//                guard let authData = try? JSONEncoder().encode(["accessToken": oauthToken]) else {
-//                    return
-//                }
-                
-
                 guard let accessToken = oauthToken?.accessToken else { return }
                 let responseJson = JSON(["token":accessToken])
                 
                 guard let authData = try? responseJson.rawData() else { return }
-                let url = URL(string: "http://3.36.84.11:3000/oauth/kakao/access")!
-                var request = URLRequest(url: url)
-                request.httpMethod = "post"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-//                     Handle response from your backend.
-                }
-                task.resume()
-                self.setNickName()
+                MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
+                    switch result {
+                    case .success(let jwtInfo):
+                        Jwt.shared = jwtInfo
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken)
+                        PersistenceManager.shared.insertToken(token: myToken)
+                        if Jwt.shared.isNew == false {
+                            self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
+                            
+                        } else {
+                            self.setNickName()
+                        }
+                        
+                    case .failure(let error):
+                        print("\(error)######")
+                    }
+                })
+                                                         
+                                                        
             }
         }
     }

@@ -6,12 +6,20 @@
 //
 
 import UIKit
+import SnapKit
+import Then
+import MessageKit
 
 class ChatViewController: UIViewController {
-
+//    var messageLabel = MessageLabel().then { MessageLabel in
+//        
+//    }
     override func viewDidLoad() {
         super.viewDidLoad()
-
+//        messageLabel.snp.makeConstraints { make in
+//            make.top.leading.trailing.equalTo(self.view)
+//            make.height.equalTo(10)
+//        }
         // Do any additional setup after loading the view.
     }
     

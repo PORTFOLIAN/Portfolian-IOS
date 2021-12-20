@@ -11,6 +11,8 @@ import SnapKit
 import Toast_Swift
 import KakaoSDKAuth
 import KakaoSDKUser
+import CoreData
+
 class SettingViewController: UIViewController {
 
     lazy var tableView = UITableView().then { make in
@@ -72,6 +74,12 @@ extension SettingViewController: UITableViewDelegate {
             }
             else {
                 print("logout() success.")
+                let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                PersistenceManager.shared.deleteAll(request: requestWriting)
+                let requestToken: NSFetchRequest<Token> = Token.fetchRequest()
+                PersistenceManager.shared.deleteAll(request: requestToken)
+                writingTeamTag.names = []
+                writingOwnerTag.names = []
                 self.goToApp()
             }
         }
@@ -83,7 +91,14 @@ extension SettingViewController: UITableViewDelegate {
             }
             else {
                 print("unlink() success.")
+                let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                PersistenceManager.shared.deleteAll(request: requestWriting)
+                let requestToken: NSFetchRequest<Token> = Token.fetchRequest()
+                PersistenceManager.shared.deleteAll(request: requestToken)
+                writingTeamTag.names = []
+                writingOwnerTag.names = []
                 self.goToApp()
+                
             }
         }
     }

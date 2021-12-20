@@ -32,6 +32,7 @@ pod 'Alamofire'
 pod 'Toast-Swift'
 pod 'SwiftyJSON'
 pod 'SwiftyMarkdown'
+pod 'MessageKit'
   # Pods for Portfolian`
 
 end

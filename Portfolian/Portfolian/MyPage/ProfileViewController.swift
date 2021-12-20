@@ -11,7 +11,6 @@ import Then
 import PhotosUI
 class ProfileViewController: UIViewController {
     lazy var profileButton = UIButton().then { UIButton in
-        
         lazy var image = UIImage(named: "Profile")
         UIButton.setImage(image, for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)

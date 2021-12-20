@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Token" representedClassName="Token" syncable="YES">
+        <attribute name="accessToken" optional="YES" attributeType="String"/>
+        <attribute name="refreshToken" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="Writing" representedClassName="Writing" syncable="YES">
         <attribute name="detail" optional="YES" attributeType="String"/>
         <attribute name="explain" optional="YES" attributeType="String"/>
@@ -12,6 +16,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
+        <element name="Token" positionX="-63" positionY="54" width="128" height="59"/>
         <element name="Writing" positionX="-63" positionY="-18" width="128" height="164"/>
     </elements>
 </model>

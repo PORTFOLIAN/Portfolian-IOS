@@ -18,7 +18,10 @@ struct Person {
     var proceed: String?
     var detail: String?
 }
-
+struct JwtToken {
+    var accessToken: String?
+    var refreshToken: String?
+}
 class PersistenceManager {
 
     static var shared: PersistenceManager = PersistenceManager()
@@ -46,7 +49,27 @@ class PersistenceManager {
             return []
         }
     }
-    
+    @discardableResult
+    func insertToken(token: JwtToken) -> Bool {
+        // Entity를 가져옴
+        let entity = NSEntityDescription.entity(forEntityName: "Token", in: self.context)
+        // NSManagedObject를 만들어줌
+        if let entity = entity {
+            let managedObject = NSManagedObject(entity: entity, insertInto: self.context)
+            managedObject.setValue(token.accessToken, forKey: "accessToken")
+            managedObject.setValue(token.refreshToken, forKey: "refreshToken")
+            
+            do {
+                try context.save()
+                return true
+            } catch {
+                print(error.localizedDescription)
+                return false
+            }
+        } else {
+            return false
+        }
+    }
     @discardableResult
     func insertPerson(person: Person) -> Bool {
         // Entity를 가져옴
