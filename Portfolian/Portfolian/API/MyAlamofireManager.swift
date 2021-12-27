@@ -44,6 +44,7 @@ final class MyAlamofireManager {
                 // 데이터 파싱
                 guard let code = responseJson["code"].int,
                       let message = responseJson["message"].string else { return }
+                
                 if code == 1 {
                     guard let projectID = responseJson["newProjectID"].string else { return }
                     recruitWriting.code = code
@@ -117,6 +118,23 @@ final class MyAlamofireManager {
                 } else {
                     completion(.failure(.testError))
                 }
+            }
+    }
+    func getMyProfile(completion: @escaping (Result<User, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.getMyProfile)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                
+                guard let responseData = response.data else { return }
+                guard let user = try? JSONDecoder().decode(User.self, from: responseData) else { return }
+                
+//                let code = user.code
+//                if code == 1 {
+                    completion(.success(user))
+//                } else {
+//                    completion(.failure(.getProjectListError))
+//                }
             }
     }
 }

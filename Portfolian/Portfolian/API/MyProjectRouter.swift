@@ -49,10 +49,10 @@ enum MyProjectRouter: URLRequestConvertible {
         switch self {
         case .createProject:
             if writingOwnerTag.names == [] {
-                return Project(article: parameter!, userId: "testUser1", ownerStack: "")
+                return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: "")
             } else {
                 let stringTag = writingOwnerTag.names[0].rawValue
-                return Project(article: parameter!, userId: "testUser1", ownerStack: stringTag)
+                return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: stringTag)
             }
         case .enterProject:
             return nil

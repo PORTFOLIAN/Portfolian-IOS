@@ -112,7 +112,7 @@ class SigninViewController: UIViewController {
         kakaoLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
         googleLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
         appleLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
-        swipeRecognizer()
+//        swipeRecognizer()
         
     }
     
@@ -220,7 +220,7 @@ class SigninViewController: UIViewController {
                     switch result {
                     case .success(let jwtInfo):
                         Jwt.shared = jwtInfo
-                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken)
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
                             self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
@@ -254,7 +254,7 @@ class SigninViewController: UIViewController {
                     switch result {
                     case .success(let jwtInfo):
                         Jwt.shared = jwtInfo
-                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken)
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
                             self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
@@ -274,26 +274,25 @@ class SigninViewController: UIViewController {
     }
     
     //MARK: - SwipeGesture
-    func swipeRecognizer() {
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
-        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
-        self.view.addGestureRecognizer(swipeRight)
-        
-    }
-    
-    @objc func respondToSwipeGesture(_ gesture: UIGestureRecognizer){
-        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-            switch swipeGesture.direction{
-            case UISwipeGestureRecognizer.Direction.right:
-                // 스와이프 시, 뒤로가기
-                if User.shared.flag == true {
-                    self.dismiss(animated: true, completion: nil)
-                }
-            default: break
-            }
-        }
-        
-    }
+//    func swipeRecognizer() {
+//        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
+//        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+//        self.view.addGestureRecognizer(swipeRight)
+//
+//    }
+//
+//    @objc func respondToSwipeGesture(_ gesture: UIGestureRecognizer){
+//        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+//            switch swipeGesture.direction{
+//            case UISwipeGestureRecognizer.Direction.right:
+//                // 스와이프 시, 뒤로가기
+//                self.dismiss(animated: true, completion: nil)
+//
+//            default: break
+//            }
+//        }
+//
+//    }
     
 }
 

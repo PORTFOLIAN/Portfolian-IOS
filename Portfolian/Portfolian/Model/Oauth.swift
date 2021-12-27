@@ -13,7 +13,7 @@ struct Jwt: Codable {
     let isNew: Bool
     var refreshToken: String
     var accessToken: String
-    let userId: String
+    var userId: String
     init() {
         self.code = 0
         self.isNew = true

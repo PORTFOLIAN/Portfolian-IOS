@@ -20,14 +20,14 @@ struct ProjectSearch: Codable{
 }
 
 struct ProjectArticle: Codable {
-        var title: String?
-        var stackList: [String]?
-        var subjectDescription: String?
-        var projectTime: String?
-        var condition: String?
-        var progress: String?
-        var description: String?
-        var capacity: Int?
+    var title: String?
+    var stackList: [String]?
+    var subjectDescription: String?
+    var projectTime: String?
+    var condition: String?
+    var progress: String?
+    var description: String?
+    var capacity: Int?
 }
 
 struct RecruitWriting {
@@ -47,7 +47,7 @@ struct ProjectInfo : Codable {
     let title: String
     let capacity: Int
     let view: Int
-    let bookMark: Int
+    let bookMark: Bool
     let status: Int
     let stackList: [String]
     let contents: Contents
@@ -63,6 +63,7 @@ struct ProjectInfo : Codable {
         let userId: String
         let nickName: String
         let description: String
+        let stack: String
         let photo: String
     }
 }
@@ -96,4 +97,3 @@ struct ProjectListInfo : Codable {
 
 var recruitWriting = RecruitWriting()
 var projectListInfo = ProjectListInfo()
-

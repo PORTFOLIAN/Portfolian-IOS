@@ -38,7 +38,8 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         button.tintColor = UIColor(rgb: 0xCCCCCC)
         return button
     }()
-    
+    var flag = false
+
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,9 +82,10 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
                 switch result{
                 case .success:
                     self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
-                    
+                    self.flag = true
                 case .failure(let error):
                     print(error)
+                    
                 }
                 
             }

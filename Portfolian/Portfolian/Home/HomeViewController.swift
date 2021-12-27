@@ -80,6 +80,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         
         subview()
         constraints()
+        editType = .yet
 //        self.tableView.separatorStyle = .none
     }
     
@@ -295,12 +296,15 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         MyAlamofireManager.shared.getProject(projectID: projectId) { result in
             switch result {
             case .success(let projectInfo):
+
                 for tag in projectInfo.stackList{
                     guard let tagName = Tag.Name(rawValue: tag) else { return }
                     writingTeamTag.names.append(tagName)
                 }
+                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+                writingOwnerTag.names.append(tagName)
+
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                WritingSaveVC.modalPresentationStyle = .fullScreen
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
             case .failure(let error):
 //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)

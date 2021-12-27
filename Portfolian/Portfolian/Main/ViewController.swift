@@ -22,12 +22,13 @@ class ViewController: UITabBarController {
         MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
             switch result {
             case .success(let articleList):
-                print(12341234)
-                let articleList = articleList
+                print("a")
             case .failure:
                 print("error?")
             }
         }
+
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -57,19 +58,35 @@ class ViewController: UITabBarController {
                 }
                 else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    self.setViewControllers(viewControllers, animated: true)
                     
+                    self.setViewControllers(viewControllers, animated: true)
 
                     let request: NSFetchRequest<Token> = Token.fetchRequest()
                     let fetchResult = PersistenceManager.shared.fetch(request: request)
                     fetchResult.forEach {
+                        
                         guard let accessToken = $0.accessToken else {return}
                         Jwt.shared.accessToken = accessToken
                         guard let refreshToken = $0.refreshToken else {return}
                         Jwt.shared.refreshToken = refreshToken
+                        guard let userId = $0.userId else {return}
+                        Jwt.shared.userId = userId
                         }
-                    print("afafaa"+Jwt.shared.refreshToken)
+                    MyAlamofireManager.shared.getMyProfile { response in
+                        switch response {
+                        case .success(let user):
+                            if user.stackList != [] {
+                                for stack in user.stackList {
+                                    myTag.names.append(Tag.Name(rawValue: stack)!)
+                                }
+                            }
+                        case .failure(let error):
 
+                            print(error)
+                        default:
+                            break
+                        }
+                    }
                 }
             }
         } else {

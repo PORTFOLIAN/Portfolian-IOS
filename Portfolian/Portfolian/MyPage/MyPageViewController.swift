@@ -67,7 +67,27 @@ class MyPageViewController: UIViewController {
         navigationItem.title = "마이페이지"
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
+        MyAlamofireManager.shared.getMyProfile { response in
+            switch response {
+            case .success(let user):
+                self.userNameLabel.text = user.nickName
+                self.introduceLabel.text = user.description
+//                if user.stackList != [] {
+//                    for stack in user.stackList {
+//                        myTag.names.append(Tag.Name(rawValue: stack)!)
+//                    }
+//                }
+//                myTag.names.append(Tag.Name(rawValue: "backEnd")!)
+//                self.tagCollectionView.reloadData()
 
+                
+                print(myTag)
+            case .failure(let error):
+                print(error)
+            default:
+                break
+            }
+        }
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
 

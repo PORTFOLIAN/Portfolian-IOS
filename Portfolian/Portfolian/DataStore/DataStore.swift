@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 var registrationType: RegistrationType?
-
+var editType: EditType?
 enum RegistrationType {
     case Searching
     case WritingTeam
@@ -16,7 +16,10 @@ enum RegistrationType {
     case Writing
     case MyPage
 }
-
+enum EditType {
+    case edit
+    case yet
+}
 struct DataStore {
     var user: User?
 }

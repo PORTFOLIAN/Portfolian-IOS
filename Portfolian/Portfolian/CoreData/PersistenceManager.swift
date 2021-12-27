@@ -21,6 +21,7 @@ struct Person {
 struct JwtToken {
     var accessToken: String?
     var refreshToken: String?
+    var userId: String?
 }
 class PersistenceManager {
 
@@ -58,7 +59,8 @@ class PersistenceManager {
             let managedObject = NSManagedObject(entity: entity, insertInto: self.context)
             managedObject.setValue(token.accessToken, forKey: "accessToken")
             managedObject.setValue(token.refreshToken, forKey: "refreshToken")
-            
+            managedObject.setValue(token.userId, forKey: "userId")
+
             do {
                 try context.save()
                 return true

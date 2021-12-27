@@ -51,6 +51,7 @@ class TagCollectionViewCell: UICollectionViewCell {
     func initState() -> Bool? {
         let clickedTags: Bool?
         switch registrationType {
+            
         case .WritingTeam:
             clickedTags = writingTeamTag.names.contains(Tag.Name.allCases[index])
         case .WritingOwner:

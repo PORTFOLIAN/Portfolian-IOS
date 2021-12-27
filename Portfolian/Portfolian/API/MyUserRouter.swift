@@ -12,7 +12,7 @@ import SwiftyJSON
 enum MyUserRouter: URLRequestConvertible {
     // 검색 관련 api
     case patchNickName(nickName: String)
-    
+    case getMyProfile
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users")!
     }
@@ -21,6 +21,8 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName:
             return .patch
+        case .getMyProfile:
+            return .get
         }
     }
    
@@ -28,6 +30,9 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName:
             return "\(Jwt.shared.userId)/nickName"
+        case .getMyProfile:
+            print(Jwt.shared.userId)
+            return "\(Jwt.shared.userId)/info"
         }
     }
     
@@ -48,7 +53,8 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName:
             request = try JSONParameterEncoder().encode(parameter, into: request)
-            
+        case .getMyProfile:
+            return request
         }
         return request
     }

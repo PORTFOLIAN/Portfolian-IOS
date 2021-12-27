@@ -10,14 +10,24 @@ import SnapKit
 import Then
 import Alamofire
 import SwiftyMarkdown
+import KakaoSDKTemplate
 class WritingSaveViewController: UIViewController {
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
     lazy var shareBarButtonItem = UIBarButtonItem(image: UIImage(named: "Share"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
-    
 
+    lazy var leaderStackTitleLabel = UILabel().then({ UILabel in
+        UILabel.text = "팀장의 사용 기술"
+        UILabel.textColor = .black
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+    })
+    lazy var teamStackTitleLabel = UILabel().then({ UILabel in
+        UILabel.text = "팀원의 사용 기술"
+        UILabel.textColor = .black
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+    })
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
-//    lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
+    lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     lazy var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     lazy var titleLabel = UILabel().then({ UILabel in
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
@@ -102,7 +112,6 @@ class WritingSaveViewController: UIViewController {
         UITextView.sizeToFit()
         UITextView.isScrollEnabled = false
         UITextView.delegate = self
-        
     })
     lazy var footerView = UIView().then { UIView in
     }
@@ -136,6 +145,7 @@ class WritingSaveViewController: UIViewController {
                 self.periodLabel.text = projectInfo.contents.projectTime
                 self.optionLabel.text = projectInfo.contents.recruitmentCondition
                 self.proceedLabel.text = projectInfo.contents.progress
+                
                 let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
                 self.detailTextView.attributedText = md.attributedString()
                 self.configureLabel(md: md)
@@ -146,33 +156,42 @@ class WritingSaveViewController: UIViewController {
             }
         }
         DispatchQueue.main.async {
+            self.tagCollectionView.reloadData()
+            var height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+            self.tagCollectionView.snp.updateConstraints {
+                $0.height.equalTo(height)
+            }
             self.tagsCollectionView.reloadData()
-            let height = self.tagsCollectionView.collectionViewLayout.collectionViewContentSize.height
+            height = self.tagsCollectionView.collectionViewLayout.collectionViewContentSize.height
             self.tagsCollectionView.snp.updateConstraints {
                 $0.height.equalTo(height)
             }
-        self.view.setNeedsLayout()
+            self.view.setNeedsLayout()
         }
-        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        tagCollectionView.isUserInteractionEnabled = false
         tagsCollectionView.isUserInteractionEnabled = false
-        
+
         navigationItem.rightBarButtonItems = [shareBarButtonItem]
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(scrollView)
-        view.addSubview(tagsCollectionView)
-        view.addSubview(leftUIView)
-        view.addSubview(recruitLabel)
-        view.addSubview(lineViewFirst)
-        view.addSubview(lineViewSecond)
-        view.addSubview(lineViewThird)
-        view.addSubview(footerView)
         scrollView.addSubview(contentView)
+        contentView.addSubview(tagCollectionView)
+        contentView.addSubview(tagsCollectionView)
+        contentView.addSubview(leaderStackTitleLabel)
+        contentView.addSubview(teamStackTitleLabel)
+        contentView.addSubview(leftUIView)
+        contentView.addSubview(recruitLabel)
+        contentView.addSubview(lineViewFirst)
+        contentView.addSubview(lineViewSecond)
+        contentView.addSubview(lineViewThird)
+        view.addSubview(footerView)
+        
         contentView.addSubview(explainTitleLabel)
         contentView.addSubview(periodTitleLabel)
         contentView.addSubview(optionTitleLabel)
@@ -183,8 +202,18 @@ class WritingSaveViewController: UIViewController {
         contentView.addSubview(optionLabel)
         contentView.addSubview(proceedLabel)
         contentView.addSubview(detailTextView)
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(viewsLabel.snp.bottom)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(footerView.snp.top)
+        }
+        contentView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(scrollView)
+            make.leading.trailing.equalTo(scrollView).inset(20)
+            make.width.equalTo(scrollView).offset(-40)
+        }
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(view.safeAreaLayoutGuide).inset(40)
+            make.leading.equalTo(view.safeAreaLayoutGuide).offset(10)
             make.trailing.equalTo(view.safeAreaLayoutGuide)
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(60)
@@ -194,12 +223,27 @@ class WritingSaveViewController: UIViewController {
             make.leading.equalTo(titleLabel)
         }
         lineViewFirst.snp.makeConstraints { make in
-            make.top.equalTo(viewsLabel.snp.bottom).offset(10)
+            make.top.equalTo(contentView)
             make.leading.trailing.equalTo(view).inset(10)
             make.height.equalTo(1)
         }
-        tagsCollectionView.snp.makeConstraints { make in
+        leaderStackTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(lineViewFirst.snp.bottom).offset(10)
+            make.leading.trailing.equalTo(view).inset(10)
+        }
+        
+        tagCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(leaderStackTitleLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.height.equalTo(0)
+        }
+        
+        teamStackTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(tagCollectionView.snp.bottom).offset(10)
+            make.leading.trailing.equalTo(view).inset(10)
+        }
+        tagsCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(teamStackTitleLabel.snp.bottom).offset(10)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).offset(10)
             make.height.equalTo(0)
         }
@@ -220,18 +264,9 @@ class WritingSaveViewController: UIViewController {
             make.height.equalTo(1)
         }
 
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(lineViewSecond.snp.bottom)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(footerView.snp.top)
-        }
-        contentView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(scrollView)
-            make.leading.trailing.equalTo(scrollView).inset(20)
-            make.width.equalTo(scrollView).offset(-40)
-        }
+        
         explainTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView)
+            make.top.equalTo(lineViewSecond).offset(10)
             make.leading.equalTo(leftUIView)
         }
         
@@ -286,22 +321,60 @@ class WritingSaveViewController: UIViewController {
             make.bottom.equalTo(view.snp.bottom)
         }
         // Do any additional setup after loading the view.
-//        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
-//        tagCollectionView.delegate = self
-//        tagCollectionView.dataSource = self
+        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagCollectionView.delegate = self
+        tagCollectionView.dataSource = self
 
         tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
+        scrollView.delegate = self
+        
+        editType = .yet
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
-        writingTeamTag.names = []
+        switch editType {
+        case .yet:
+            writingTeamTag.names = []
+            writingOwnerTag.names = []
+        default:
+            break
+        }
     }
-    @objc func buttonPressed(_ sender : UIButton){
+    
+    func alert(_ title: String){
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        let editAction = UIAlertAction(title: "수정하기", style: .default) { _ in
+            print("채워진 writing으로 가는데 getProject resistrationType처럼 글작성, 글수정이라는 걸 만들어준다. push로 해주고 <누르면 임시저장 같은거 없이 바로 뒤로가기 해주고 저장눌러도 바로 뒤로가기 해주기")
+            editType = .edit
+            let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
+            self.navigationController?.pushViewController(WritingVC, animated: true)
+        }
         
+        let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
+            print("삭제하고 홈화면으로 가기")
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        alert.addAction(cancelAction)
+        alert.addAction(editAction)
+        alert.addAction(refuseAction)
+        self.present(alert, animated: false)
+    }
+    
+    @objc func buttonPressed(_ sender : UIButton){
+        switch sender {
+            
+        case shareBarButtonItem:
+            print("공유")
+        case editButtonItem:
+            self.alert("")
+        default:
+            print("error?")
+        }
     }
     
     private func configureLabel(md: SwiftyMarkdown) {
@@ -350,7 +423,18 @@ extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
+        switch collectionView {
+        case tagCollectionView:
+            let tag = writingOwnerTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let label = TagButton().then {
+                $0.informTextInfo(text: tagName, fontSize: 16)
+                $0.sizeToFit()
+            }
+            let size = label.frame.size
+            return CGSize(width: size.width, height: size.height)
+        default:
             let tag = writingTeamTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
             let tagName = tagInfo.name
@@ -360,7 +444,8 @@ extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
             }
             let size = label.frame.size
             return CGSize(width: size.width, height: size.height)
-//        }
+        
+       }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -373,12 +458,26 @@ extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
 extension WritingSaveViewController: UICollectionViewDataSource {
     // 한 섹션에 몇개의 컬렉션 셀을 보여줄지
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case tagCollectionView:
+            return writingOwnerTag.names.count
+        default:
             return writingTeamTag.names.count
+        }
     }
     
     // 셀을 어떻게 보여줄지
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+        switch collectionView {
+        case tagCollectionView:
+            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let tag = writingOwnerTag.names[indexPath.row]
+            let tagInfo = Tag.shared.getTagInfo(tag: tag)
+            let tagName = tagInfo.name
+            let tagColor = tagInfo.color
+            cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
+            return cell
+        default:
             let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
             let tag = writingTeamTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
@@ -386,11 +485,8 @@ extension WritingSaveViewController: UICollectionViewDataSource {
             let tagColor = tagInfo.color
             cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
             return cell
-//        }
-        
+       }
     }
-    
-    
 }
 extension WritingSaveViewController: UITextViewDelegate{
     // 입력된 포지션에 따라 라벨의 문자열의 인덱스 반환
@@ -399,4 +495,10 @@ extension WritingSaveViewController: UITextViewDelegate{
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         return true
     }
+}
+extension WritingSaveViewController: UIScrollViewDelegate {
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        print("위로 가버렷")
+    }
+    
 }

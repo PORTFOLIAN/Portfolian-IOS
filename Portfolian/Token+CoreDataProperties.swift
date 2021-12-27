@@ -18,7 +18,7 @@ extension Token {
 
     @NSManaged public var accessToken: String?
     @NSManaged public var refreshToken: String?
-
+    @NSManaged public var userId: String?
 }
 
 extension Token : Identifiable {

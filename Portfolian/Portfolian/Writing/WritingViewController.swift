@@ -53,7 +53,7 @@ class WritingViewController: UIViewController {
     
     lazy var teamConfiguration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
-        let title = "사용 기술을 선택해주세요. (최대 7개)"
+        let title = "팀원들의 사용 기술을 선택해주세요."
         let icon = UIImage(systemName: "chevron.right")
         configuration.title = title
         configuration.image = icon
@@ -116,7 +116,7 @@ class WritingViewController: UIViewController {
     lazy var detailTextView = UITextView().then({ UITextView in
         UITextView.text = detailInit
         UITextView.textColor = ColorPortfolian.gray2
-        UITextView.textContainer.maximumNumberOfLines = 15
+        UITextView.textContainer.maximumNumberOfLines = 0
         UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     
@@ -186,8 +186,27 @@ class WritingViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .Writing
-
-        if isMovingToParent == true {
+        
+        if editType == .edit {
+            MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
+                switch result {
+                case .success(let projectInfo):
+                    
+                    print("view did load \(writingTeamTag.names)")
+                    self.titleTextField.text = projectInfo.title
+                    self.recruitTextField.text = "모집인원 " + String(projectInfo.capacity)
+                    self.explainTextView.text = projectInfo.contents.subjectDescription
+                    self.periodTextView.text = projectInfo.contents.projectTime
+                    self.optionTextView.text = projectInfo.contents.recruitmentCondition
+                    self.proceedTextView.text = projectInfo.contents.progress
+                    self.detailTextView.text = projectInfo.contents.description
+                    
+                case .failure(let error):
+                    //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
+                    print("\(error)######")
+                }
+            }
+        } else if isMovingToParent == true {
             fetchWriting()
         }
         
@@ -414,7 +433,7 @@ class WritingViewController: UIViewController {
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColor.black]
-        let saveAction = UIAlertAction(title: "저장", style: .default) { _ in
+        let saveAction = UIAlertAction(title: "저장하기", style: .default) { _ in
             self.saveWriting()
             self.navigationController?.popViewController(animated: true)
             
@@ -545,7 +564,6 @@ class WritingViewController: UIViewController {
             }
             
             let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
-            
             MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
@@ -565,7 +583,28 @@ class WritingViewController: UIViewController {
             
             
         case cancelBarButtonItem:
-            self.alert("임시 저장하시겠습니까?")
+            if editType == .yet {
+                self.alert("임시 저장하시겠습니까?")
+            } else {
+                let numRecruit = Int(recruitTextField.text!)
+                var stringTags: [String] = []
+                for tag in writingTeamTag.names {
+                    stringTags.append(tag.rawValue)
+                }
+                let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
+                MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case .success:
+                        let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                        self.navigationController?.popViewController(animated: true)
+                        
+                    case .failure(let error):
+                        print(error)
+                        self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
+                    }
+                }
+            }
         case stackButton:
             registrationType = .WritingOwner
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")

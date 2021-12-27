@@ -36,6 +36,7 @@
 		2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */; };
 		2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B3273C7A95005A09D0 /* DataStore.swift */; };
 		2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */; };
+		2AC842D72772BFE900A8CE60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */; };
 		2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */; };
 		2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD02A78272C3A5100945DC5 /* Writing.storyboard */; };
 		2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */; };
@@ -108,6 +109,7 @@
 		2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
 		2ABBF3B3273C7A95005A09D0 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTableViewCell.swift; sourceTree = "<group>"; };
 		2AD02A78272C3A5100945DC5 /* Writing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Writing.storyboard; sourceTree = "<group>"; };
 		2AD02A7A272C3A9F00945DC5 /* WritingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingViewController.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 				2AFB53ED271C0EC900B6FFC6 /* Assets.xcassets */,
 				2AFB53EF271C0EC900B6FFC6 /* LaunchScreen.storyboard */,
 				2AFB53F2271C0EC900B6FFC6 /* Info.plist */,
+				2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */,
 			);
 			path = Portfolian;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 			files = (
 				2AFB53FA271C0FC500B6FFC6 /* Auth.storyboard in Resources */,
 				2AFB5420271E302C00B6FFC6 /* Bookmark.storyboard in Resources */,
+				2AC842D72772BFE900A8CE60 /* GoogleService-Info.plist in Resources */,
 				2AD02A79272C3A5100945DC5 /* Writing.storyboard in Resources */,
 				2AFB53F1271C0EC900B6FFC6 /* LaunchScreen.storyboard in Resources */,
 				2AFB540B271C7B2F00B6FFC6 /* NotoSansKR-Medium.otf in Resources */,

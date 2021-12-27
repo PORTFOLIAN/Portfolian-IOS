@@ -97,6 +97,8 @@ extension SettingViewController: UITableViewDelegate {
                 PersistenceManager.shared.deleteAll(request: requestToken)
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
+                
+                
                 self.goToApp()
                 
             }
