@@ -64,8 +64,7 @@ final class MyAlamofireManager {
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-                guard let projectInfo = try? JSONDecoder().decode(ProjectInfo.self, from: responseData) else { return }
-
+                projectInfo = try! JSONDecoder().decode(ProjectInfo.self, from: responseData)
                 completion(.success(projectInfo))
             }
     }
@@ -74,13 +73,24 @@ final class MyAlamofireManager {
         self.session
             .request(MyProjectRouter.arrangeProject(searchOption: searchOption))
             .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                let responseJson = JSON(responseValue)
+                print(responseJson)
+            }
             .responseData { response in
                 
                 guard let responseData = response.data else { return }
+                
                 projectListInfo = try! JSONDecoder().decode(ProjectListInfo.self, from: responseData)
                 let code = projectListInfo.code
                 if code == 1 {
+                    
                     completion(.success(projectListInfo))
+                    
+                } else if code == -99 {
+                    // accessToken 갱신
+
                 } else {
                     completion(.failure(.getProjectListError))
                 }
@@ -90,12 +100,24 @@ final class MyAlamofireManager {
         self.session
             .request(MyOauthRouter.postKaKaoToken(token: token))
             .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                let responseJson = JSON(responseValue)
+                print("@@@@\(responseJson)")
+
+            }
             .responseData { response in
+                
                 guard let responseData = response.data else { return }
+                
                 guard let jwt = try? JSONDecoder().decode(Jwt.self, from: responseData) else { return }
+                
+                Jwt.shared = jwt
                 let code = jwt.code
                 if code == 1 {
                     completion(.success(jwt))
+                } else if code == -99 {
+                    // accessToken 갱신
                 } else {
                     completion(.failure(.getProjectListError))
                 }
@@ -112,9 +134,10 @@ final class MyAlamofireManager {
                 guard let code = responseJson["code"].int,
                       let message = responseJson["message"].string else { return }
                 if code == 1 {
-                    
                     completion(.success(code))
-                    
+                } else if code == -99 {
+                    // accessToken 갱신
+
                 } else {
                     completion(.failure(.testError))
                 }
@@ -135,6 +158,98 @@ final class MyAlamofireManager {
 //                } else {
 //                    completion(.failure(.getProjectListError))
 //                }
+            }
+    }
+    func renewAccessToken() {
+        self.session
+            .request(MyOauthRouter.postRefreshToken)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                
+                guard let responseValue = response.value else { return }
+                let responseJson = JSON(responseValue)
+
+                guard let code = responseJson["code"].int,
+                      let accessToken = responseJson["accessToken"].string else { return }
+
+                if code == 1 {
+                    Jwt.shared.accessToken = accessToken
+                    let myToken = JwtToken(accessToken: Jwt.shared.accessToken, refreshToken: Jwt.shared.refreshToken, userId: Jwt.shared.userId)
+                    PersistenceManager.shared.insertToken(token: myToken)
+                    
+                    print("갱신할때 있는 refreshToken은 \(Jwt.shared)")
+                } else {
+                    print(MyError.adminError)
+                }
+            }
+    }
+    
+    func patchLogout(completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyOauthRouter.patchLogout)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                
+                guard let responseData = response.data else { return }
+                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.retryError))
+                }
+            }
+    }
+    func putProject(projectArticle: ProjectArticle, completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyProjectRouter.putProject(term: projectArticle))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                
+                guard let responseData = response.data else { return }
+                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.retryError))
+                }
+            }
+    }
+    func deleteUserId(completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.deleteUserId)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                
+                guard let responseData = response.data else { return }
+                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.retryError))
+                }
+            }
+    }
+    func postBookmark(bookmark: Bookmark, completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.postBookMark(bookmark: bookmark))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                
+                guard let responseData = response.data else { return }
+                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.retryError))
+                }
             }
     }
 }

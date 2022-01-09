@@ -73,13 +73,16 @@ extension SettingViewController: UITableViewDelegate {
                 print(error)
             }
             else {
-                print("logout() success.")
+                MyAlamofireManager.shared.patchLogout { result in
+                    print("logout() success.")
+                }
                 let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
                 PersistenceManager.shared.deleteAll(request: requestWriting)
                 let requestToken: NSFetchRequest<Token> = Token.fetchRequest()
                 PersistenceManager.shared.deleteAll(request: requestToken)
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
+                
                 self.goToApp()
             }
         }
@@ -97,7 +100,9 @@ extension SettingViewController: UITableViewDelegate {
                 PersistenceManager.shared.deleteAll(request: requestToken)
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
-                
+                MyAlamofireManager.shared.deleteUserId { result in
+                    
+                }
                 
                 self.goToApp()
                 

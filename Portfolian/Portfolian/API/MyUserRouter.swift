@@ -13,6 +13,8 @@ enum MyUserRouter: URLRequestConvertible {
     // 검색 관련 api
     case patchNickName(nickName: String)
     case getMyProfile
+    case deleteUserId
+    case postBookMark(bookmark: Bookmark)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users")!
     }
@@ -23,6 +25,10 @@ enum MyUserRouter: URLRequestConvertible {
             return .patch
         case .getMyProfile:
             return .get
+        case .deleteUserId:
+            return .delete
+        case .postBookMark:
+            return .post
         }
     }
    
@@ -33,17 +39,24 @@ enum MyUserRouter: URLRequestConvertible {
         case .getMyProfile:
             print(Jwt.shared.userId)
             return "\(Jwt.shared.userId)/info"
+        case .deleteUserId:
+            return "\(Jwt.shared.userId)"
+        case .postBookMark:
+            return "\(Jwt.shared.userId)/bookMark"
         }
     }
     
-    var parameter: [String: String]? {
+    var parameter: Any? {
         switch self {
         case let .patchNickName(nickName):
             return ["nickName": nickName]
+        case let .postBookMark(bookmark):
+            return bookmark
         default:
             return nil
         }
     }
+    
     
     func asURLRequest() throws -> URLRequest {
         let url  = baseURL.appendingPathComponent(endPoint)
@@ -52,8 +65,10 @@ enum MyUserRouter: URLRequestConvertible {
         request.method = method
         switch self {
         case .patchNickName:
-            request = try JSONParameterEncoder().encode(parameter, into: request)
-        case .getMyProfile:
+            request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
+        case .postBookMark:
+            request = try JSONParameterEncoder().encode(parameter as? Bookmark, into: request)
+        case .getMyProfile, .deleteUserId:
             return request
         }
         return request
@@ -61,3 +76,8 @@ enum MyUserRouter: URLRequestConvertible {
 }
 
 
+struct Bookmark: Codable {
+    var projectId: String
+    var like: Bool
+}
+//북마크로 하기

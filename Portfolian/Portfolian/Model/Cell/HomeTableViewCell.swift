@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import MessageKit
 protocol BookmarkButtonDelegate: AnyObject {
-    func didTouchBookmarkButton(didClicked: Bool)
+    func didTouchBookmarkButton(didClicked: Bool, sender: UIButton)
     
 }
 class HomeTableViewCell: UITableViewCell {
@@ -169,14 +170,16 @@ class HomeTableViewCell: UITableViewCell {
     }
     
     @objc func buttonPressed(_ sender: UIButton) {
-        cellDelegate?.didTouchBookmarkButton(didClicked: isClicked)
+        cellDelegate?.didTouchBookmarkButton(didClicked: isClicked,sender: sender)
         isClicked.toggle()
         if isClicked == true{
             sender.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         }else{
             sender.setImage(UIImage(named: "Bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
             }
-    }
+        
+        }
+
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

@@ -14,7 +14,7 @@ struct Project: Codable {
 }
 
 struct ProjectSearch: Codable{
-    let stackList: String
+    let stack: String
     let sort: String
     let keyword: String
 }
@@ -58,6 +58,13 @@ struct ProjectInfo : Codable {
         let recruitmentCondition: String
         let progress: String
         let description: String
+        init() {
+            self.subjectDescription = String()
+            self.projectTime = String()
+            self.recruitmentCondition = String()
+            self.progress = String()
+            self.description = String()
+        }
     }
     struct Leader: Codable {
         let userId: String
@@ -65,6 +72,26 @@ struct ProjectInfo : Codable {
         let description: String
         let stack: String
         let photo: String
+        init() {
+            self.userId = String()
+            self.nickName = String()
+            self.description = String()
+            self.stack = String()
+            self.photo = String()
+        }
+    }
+    init() {
+        self.code = Int()
+        self.projectId = String()
+        self.title = String()
+        self.capacity = Int()
+        self.view = Int()
+        self.bookMark = Bool()
+        self.status = Int()
+        self.stackList = [String]()
+        self.contents = Contents()
+        self.leader = Leader()
+        
     }
 }
 
@@ -97,3 +124,4 @@ struct ProjectListInfo : Codable {
 
 var recruitWriting = RecruitWriting()
 var projectListInfo = ProjectListInfo()
+var projectInfo = ProjectInfo()

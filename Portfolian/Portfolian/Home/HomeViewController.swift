@@ -6,9 +6,13 @@
 //
 
 import UIKit
+import Then
+import SnapKit
 import Alamofire
+import MapKit
 
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
+    
     lazy var logo: UIBarButtonItem = {
         let image = UIImage(named: "Logo")?.resizeImage(size: CGSize(width: 150, height: 30)).withRenderingMode(.alwaysOriginal)
         let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
@@ -22,6 +26,24 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         button.tag = 2
         return button
     }()
+    var searchToggle : Bool = true
+    lazy var viewsCheckBox = UIButton().then({ UIButton in
+        UIButton.setImage(UIImage(named: "Checkbox"), for: .normal)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    })
+    lazy var viewsLabel = UILabel().then({ UILabel in
+        UILabel.text = "조회 순"
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
+    })
+    lazy var latestCheckBox = UIButton().then({ UIButton in
+        UIButton.setImage(UIImage(named: "CheckboxFill"), for: .normal)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    })
+    
+    lazy var latestLabel = UILabel().then({ UILabel in
+        UILabel.text = "최신 순"
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
+    })
     
     lazy var filter: UIBarButtonItem = {
         let image = UIImage(named: "Filter")
@@ -54,18 +76,19 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let projectSearch = ProjectSearch(stackList: "default", sort: "default", keyword: "default")
-        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
-            switch result {
-            case .success(let articleList):
-                let articleList = articleList
-            case .failure:
-                print("error?")
-            }
-        }
+        
+//        let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+//        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+//            switch result {
+//            case .success(let articleList):
+//                let articleList = articleList
+//            case .failure:
+//                print("error?")
+//            }
+//        }
         tableView.reloadData()
-        
-        
+        // 엑세스 토큰 갱신
+//        MyAlamofireManager.shared.renewAccessToken()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -118,9 +141,44 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
-        WritingVC.modalPresentationStyle = .fullScreen
-        self.navigationController?.pushViewController(WritingVC, animated: true)
+        switch sender {
+        case writeButton:
+            let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
+            WritingVC.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(WritingVC, animated: true)
+        case viewsCheckBox:
+            if searchToggle {
+                searchToggle.toggle()
+                viewsCheckBox.setImage(UIImage(named: "CheckboxFill"), for: .normal)
+                latestCheckBox.setImage(UIImage(named: "Checkbox"), for: .normal)
+                let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
+                MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.view.setNeedsLayout()
+                    }
+                }
+            }
+            
+        case latestCheckBox:
+            
+            if !searchToggle {
+                searchToggle.toggle()
+                latestCheckBox.setImage(UIImage(named: "CheckboxFill"), for: .normal)
+                viewsCheckBox.setImage(UIImage(named: "Checkbox"), for: .normal)
+
+                let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+                MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.view.setNeedsLayout()
+                    }
+                }
+            }
+        default:
+            break
+        }
+        
     }
     
     
@@ -157,15 +215,34 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         setUpItem()
         setUpLogo()
     }
-    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText != "" {
+            let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: searchText)
+            MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
+                }
+            }
+        } else {
+            let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
+                }
+            }
+        }
+        
+    }
     func updateSearchResults(for searchController: UISearchController) {
         
     }
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        
+        print(2)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
+        print(1)
         
         
     }
@@ -183,28 +260,62 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
  */
 
 extension HomeViewController: BookmarkButtonDelegate {
-    func didTouchBookmarkButton(didClicked: Bool) {
-        
-        
+    func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
+        let buttonPosition:CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
+        let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
+        print(indexPath)
+        var articleList = projectListInfo.articleList
+        let articleInfo = articleList[indexPath?[1] ?? 0]
+        let projectId = articleInfo.projectId
+        var like = false
+        like.toggle()
+        let bookmark = Bookmark(projectId: projectId, like: like)
+        MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
+            
+        }
     }
+    
 }
 
 extension HomeViewController {
     func subview() {
         view.addSubview(tableView)
         view.addSubview(writeButton)
+        view.addSubview(viewsCheckBox)
+        view.addSubview(viewsLabel)
+        view.addSubview(latestCheckBox)
+        view.addSubview(latestLabel)
     }
     
     func constraints() {
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
-            writeButton.bottomAnchor.constraint(equalTo: tableView.frameLayoutGuide.bottomAnchor, constant: -20),
-            writeButton.trailingAnchor.constraint(equalTo: tableView.frameLayoutGuide.trailingAnchor, constant: -20),
-        ])
+        latestLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-10)
+        }
+        latestCheckBox.snp.makeConstraints { make in
+            make.height.width.equalTo(15)
+            make.centerY.equalTo(latestLabel)
+            make.trailing.equalTo(latestLabel.snp.leading).offset(-10)
+        }
+        
+        viewsLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(latestCheckBox)
+            make.trailing.equalTo(latestCheckBox.snp.leading).offset(-10)
+        }
+        
+        viewsCheckBox.snp.makeConstraints { make in
+            make.height.width.equalTo(15)
+            make.centerY.equalTo(viewsLabel)
+            make.trailing.equalTo(viewsLabel.snp.leading).offset(-10)
+        }
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(viewsCheckBox.snp.bottom).offset(10)
+            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        writeButton.snp.makeConstraints { make in
+            make.trailing.bottom.equalTo(tableView.frameLayoutGuide)
+        }
     }
 }
 
@@ -220,7 +331,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
         cell.cellDelegate = self
         var articleList = projectListInfo.articleList
-        articleList.reverse()
         let articleInfo = articleList[indexPath[1]]
         cell.titleLabel.text = articleInfo.title
         let lenStackList = articleInfo.stackList.count
@@ -287,16 +397,17 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+//        print(indexPath)
         var articleList = projectListInfo.articleList
-        articleList.reverse()
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
         recruitWriting.newProjectID = projectId
         MyAlamofireManager.shared.getProject(projectID: projectId) { result in
             switch result {
-            case .success(let projectInfo):
-
+            case .success:
+                
+                writingTeamTag.names = []
+                writingOwnerTag.names = []
                 for tag in projectInfo.stackList{
                     guard let tagName = Tag.Name(rawValue: tag) else { return }
                     writingTeamTag.names.append(tagName)
@@ -306,6 +417,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
+                
             case .failure(let error):
 //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
                 print("\(error)######")

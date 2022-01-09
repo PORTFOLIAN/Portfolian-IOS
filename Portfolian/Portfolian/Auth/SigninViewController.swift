@@ -79,6 +79,7 @@ class SigninViewController: UIViewController {
         containerView.addSubview(googleLoginButton)
         containerView.addSubview(githubLoginButton)
         containerView.addSubview(appleLoginButton)
+        
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             containerView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
@@ -213,13 +214,10 @@ class SigninViewController: UIViewController {
             else {
                 print("loginWithKakaoAccount() success.")
                 guard let accessToken = oauthToken?.accessToken else { return }
-                let responseJson = JSON(["token":accessToken])
                 
-                guard let authData = try? responseJson.rawData() else { return }
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
                     switch result {
                     case .success(let jwtInfo):
-                        Jwt.shared = jwtInfo
                         let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
@@ -247,20 +245,17 @@ class SigninViewController: UIViewController {
             else {
                 print("loginWithKakaoAccount() success.")
                 guard let accessToken = oauthToken?.accessToken else { return }
-                let responseJson = JSON(["token":accessToken])
-                
-                guard let authData = try? responseJson.rawData() else { return }
+                print("#####\(accessToken)")
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
                     switch result {
                     case .success(let jwtInfo):
-                        Jwt.shared = jwtInfo
                         let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
-                            self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
-                            
+                            self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)
                         } else {
                             self.setNickName()
+                    
                         }
                         
                     case .failure(let error):
@@ -291,9 +286,5 @@ class SigninViewController: UIViewController {
 //            default: break
 //            }
 //        }
-//
 //    }
-    
 }
-
-

@@ -12,6 +12,8 @@ import CoreData
 import Alamofire
 import SwiftyJSON
 import KakaoSDKCommon
+import simd
+import AVFoundation
 
 class WritingViewController: UIViewController {
     let periodInit = "예시: 3개월, 2021.09 ~ 2021.11"
@@ -81,7 +83,7 @@ class WritingViewController: UIViewController {
         UITextField.placeholder = "모집 인원"
         UITextField.leftView = leftUIView
         UITextField.leftViewMode = .always
-        UITextField.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 18)
         UITextField.keyboardType = .numberPad
     })
     
@@ -89,35 +91,35 @@ class WritingViewController: UIViewController {
         UITextView.text = periodInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 2
-        UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     lazy var explainTextView = UITextView().then({ UITextView in
         UITextView.text = explainInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
-        UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     lazy var optionTextView = UITextView().then({ UITextView in
         UITextView.text = optionInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
-        UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     lazy var proceedTextView = UITextView().then({ UITextView in
         UITextView.text = proceedInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
-        UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     lazy var detailTextView = UITextView().then({ UITextView in
         UITextView.text = detailInit
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 0
-        UITextView.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     lazy var periodLabel = UILabel().then { UILabel in
@@ -194,12 +196,26 @@ class WritingViewController: UIViewController {
                     
                     print("view did load \(writingTeamTag.names)")
                     self.titleTextField.text = projectInfo.title
-                    self.recruitTextField.text = "모집인원 " + String(projectInfo.capacity)
+                    self.titleTextField.textColor = .black
+                    
+                    self.recruitTextField.text = String(projectInfo.capacity)
+                    self.recruitTextField.textColor = .black
+
                     self.explainTextView.text = projectInfo.contents.subjectDescription
+                    self.explainTextView.textColor = .black
+
                     self.periodTextView.text = projectInfo.contents.projectTime
+                    self.periodTextView.textColor = .black
+
                     self.optionTextView.text = projectInfo.contents.recruitmentCondition
+                    self.optionTextView.textColor = .black
+
                     self.proceedTextView.text = projectInfo.contents.progress
+                    self.proceedTextView.textColor = .black
+
                     self.detailTextView.text = projectInfo.contents.description
+                    self.detailTextView.textColor = .black
+
                     
                 case .failure(let error):
                     //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
@@ -470,7 +486,6 @@ class WritingViewController: UIViewController {
     func fetchWriting() {
         print("fetchWriting - start")
         
-
         let request: NSFetchRequest<Writing> = Writing.fetchRequest()
         let fetchResult = PersistenceManager.shared.fetch(request: request)
         fetchResult.forEach {
@@ -564,21 +579,73 @@ class WritingViewController: UIViewController {
             }
             
             let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
+            if editType == .yet {
             MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success:
-                    self.deleteWriting()
+                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
+                            switch result {
+                            case .success:
+                                self.deleteWriting()
+                                for tag in projectInfo.stackList{
+                                    guard let tagName = Tag.Name(rawValue: tag) else { return }
+                                    writingTeamTag.names.append(tagName)
+                                }
+                                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+                                writingOwnerTag.names.append(tagName)
+                                
+                                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                                self.navigationController?.popToRootViewController(animated: true)
+                                self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
+                            case .failure(let error):
+                                // self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
+                                print("\(error)")
+                            }
+                        }
                     
-                    let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                    WritingSaveVC.modalPresentationStyle = .fullScreen
-                    self.navigationController?.popToRootViewController(animated: true)
-                    self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                
                 case .failure(let error):
-                    print(error)
-                    self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
+                    switch error {
+                    case .testError:
+                        self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
+                    default:
+                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
+                        }
+                    }
+                    
+                }
             }
+            } else {
+                MyAlamofireManager.shared.putProject(projectArticle: projectArticle) { result in
+                    switch result {
+                    case .success:
+                        print("성공")
+                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
+                            switch result {
+                            case .success:
+                                writingOwnerTag.names = []
+                                writingTeamTag.names = []
+                                
+                                for tag in projectInfo.stackList{
+                                    guard let tagName = Tag.Name(rawValue: tag) else { return }
+                                    writingTeamTag.names.append(tagName)
+                                }
+                                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+                                writingOwnerTag.names.append(tagName)
+                                
+                                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                                self.navigationController?.popToRootViewController(animated: true)
+                                self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
+                            case .failure(let error):
+                                // self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
+                                print("\(error)")
+                            }
+                        }
+                    case .failure:
+                        print("실패")
+                    }
+                }
+                
             }
             
             
@@ -586,22 +653,13 @@ class WritingViewController: UIViewController {
             if editType == .yet {
                 self.alert("임시 저장하시겠습니까?")
             } else {
-                let numRecruit = Int(recruitTextField.text!)
-                var stringTags: [String] = []
-                for tag in writingTeamTag.names {
-                    stringTags.append(tag.rawValue)
-                }
-                let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
-                MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
-                    guard let self = self else { return }
+                MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
                     switch result {
                     case .success:
-                        let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                        print("WritingViewController \(writingTeamTag.names)")
                         self.navigationController?.popViewController(animated: true)
-                        
-                    case .failure(let error):
-                        print(error)
-                        self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
+                    default:
+                        break
                     }
                 }
             }

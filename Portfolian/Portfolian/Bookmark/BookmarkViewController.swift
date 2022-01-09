@@ -104,7 +104,7 @@ class BookmarkViewController: UIViewController {
 }
 
 extension BookmarkViewController: BookmarkButtonDelegate {
-    func didTouchBookmarkButton(didClicked: Bool) {
+    func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
         print("success")
     }
 }

@@ -18,6 +18,5 @@ struct User: Codable {
     let photo : String
     let github : String
     let mail : String
-    
 }
 

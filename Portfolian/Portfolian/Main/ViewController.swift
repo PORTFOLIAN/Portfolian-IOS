@@ -18,22 +18,27 @@ class ViewController: UITabBarController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
-        let projectSearch = ProjectSearch(stackList: "default", sort: "default", keyword: "default")
-        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
-            switch result {
-            case .success(let articleList):
-                print("a")
-            case .failure:
-                print("error?")
-            }
-        }
+        
+        print()
+        
 
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        kakaoAutoLogin()
+        
+        self.kakaoAutoLogin()
+        
+        let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+            switch result {
+            case .success(let articleList):
+                print("프로젝트 리스트 가져오기 성공")
+            case .failure:
+                print("프로젝트 리스트 가져오기 실패")
+            }
+        }
     }
     private func kakaoAutoLogin() {
         let viewControllers : [UIViewController] = [
@@ -42,7 +47,6 @@ class ViewController: UITabBarController {
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "Chat"), tag: 3),
             initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "Mypage"), tag: 4)
         ]
-        print("가")
         if (AuthApi.hasToken()) {
             UserApi.shared.accessTokenInfo { (_, error) in
                 if let error = error {
@@ -50,6 +54,7 @@ class ViewController: UITabBarController {
                         //로그인 필요
                         
                         self.goToApp()
+                        
                     }
                     else {
                         //기타 에러
@@ -72,6 +77,8 @@ class ViewController: UITabBarController {
                         guard let userId = $0.userId else {return}
                         Jwt.shared.userId = userId
                         }
+                    
+                    
                     MyAlamofireManager.shared.getMyProfile { response in
                         switch response {
                         case .success(let user):
@@ -81,12 +88,12 @@ class ViewController: UITabBarController {
                                 }
                             }
                         case .failure(let error):
-
                             print(error)
                         default:
                             break
                         }
                     }
+                    
                 }
             }
         } else {

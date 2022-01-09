@@ -35,6 +35,9 @@ PODS:
   - MessageKit (3.7.0):
     - InputBarAccessoryView (~> 5.4.0)
   - SnapKit (5.0.1)
+  - Socket.IO-Client-Swift (16.0.1):
+    - Starscream (~> 4.0)
+  - Starscream (4.0.4)
   - SwiftyJSON (5.0.1)
   - SwiftyMarkdown (1.2.3)
   - Then (2.7.0)
@@ -49,6 +52,7 @@ DEPENDENCIES:
   - KakaoSDKUser
   - MessageKit
   - SnapKit
+  - Socket.IO-Client-Swift
   - SwiftyJSON
   - SwiftyMarkdown
   - Then
@@ -69,6 +73,8 @@ SPEC REPOS:
     - KakaoSDKUser
     - MessageKit
     - SnapKit
+    - Socket.IO-Client-Swift
+    - Starscream
     - SwiftyJSON
     - SwiftyMarkdown
     - Then
@@ -88,11 +94,13 @@ SPEC CHECKSUMS:
   KakaoSDKUser: 937f1acc1380192d38483480d5bf01b141471829
   MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  Socket.IO-Client-Swift: c116d6dc9fd6be9c259bacfe143f8725bce7d79e
+  Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   SwiftyMarkdown: be01b2905694bd7bfd95330cd43704bfdb978aec
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
 
-PODFILE CHECKSUM: 8f5bc3e7554ff0b7996bcfc50cd30218778a27bb
+PODFILE CHECKSUM: 9030822c04f4c8f6429806f7a93a1b602b336296
 
 COCOAPODS: 1.11.2

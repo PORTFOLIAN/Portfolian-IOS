@@ -33,6 +33,7 @@ pod 'Toast-Swift'
 pod 'SwiftyJSON'
 pod 'SwiftyMarkdown'
 pod 'MessageKit'
+pod 'Socket.IO-Client-Swift'
 # pod 'Firebase'
   # Pods for Portfolian`
 

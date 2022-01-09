@@ -14,7 +14,10 @@ import KakaoSDKTemplate
 class WritingSaveViewController: UIViewController {
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
+    lazy var editBarButtonItem = UIBarButtonItem(image: UIImage(named: "Edit"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
     lazy var shareBarButtonItem = UIBarButtonItem(image: UIImage(named: "Share"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
+    lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
+
 
     lazy var leaderStackTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "팀장의 사용 기술"
@@ -132,29 +135,23 @@ class WritingSaveViewController: UIViewController {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
         registrationType = .Writing
-        let newProjectID = recruitWriting.newProjectID as String
-        MyAlamofireManager.shared.getProject(projectID: newProjectID) { result in
-            switch result {
-            case .success(let projectInfo):
+//        let newProjectID = recruitWriting.newProjectID as String
+        
+        print("WritingSaveViewController \(writingTeamTag.names)")
+        titleLabel.text = projectInfo.title
+        viewsLabel.text = "조회수 " + String(projectInfo.view)
+        recruitLabel.text = "모집인원 " + String(projectInfo.capacity)
+        explainLabel.text = projectInfo.contents.subjectDescription
+        periodLabel.text = projectInfo.contents.projectTime
+        optionLabel.text = projectInfo.contents.recruitmentCondition
+        proceedLabel.text = projectInfo.contents.progress
+        
+        let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
+        detailTextView.attributedText = md.attributedString()
+        configureLabel(md: md)
                 
-                print("view did load \(writingTeamTag.names)")
-                self.titleLabel.text = projectInfo.title
-                self.viewsLabel.text = "조회수 " + String(projectInfo.view)
-                self.recruitLabel.text = "모집인원 " + String(projectInfo.capacity)
-                self.explainLabel.text = projectInfo.contents.subjectDescription
-                self.periodLabel.text = projectInfo.contents.projectTime
-                self.optionLabel.text = projectInfo.contents.recruitmentCondition
-                self.proceedLabel.text = projectInfo.contents.progress
-                
-                let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
-                self.detailTextView.attributedText = md.attributedString()
-                self.configureLabel(md: md)
-                
-            case .failure(let error):
-//                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
-                print("\(error)######")
-            }
-        }
+        
+        
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
             var height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
@@ -175,8 +172,9 @@ class WritingSaveViewController: UIViewController {
 
         tagCollectionView.isUserInteractionEnabled = false
         tagsCollectionView.isUserInteractionEnabled = false
+        navigationItem.leftBarButtonItem = cancelBarButtonItem
 
-        navigationItem.rightBarButtonItems = [shareBarButtonItem]
+        navigationItem.rightBarButtonItems = [editBarButtonItem, shareBarButtonItem]
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(scrollView)
@@ -345,8 +343,9 @@ class WritingSaveViewController: UIViewController {
         }
     }
     
-    func alert(_ title: String){
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+    func alert() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
         let editAction = UIAlertAction(title: "수정하기", style: .default) { _ in
             print("채워진 writing으로 가는데 getProject resistrationType처럼 글작성, 글수정이라는 걸 만들어준다. push로 해주고 <누르면 임시저장 같은거 없이 바로 뒤로가기 해주고 저장눌러도 바로 뒤로가기 해주기")
             editType = .edit
@@ -356,6 +355,7 @@ class WritingSaveViewController: UIViewController {
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
             print("삭제하고 홈화면으로 가기")
+            self.navigationController?.popViewController(animated: true)
         }
         
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
@@ -370,8 +370,10 @@ class WritingSaveViewController: UIViewController {
             
         case shareBarButtonItem:
             print("공유")
-        case editButtonItem:
-            self.alert("")
+        case editBarButtonItem:
+            self.alert()
+        case cancelBarButtonItem:
+            self.navigationController?.popViewController(animated: true)
         default:
             print("error?")
         }
@@ -496,9 +498,4 @@ extension WritingSaveViewController: UITextViewDelegate{
         return true
     }
 }
-extension WritingSaveViewController: UIScrollViewDelegate {
-    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
-        print("위로 가버렷")
-    }
-    
-}
+

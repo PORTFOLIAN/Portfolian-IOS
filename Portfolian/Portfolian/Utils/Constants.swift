@@ -17,6 +17,10 @@ enum API {
     static let USER_ID : String = "test1"
 }
 
+enum SocketIO {
+    static let BASE_URL : String = "http://3.36.84.11:3001/"
+}
+
 enum NOTIFICATION {
     enum API {
         static let AUTH_FAIL = "authentication_fail"
@@ -30,9 +34,9 @@ struct ColorPortfolian {
     static let backEnd = UIColor(rgb: 0xFFE58A)
     static let react = UIColor(rgb: 0xD0FDFD)
     static let vue = UIColor(rgb: 0xB4E8D2)
-    static let spring = UIColor(rgb: 0xB0FFB4)
+    static let spring = UIColor(rgb: 0xC5F8C7)
     static let django = UIColor(rgb: 0x93C59B)
-    static let javascript = UIColor(rgb: 0xFAFC9F)
+    static let javascript = UIColor(rgb: 0xFFF38A)
     static let typescript = UIColor(rgb: 0xC9E3FB)
     static let ios = UIColor(rgb: 0xFFBBB7)
     static let android = UIColor(rgb: 0xAFF2AA)

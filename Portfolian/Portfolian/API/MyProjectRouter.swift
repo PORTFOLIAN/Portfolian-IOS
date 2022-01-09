@@ -14,6 +14,7 @@ enum MyProjectRouter: URLRequestConvertible {
     case createProject(term: ProjectArticle)
     case enterProject(projectID: String)
     case arrangeProject(searchOption: ProjectSearch)
+    case putProject(term: ProjectArticle)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "projects/")!
     }
@@ -24,6 +25,8 @@ enum MyProjectRouter: URLRequestConvertible {
             return .post
         case .enterProject, .arrangeProject:
             return .get
+        case .putProject:
+            return .put
         }
     }
     
@@ -33,12 +36,16 @@ enum MyProjectRouter: URLRequestConvertible {
             return ""
         case .enterProject(let projectId):
             return projectId
+        case .putProject:
+            return recruitWriting.newProjectID
         }
     }
     
     var parameter: ProjectArticle? {
         switch self {
         case let .createProject(term):
+            return term
+        case let .putProject(term):
             return term
         default:
             return nil
@@ -47,12 +54,13 @@ enum MyProjectRouter: URLRequestConvertible {
     
     var parameters: Any? {
         switch self {
-        case .createProject:
-            if writingOwnerTag.names == [] {
-                return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: "")
-            } else {
+        case .createProject, .putProject:
+            if writingOwnerTag.names != [] {
                 let stringTag = writingOwnerTag.names[0].rawValue
-                return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: stringTag)
+            
+            return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: stringTag)
+            } else {
+                return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: "")
             }
         case .enterProject:
             return nil
@@ -67,7 +75,7 @@ enum MyProjectRouter: URLRequestConvertible {
         var request = URLRequest(url: url)
         request.method = method
         switch self {
-        case .createProject:
+        case .createProject, .putProject:
             request = try JSONParameterEncoder().encode(parameters as? Project, into: request)
         case .enterProject:
             return request
