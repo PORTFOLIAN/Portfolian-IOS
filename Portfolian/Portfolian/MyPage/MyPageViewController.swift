@@ -72,13 +72,17 @@ class MyPageViewController: UIViewController {
             case .success(let user):
                 self.userNameLabel.text = user.nickName
                 self.introduceLabel.text = user.description
-//                if user.stackList != [] {
-//                    for stack in user.stackList {
-//                        myTag.names.append(Tag.Name(rawValue: stack)!)
-//                    }
-//                }
-//                myTag.names.append(Tag.Name(rawValue: "backEnd")!)
-//                self.tagCollectionView.reloadData()
+                if let url = URL(string: user.photo) {
+                    print(url)
+                    let data = try? Data(contentsOf: url)
+                    self.profileImage.image = UIImage(data: data!)
+                }
+                if user.stackList != [] {
+                    for stack in user.stackList {
+                        myTag.names.append(Tag.Name(rawValue: stack)!)
+                    }
+                }
+                self.tagCollectionView.reloadData()
 
                 
                 print(myTag)

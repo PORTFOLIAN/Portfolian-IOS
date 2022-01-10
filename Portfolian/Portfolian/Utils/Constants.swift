@@ -11,6 +11,7 @@ import GoogleSignIn
 let spacingRow = 20
 let spacingColumn = 10
 let identifier = "TagCollectionViewCell"
+var searchToggle : Bool = true
 
 enum API {
     static let BASE_URL : String = "http://3.36.84.11:3000/"

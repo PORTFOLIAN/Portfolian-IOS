@@ -16,7 +16,6 @@ class BaseInterceptor: RequestInterceptor {
             request.setValue("Bearer " + Jwt.shared.accessToken, forHTTPHeaderField: "Authorization")
         }
         
-        print(request)
 //        request.addValue("application/json; charset = utf-8", forHTTPHeaderField: "Content-Type")
         // 공통 파라매터 추가
 //        var dictionary = [String : String]()
@@ -38,7 +37,9 @@ class BaseInterceptor: RequestInterceptor {
         }
         let data = ["statusCode" : statusCode]
         if statusCode == 401 {
-            MyAlamofireManager.shared.renewAccessToken()
+            if Jwt.shared.refreshToken != "" {
+                MyAlamofireManager.shared.renewAccessToken()
+            }
         }
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION.API.AUTH_FAIL), object: nil, userInfo:  data)

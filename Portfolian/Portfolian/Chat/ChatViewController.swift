@@ -8,7 +8,6 @@
 import UIKit
 import SnapKit
 import Then
-import MessageKit
 import SocketIO
 
 class ChatViewController: UIViewController {
@@ -23,9 +22,7 @@ class ChatViewController: UIViewController {
 //        }
         // Do any additional setup after loading the view.
     }
-    func bindMsg() {
-//        self.socket
-    }
+
 
     /*
     // MARK: - Navigation

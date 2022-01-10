@@ -59,7 +59,7 @@ enum MyOauthRouter: URLRequestConvertible {
             
             request = try JSONParameterEncoder().encode(parameter, into: request)
         case .postRefreshToken:
-            print("갱신할때 있는 refreshToken은 \(Jwt.shared)")
+            print("갱신 refreshToken은 \(Jwt.shared)")
 
             request = try JSONParameterEncoder().encode(parameter, into: request)
         case .patchLogout:

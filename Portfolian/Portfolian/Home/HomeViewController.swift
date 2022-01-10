@@ -10,7 +10,6 @@ import Then
 import SnapKit
 import Alamofire
 import MapKit
-
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
     
     lazy var logo: UIBarButtonItem = {
@@ -26,7 +25,6 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         button.tag = 2
         return button
     }()
-    var searchToggle : Bool = true
     lazy var viewsCheckBox = UIButton().then({ UIButton in
         UIButton.setImage(UIImage(named: "Checkbox"), for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -86,9 +84,30 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
 //                print("error?")
 //            }
 //        }
-        tableView.reloadData()
+        
+        if searchToggle {
+            let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
+                }
+            }
+        }
+        if !searchToggle {
+            let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
+            MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
+                }
+            }
+        }
         // 엑세스 토큰 갱신
-//        MyAlamofireManager.shared.renewAccessToken()
+        if Jwt.shared.refreshToken != "" {
+            print(Jwt.shared.refreshToken, "뭘까 리프레시 토큰이")
+            MyAlamofireManager.shared.renewAccessToken()
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -161,7 +180,6 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             }
             
         case latestCheckBox:
-            
             if !searchToggle {
                 searchToggle.toggle()
                 latestCheckBox.setImage(UIImage(named: "CheckboxFill"), for: .normal)
@@ -267,9 +285,9 @@ extension HomeViewController: BookmarkButtonDelegate {
         var articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath?[1] ?? 0]
         let projectId = articleInfo.projectId
-        var like = false
-        like.toggle()
-        let bookmark = Bookmark(projectId: projectId, like: like)
+        var bookMarked = false
+        bookMarked.toggle()
+        let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
         MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
             
         }
@@ -431,5 +449,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 175.0;//Choose your custom row height
     }
+    
+}
+struct Toggle {
     
 }

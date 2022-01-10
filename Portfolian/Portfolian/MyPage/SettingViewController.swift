@@ -100,8 +100,10 @@ extension SettingViewController: UITableViewDelegate {
                 PersistenceManager.shared.deleteAll(request: requestToken)
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
+                print(Jwt.shared, "아직있지 jwt야??")
                 MyAlamofireManager.shared.deleteUserId { result in
-                    
+                    Jwt.shared = .init()
+                    print(Jwt.shared, "없어졌니 jwt야?")
                 }
                 
                 self.goToApp()

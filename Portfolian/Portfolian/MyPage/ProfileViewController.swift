@@ -101,7 +101,30 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
+        MyAlamofireManager.shared.getMyProfile { response in
+            switch response {
+            case .success(let user):
+                if let url = URL(string: user.photo) {
+                    print(url)
+                    let data = try? Data(contentsOf: url)
+                    self.profileButton.setImage(UIImage(data: data!), for: .normal)
+                }
+//                if user.stackList != [] {
+//                    for stack in user.stackList {
+//                        myTag.names.append(Tag.Name(rawValue: stack)!)
+//                    }
+//                }
+//                myTag.names.append(Tag.Name(rawValue: "backEnd")!)
+//                self.tagCollectionView.reloadData()
 
+                
+                print(myTag)
+            case .failure(let error):
+                print(error)
+            default:
+                break
+            }
+        }
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
 

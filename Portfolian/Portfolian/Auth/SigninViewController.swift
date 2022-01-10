@@ -10,8 +10,9 @@ import KakaoSDKAuth
 import KakaoSDKUser
 import GoogleSignIn
 import SwiftyJSON
-import AVFoundation
-import MapKit
+//import AVFoundation
+//import MapKit
+import Toast_Swift
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "Logo"))
@@ -210,6 +211,7 @@ class SigninViewController: UIViewController {
         UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
             if let error = error {
                 print(error)
+                self.view.makeToast("카카오톡과 통신에 실패했습니다.\n재시도 부탁드립니다😶‍🌫️ ", duration: 1.5, position: .center)
             }
             else {
                 print("loginWithKakaoAccount() success.")
@@ -227,7 +229,7 @@ class SigninViewController: UIViewController {
                             self.setNickName()
                         }
                     case .failure(let error):
-                        print("\(error)######")
+                        print(error)
                     }
                 })
                                                          
@@ -241,6 +243,8 @@ class SigninViewController: UIViewController {
         UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
             if let error = error {
                 print(error)
+                self.view.makeToast("카카오톡과 통신에 실패했습니다. 재시도 부탁드립니다 :)", duration: 1.0, position: .center)
+
             }
             else {
                 print("loginWithKakaoAccount() success.")
@@ -255,11 +259,10 @@ class SigninViewController: UIViewController {
                             self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)
                         } else {
                             self.setNickName()
-                    
                         }
                         
                     case .failure(let error):
-                        print("\(error)######")
+                        print("error")
                     }
                 })
                                                          

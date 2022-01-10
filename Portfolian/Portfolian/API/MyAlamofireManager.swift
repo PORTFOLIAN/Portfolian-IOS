@@ -76,24 +76,28 @@ final class MyAlamofireManager {
             .responseJSON { response in
                 guard let responseValue = response.value else { return }
                 let responseJson = JSON(responseValue)
-                print(responseJson)
+                print(responseJson, "뭔데 대체")
             }
             .responseData { response in
-                
                 guard let responseData = response.data else { return }
-                
-                projectListInfo = try! JSONDecoder().decode(ProjectListInfo.self, from: responseData)
-                let code = projectListInfo.code
-                if code == 1 {
-                    
-                    completion(.success(projectListInfo))
-                    
-                } else if code == -99 {
-                    // accessToken 갱신
 
-                } else {
-                    completion(.failure(.getProjectListError))
+                do {
+                    projectListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
+                    let code = projectListInfo.code
+                    if code == 1 {
+                        
+                        completion(.success(projectListInfo))
+                        
+                    } else if code == -99 {
+                        // accessToken 갱신
+
+                    } else {
+                        completion(.failure(.getProjectListError))
+                    }
+                } catch {
+                    print(error)
                 }
+                
             }
     }
     func postKaKaoToken(token: String, completion: @escaping (Result<Jwt, MyError>) -> Void) {

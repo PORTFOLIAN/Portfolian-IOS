@@ -78,6 +78,6 @@ enum MyUserRouter: URLRequestConvertible {
 
 struct Bookmark: Codable {
     var projectId: String
-    var like: Bool
+    var bookMarked: Bool
 }
 //북마크로 하기
