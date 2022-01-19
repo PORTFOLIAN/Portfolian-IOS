@@ -105,17 +105,22 @@ final class MyAlamofireManager {
             .request(MyOauthRouter.postKaKaoToken(token: token))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseJSON { response in
+                if let refreshToken = response.response?.allHeaderFields["Set-Cookie"] as? String {
+                    let start = refreshToken.index(refreshToken.startIndex, offsetBy: 8)
+                    guard let end = refreshToken.firstIndex(of: ";") else { return }
+                    REFRESHTOKEN = String(refreshToken[start..<end])
+                    
+                }
                 guard let responseValue = response.value else { return }
                 let responseJson = JSON(responseValue)
-                print("@@@@\(responseJson)")
-
+                print("@@\(responseJson)")
             }
             .responseData { response in
                 
                 guard let responseData = response.data else { return }
                 
                 guard let jwt = try? JSONDecoder().decode(Jwt.self, from: responseData) else { return }
-                
+                print("########", responseData)
                 Jwt.shared = jwt
                 let code = jwt.code
                 if code == 1 {
@@ -178,10 +183,10 @@ final class MyAlamofireManager {
 
                 if code == 1 {
                     Jwt.shared.accessToken = accessToken
-                    let myToken = JwtToken(accessToken: Jwt.shared.accessToken, refreshToken: Jwt.shared.refreshToken, userId: Jwt.shared.userId)
+                    let myToken = JwtToken(accessToken: Jwt.shared.accessToken, refreshToken: REFRESHTOKEN, userId: Jwt.shared.userId)
                     PersistenceManager.shared.insertToken(token: myToken)
                     
-                    print("갱신할때 있는 refreshToken은 \(Jwt.shared)")
+                    print("갱신할때 있는 refreshToken은 \(REFRESHTOKEN)")
                 } else {
                     print(MyError.adminError)
                 }

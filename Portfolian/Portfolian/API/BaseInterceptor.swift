@@ -37,7 +37,7 @@ class BaseInterceptor: RequestInterceptor {
         }
         let data = ["statusCode" : statusCode]
         if statusCode == 401 {
-            if Jwt.shared.refreshToken != "" {
+            if REFRESHTOKEN != "" {
                 MyAlamofireManager.shared.renewAccessToken()
             }
         }

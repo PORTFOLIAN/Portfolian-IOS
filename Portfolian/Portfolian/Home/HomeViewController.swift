@@ -85,7 +85,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
 //            }
 //        }
         
-        if searchToggle {
+        if SEARCHTOGGLE {
             let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
             MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                 DispatchQueue.main.async {
@@ -94,7 +94,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
                 }
             }
         }
-        if !searchToggle {
+        if !SEARCHTOGGLE {
             let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
             MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                 DispatchQueue.main.async {
@@ -104,8 +104,9 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             }
         }
         // 엑세스 토큰 갱신
-        if Jwt.shared.refreshToken != "" {
-            print(Jwt.shared.refreshToken, "뭘까 리프레시 토큰이")
+        print(REFRESHTOKEN, "REFRESH갱신")
+        
+        if REFRESHTOKEN != "" {
             MyAlamofireManager.shared.renewAccessToken()
         }
     }
@@ -166,8 +167,8 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             WritingVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(WritingVC, animated: true)
         case viewsCheckBox:
-            if searchToggle {
-                searchToggle.toggle()
+            if SEARCHTOGGLE {
+                SEARCHTOGGLE.toggle()
                 viewsCheckBox.setImage(UIImage(named: "CheckboxFill"), for: .normal)
                 latestCheckBox.setImage(UIImage(named: "Checkbox"), for: .normal)
                 let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
@@ -180,11 +181,11 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             }
             
         case latestCheckBox:
-            if !searchToggle {
-                searchToggle.toggle()
+            if !SEARCHTOGGLE {
+                SEARCHTOGGLE.toggle()
                 latestCheckBox.setImage(UIImage(named: "CheckboxFill"), for: .normal)
                 viewsCheckBox.setImage(UIImage(named: "Checkbox"), for: .normal)
-
+                
                 let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
                 MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                     DispatchQueue.main.async {

@@ -11,13 +11,11 @@ struct Jwt: Codable {
     static var shared = Jwt()
     let code: Int
     let isNew: Bool
-    var refreshToken: String
     var accessToken: String
     var userId: String
     init() {
         self.code = 0
         self.isNew = true
-        self.refreshToken = ""
         self.accessToken = ""
         self.userId = ""
     }

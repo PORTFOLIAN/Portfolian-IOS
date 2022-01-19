@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 import GoogleSignIn
-let spacingRow = 20
-let spacingColumn = 10
-let identifier = "TagCollectionViewCell"
-var searchToggle : Bool = true
-
+let SPACINGROW = 20
+let SPACINGCOL = 10
+let IDENTIFIER = "TagCollectionViewCell"
+var SEARCHTOGGLE : Bool = true
+var REFRESHTOKEN = ""
 enum API {
-    static let BASE_URL : String = "http://3.36.84.11:3000/"
+    static let BASE_URL : String = "https://api.portfolian.site:443/"
     static let USER_ID : String = "test1"
 }
 

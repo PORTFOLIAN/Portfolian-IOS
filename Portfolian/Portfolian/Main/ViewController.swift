@@ -70,7 +70,7 @@ class ViewController: UITabBarController {
                         guard let accessToken = $0.accessToken else {return}
                         Jwt.shared.accessToken = accessToken
                         guard let refreshToken = $0.refreshToken else {return}
-                        Jwt.shared.refreshToken = refreshToken
+                        REFRESHTOKEN = refreshToken
                         guard let userId = $0.userId else {return}
                         Jwt.shared.userId = userId
                         }

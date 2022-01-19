@@ -173,8 +173,12 @@ class WritingSaveViewController: UIViewController {
         tagCollectionView.isUserInteractionEnabled = false
         tagsCollectionView.isUserInteractionEnabled = false
         navigationItem.leftBarButtonItem = cancelBarButtonItem
-
-        navigationItem.rightBarButtonItems = [editBarButtonItem, shareBarButtonItem]
+        if Jwt.shared.userId == projectInfo.leader.userId {
+            navigationItem.rightBarButtonItems = [editBarButtonItem, shareBarButtonItem]
+        } else {
+            navigationItem.rightBarButtonItems = [shareBarButtonItem]
+        }
+        
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(scrollView)
@@ -319,11 +323,11 @@ class WritingSaveViewController: UIViewController {
             make.bottom.equalTo(view.snp.bottom)
         }
         // Do any additional setup after loading the view.
-        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
 
-        tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
         scrollView.delegate = self
@@ -348,9 +352,11 @@ class WritingSaveViewController: UIViewController {
         
         let editAction = UIAlertAction(title: "수정하기", style: .default) { _ in
             print("채워진 writing으로 가는데 getProject resistrationType처럼 글작성, 글수정이라는 걸 만들어준다. push로 해주고 <누르면 임시저장 같은거 없이 바로 뒤로가기 해주고 저장눌러도 바로 뒤로가기 해주기")
+            
             editType = .edit
             let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
             self.navigationController?.pushViewController(WritingVC, animated: true)
+            
         }
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
@@ -417,11 +423,11 @@ class WritingSaveViewController: UIViewController {
 
 extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(spacingRow) - 5
+        return CGFloat(SPACINGROW) - 5
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(spacingColumn) - 5
+        return CGFloat(SPACINGCOL) - 5
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -472,7 +478,7 @@ extension WritingSaveViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case tagCollectionView:
-            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: IDENTIFIER, for: indexPath) as! TagCollectionViewCell
             let tag = writingOwnerTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
             let tagName = tagInfo.name
@@ -480,7 +486,7 @@ extension WritingSaveViewController: UICollectionViewDataSource {
             cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
             return cell
         default:
-            let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: IDENTIFIER, for: indexPath) as! TagCollectionViewCell
             let tag = writingTeamTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
             let tagName = tagInfo.name

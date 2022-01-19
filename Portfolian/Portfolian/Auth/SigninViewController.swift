@@ -220,7 +220,7 @@ class SigninViewController: UIViewController {
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
                     switch result {
                     case .success(let jwtInfo):
-                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: REFRESHTOKEN, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
                             self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
@@ -253,7 +253,7 @@ class SigninViewController: UIViewController {
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
                     switch result {
                     case .success(let jwtInfo):
-                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: jwtInfo.refreshToken, userId: jwtInfo.userId)
+                        let myToken = JwtToken(accessToken: jwtInfo.accessToken, refreshToken: REFRESHTOKEN, userId: jwtInfo.userId)
                         PersistenceManager.shared.insertToken(token: myToken)
                         if Jwt.shared.isNew == false {
                             self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)

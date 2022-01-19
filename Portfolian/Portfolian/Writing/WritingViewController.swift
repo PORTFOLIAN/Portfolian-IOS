@@ -285,11 +285,11 @@ class WritingViewController: UIViewController {
         proceedTextView.delegate = self
         detailTextView.delegate = self
         
-        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
 
-        tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
+        tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
         
@@ -711,11 +711,11 @@ extension WritingViewController: UITextViewDelegate {
 
 extension WritingViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(spacingRow)
+        return CGFloat(SPACINGROW)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(spacingColumn)
+        return CGFloat(SPACINGCOL)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -766,7 +766,7 @@ extension WritingViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case tagCollectionView:
-            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: IDENTIFIER, for: indexPath) as! TagCollectionViewCell
             let tag = writingOwnerTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
             let tagName = tagInfo.name
@@ -774,7 +774,7 @@ extension WritingViewController: UICollectionViewDataSource {
             cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
             return cell
         default:
-            let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
+            let cell = tagsCollectionView.dequeueReusableCell(withReuseIdentifier: IDENTIFIER, for: indexPath) as! TagCollectionViewCell
             let tag = writingTeamTag.names[indexPath.row]
             let tagInfo = Tag.shared.getTagInfo(tag: tag)
             let tagName = tagInfo.name

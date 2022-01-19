@@ -43,7 +43,8 @@ enum MyOauthRouter: URLRequestConvertible {
         case let .postKaKaoToken(token):
             return ["token": token]
         case .postRefreshToken:
-            return ["userId": Jwt.shared.userId, "refreshToken": Jwt.shared.refreshToken]
+//            return ["userId": Jwt.shared.userId, "refreshToken": Jwt.shared.refreshToken]
+            return ["userId": Jwt.shared.userId, "refreshToken": ""]
         case .patchLogout:
             return nil
         }
@@ -60,7 +61,6 @@ enum MyOauthRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter, into: request)
         case .postRefreshToken:
             print("갱신 refreshToken은 \(Jwt.shared)")
-
             request = try JSONParameterEncoder().encode(parameter, into: request)
         case .patchLogout:
             return request
