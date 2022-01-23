@@ -49,6 +49,7 @@ struct ProjectInfo : Codable {
     let view: Int
     let bookMark: Bool
     let status: Int
+    let createdAt: String
     let stackList: [String]
     let contents: Contents
     let leader: Leader
@@ -88,6 +89,7 @@ struct ProjectInfo : Codable {
         self.view = Int()
         self.bookMark = Bool()
         self.status = Int()
+        self.createdAt = String()
         self.stackList = [String]()
         self.contents = Contents()
         self.leader = Leader()
@@ -103,25 +105,27 @@ struct ProjectListInfo : Codable {
         self.code = Int()
     }
     
-    struct Article: Codable {
-        let projectId: String
-        let title: String
-        let stackList: [String]
-        let description: String
-        let capacity: Int
-        let view: Int
-        let bookMark: Bool
-        let status: Int
-        
-        let leader: Leader
-        struct Leader: Codable {
-            let userId: String
-            let photo: String
-        }
+    
+}
+struct Article: Codable {
+    let projectId: String
+    let title: String
+    let stackList: [String]
+    let description: String
+    let capacity: Int
+    let view: Int
+    let bookMark: Bool
+    let status: Int
+    
+    let leader: Leader
+    struct Leader: Codable {
+        let userId: String
+        let photo: String
     }
 }
 
-
 var recruitWriting = RecruitWriting()
 var projectListInfo = ProjectListInfo()
+var bookmarkListInfo = ProjectListInfo()
+
 var projectInfo = ProjectInfo()

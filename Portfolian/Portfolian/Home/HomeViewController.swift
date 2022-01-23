@@ -11,7 +11,8 @@ import SnapKit
 import Alamofire
 import MapKit
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
-    
+    lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
+
     lazy var logo: UIBarButtonItem = {
         let image = UIImage(named: "Logo")?.resizeImage(size: CGSize(width: 150, height: 30)).withRenderingMode(.alwaysOriginal)
         let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
@@ -75,16 +76,6 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-//        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
-//            switch result {
-//            case .success(let articleList):
-//                let articleList = articleList
-//            case .failure:
-//                print("error?")
-//            }
-//        }
-        
         if SEARCHTOGGLE {
             let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
             MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
@@ -93,8 +84,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
                     self.view.setNeedsLayout()
                 }
             }
-        }
-        if !SEARCHTOGGLE {
+        } else {
             let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
             MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                 DispatchQueue.main.async {
@@ -286,14 +276,29 @@ extension HomeViewController: BookmarkButtonDelegate {
         var articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath?[1] ?? 0]
         let projectId = articleInfo.projectId
-        var bookMarked = false
+        var bookMarked = articleInfo.bookMark
         bookMarked.toggle()
         let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
         MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
-            
+            if SEARCHTOGGLE {
+                let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+                MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.view.setNeedsLayout()
+                    }
+                }
+            } else {
+                let projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
+                MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.view.setNeedsLayout()
+                    }
+                }
+            }
         }
     }
-    
 }
 
 extension HomeViewController {
@@ -354,6 +359,30 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = articleInfo.title
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
+        let bookmark = articleInfo.bookMark
+
+        if cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject) != nil {
+            cell.profileImageView.image = cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject)
+            print("캐시 사용")
+        } else {
+                DispatchQueue.main.async {
+                    let profileImage = articleInfo.leader.photo
+                    let data = try? Data(contentsOf: URL(string: profileImage)!)
+                    let image = UIImage(data: data!)
+                    cell.profileImageView.image = image
+                    self.cache.setObject(image!, forKey: (indexPath as NSIndexPath).row as AnyObject)
+                    print("통신 사용")
+
+                }
+            }
+        
+        
+
+        if bookmark == true {
+            cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+        } else {
+            cell.bookmarkButton.setImage(UIImage(named: "Bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+        }
         var labelStackCount: Int = 0
         var tagInfo1, tagInfo2, tagInfo3: TagInfo
         
@@ -402,13 +431,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             cell.tagButton3.currentColor(color: tagInfo3.color)
             cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
-//        북마크 버튼을 눌렀을 때 값을 변경해주는 메소드를 구현하고 넣기
-        
-//        if articleInfo.bookMark == false {
-//            cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill"), for: .highlighted)
-//        } else {
-//            cell.bookmarkButton.setImage(UIImage(named: "Bookmark2"), for: .normal)
-//        }
+
         cell.viewsLabel.text = "조회 \(articleInfo.view)"
         
         return cell
@@ -417,6 +440,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print(indexPath)
+        
         var articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
@@ -450,7 +474,28 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 175.0;//Choose your custom row height
     }
-    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            if editingStyle == .delete {
+            
+                var articleList = projectListInfo.articleList
+                let articleInfo = articleList[indexPath[1]]
+                let projectId = articleInfo.projectId
+//                tableView.deleteRows(at: [indexPath], with: .fade)
+                MyAlamofireManager.shared.deleteProject(projectID: projectId) { result in
+                    if result == .success(1) {
+                        DispatchQueue.main.async {
+                            projectListInfo.articleList.remove(at: indexPath.row)
+
+                            tableView.reloadData()
+                            tableView.setNeedsLayout()
+                        }
+                    } else {
+                        self.view.makeToast("본인의 글이 아닙니다.", duration: 1.0, position: .center)
+                    }
+                    
+                }
+            }
+        }
 }
 struct Toggle {
     

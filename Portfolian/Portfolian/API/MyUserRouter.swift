@@ -15,6 +15,7 @@ enum MyUserRouter: URLRequestConvertible {
     case getMyProfile
     case deleteUserId
     case postBookMark(bookmark: Bookmark)
+    case arrangeProject
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users")!
     }
@@ -29,6 +30,8 @@ enum MyUserRouter: URLRequestConvertible {
             return .delete
         case .postBookMark:
             return .post
+        case .arrangeProject:
+            return .get
         }
     }
    
@@ -41,7 +44,7 @@ enum MyUserRouter: URLRequestConvertible {
             return "\(Jwt.shared.userId)/info"
         case .deleteUserId:
             return "\(Jwt.shared.userId)"
-        case .postBookMark:
+        case .postBookMark, .arrangeProject:
             return "\(Jwt.shared.userId)/bookMark"
         }
     }
@@ -68,16 +71,10 @@ enum MyUserRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
         case .postBookMark:
             request = try JSONParameterEncoder().encode(parameter as? Bookmark, into: request)
-        case .getMyProfile, .deleteUserId:
+        case .getMyProfile, .deleteUserId, .arrangeProject:
             return request
         }
         return request
     }
 }
 
-
-struct Bookmark: Codable {
-    var projectId: String
-    var bookMarked: Bool
-}
-//북마크로 하기

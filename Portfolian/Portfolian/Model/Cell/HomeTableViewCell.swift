@@ -171,7 +171,6 @@ class HomeTableViewCell: UITableViewCell {
     
     @objc func buttonPressed(_ sender: UIButton) {
         cellDelegate?.didTouchBookmarkButton(didClicked: isClicked,sender: sender)
-        isClicked.toggle()
         if isClicked == true{
             sender.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         }else{

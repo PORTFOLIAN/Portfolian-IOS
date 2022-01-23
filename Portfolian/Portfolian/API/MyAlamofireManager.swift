@@ -64,8 +64,29 @@ final class MyAlamofireManager {
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-                projectInfo = try! JSONDecoder().decode(ProjectInfo.self, from: responseData)
+                do {
+                    projectInfo = try JSONDecoder().decode(ProjectInfo.self, from: responseData)
+                } catch {
+                    print(error)
+                }
                 completion(.success(projectInfo))
+            }
+    }
+    
+    func deleteProject(projectID: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request(MyProjectRouter.deleteProject(projectID: projectID))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                
+                let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData)
+                
+                if let code = codeMessage?.code {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(MyError.testError))
+                }
             }
     }
     
@@ -73,11 +94,6 @@ final class MyAlamofireManager {
         self.session
             .request(MyProjectRouter.arrangeProject(searchOption: searchOption))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON { response in
-                guard let responseValue = response.value else { return }
-                let responseJson = JSON(responseValue)
-                print(responseJson, "뭔데 대체")
-            }
             .responseData { response in
                 guard let responseData = response.data else { return }
 
@@ -88,16 +104,32 @@ final class MyAlamofireManager {
                         
                         completion(.success(projectListInfo))
                         
-                    } else if code == -99 {
-                        // accessToken 갱신
-
                     } else {
                         completion(.failure(.getProjectListError))
                     }
                 } catch {
                     print(error)
                 }
-                
+            }
+    }
+    
+    func getBookmarkList(completion: @escaping (Result<ProjectListInfo, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.arrangeProject)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                do {
+                    bookmarkListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
+                    let code = projectListInfo.code
+                    if code == 1 {
+                        completion(.success(bookmarkListInfo))
+                    } else {
+                        completion(.failure(.getProjectListError))
+                    }
+                } catch {
+                    print(error)
+                }
             }
     }
     func postKaKaoToken(token: String, completion: @escaping (Result<Jwt, MyError>) -> Void) {
@@ -210,6 +242,7 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
     func putProject(projectArticle: ProjectArticle, completion: @escaping (Result<Int, MyError>) -> Void) {
         self.session
             .request(MyProjectRouter.putProject(term: projectArticle))

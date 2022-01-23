@@ -9,7 +9,6 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKUser
 import KakaoSDKCommon
-import simd
 import CoreData
 
 
@@ -27,15 +26,7 @@ class ViewController: UITabBarController {
         
         self.kakaoAutoLogin()
         
-        let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-        MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
-            switch result {
-            case .success(let articleList):
-                print("프로젝트 리스트 가져오기 성공")
-            case .failure:
-                print("프로젝트 리스트 가져오기 실패")
-            }
-        }
+                
     }
     private func kakaoAutoLogin() {
         let viewControllers : [UIViewController] = [

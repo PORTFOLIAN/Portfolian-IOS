@@ -14,6 +14,7 @@ enum MyProjectRouter: URLRequestConvertible {
     case createProject(term: ProjectArticle)
     case enterProject(projectID: String)
     case arrangeProject(searchOption: ProjectSearch)
+    case deleteProject(projectID: String)
     case putProject(term: ProjectArticle)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "projects/")!
@@ -27,6 +28,8 @@ enum MyProjectRouter: URLRequestConvertible {
             return .get
         case .putProject:
             return .put
+        case .deleteProject:
+            return .delete
         }
     }
     
@@ -34,10 +37,12 @@ enum MyProjectRouter: URLRequestConvertible {
         switch self {
         case .createProject, .arrangeProject:
             return ""
-        case .enterProject(let projectId):
-            return projectId
+        case .enterProject(let projectID):
+            return projectID
         case .putProject:
             return recruitWriting.newProjectID
+        case .deleteProject(let projectID):
+            return projectID
         }
     }
     
@@ -62,7 +67,7 @@ enum MyProjectRouter: URLRequestConvertible {
             } else {
                 return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: "")
             }
-        case .enterProject:
+        case .enterProject, .deleteProject:
             return nil
         case .arrangeProject(let searchOption):
             return searchOption
@@ -77,7 +82,7 @@ enum MyProjectRouter: URLRequestConvertible {
         switch self {
         case .createProject, .putProject:
             request = try JSONParameterEncoder().encode(parameters as? Project, into: request)
-        case .enterProject:
+        case .enterProject, .deleteProject:
             return request
         case .arrangeProject:
             request = try URLEncodedFormParameterEncoder().encode(parameters as? ProjectSearch, into: request)

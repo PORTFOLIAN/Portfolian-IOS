@@ -20,3 +20,9 @@ struct User: Codable {
     let mail : String
 }
 
+struct Bookmark: Codable {
+    var projectId: String
+    var bookMarked: Bool
+}
+
+
