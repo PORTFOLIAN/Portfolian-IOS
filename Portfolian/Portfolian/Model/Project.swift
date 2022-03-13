@@ -53,6 +53,7 @@ struct ProjectInfo : Codable {
     let stackList: [String]
     let contents: Contents
     let leader: Leader
+    
     struct Contents: Codable {
         let subjectDescription: String
         let projectTime: String
@@ -67,6 +68,7 @@ struct ProjectInfo : Codable {
             self.description = String()
         }
     }
+
     struct Leader: Codable {
         let userId: String
         let nickName: String
@@ -81,6 +83,7 @@ struct ProjectInfo : Codable {
             self.photo = String()
         }
     }
+    
     init() {
         self.code = Int()
         self.projectId = String()
@@ -93,7 +96,6 @@ struct ProjectInfo : Codable {
         self.stackList = [String]()
         self.contents = Contents()
         self.leader = Leader()
-        
     }
 }
 
@@ -104,8 +106,6 @@ struct ProjectListInfo : Codable {
         self.articleList = [Article]()
         self.code = Int()
     }
-    
-    
 }
 struct Article: Codable {
     let projectId: String

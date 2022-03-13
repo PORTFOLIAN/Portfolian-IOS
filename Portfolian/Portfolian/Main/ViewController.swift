@@ -11,23 +11,19 @@ import KakaoSDKUser
 import KakaoSDKCommon
 import CoreData
 
-
 class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
-
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         self.kakaoAutoLogin()
-        
-                
     }
+    
     private func kakaoAutoLogin() {
         let viewControllers : [UIViewController] = [
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "Home"), tag: 1),
@@ -57,7 +53,6 @@ class ViewController: UITabBarController {
                     let request: NSFetchRequest<Token> = Token.fetchRequest()
                     let fetchResult = PersistenceManager.shared.fetch(request: request)
                     fetchResult.forEach {
-                        
                         guard let accessToken = $0.accessToken else {return}
                         Jwt.shared.accessToken = accessToken
                         guard let refreshToken = $0.refreshToken else {return}
@@ -70,11 +65,12 @@ class ViewController: UITabBarController {
                     MyAlamofireManager.shared.getMyProfile { response in
                         switch response {
                         case .success(let user):
-                            if user.stackList != [] {
-                                for stack in user.stackList {
-                                    myTag.names.append(Tag.Name(rawValue: stack)!)
-                                }
-                            }
+                            ()
+//                            if user.stackList != [] {
+//                                for stack in user.stackList {
+//                                    myTag.names.append(Tag.Name(rawValue: stack)!)
+//                                }
+//                            }
                         case .failure(let error):
                             print(error)
                         default:

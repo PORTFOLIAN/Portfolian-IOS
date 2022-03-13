@@ -604,10 +604,8 @@ extension SwiftyMarkdown {
                        var width = image?.size.width {
                     // 사진의 크기 줄여주기
                         while height > 500 || width > 350 {
-                            
-                                height /= 1.02
-                                width /= 1.02
-                            
+                            height /= 1.02
+                            width /= 1.02
                             // height는 400보다 커도됨
                             // weight는 400보다 작아야함
                             // 높이가 400보다 크고 너비가 400보다 클 때

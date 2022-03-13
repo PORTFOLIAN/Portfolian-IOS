@@ -132,6 +132,7 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
     func postKaKaoToken(token: String, completion: @escaping (Result<Jwt, MyError>) -> Void) {
         self.session
             .request(MyOauthRouter.postKaKaoToken(token: token))
@@ -164,6 +165,7 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
     func patchNickName(nickName: String, completion: @escaping (Result<Int, MyError>) -> Void) {
         self.session
             .request(MyUserRouter.patchNickName(nickName: nickName))
@@ -184,15 +186,28 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
+    func patchMyProfile(profileImage: UIImage, completion: @escaping (Result<Int, MyError>) -> Void) {
+        let route = MyUserRouter.patchMyProfile(profileImage: profileImage)
+        self.session
+            .upload(multipartFormData: route.multipartFormData, with: route)
+            .uploadProgress { (progress) in
+                print("\(progress)")
+            }
+            .validate(statusCode: 200..<401)
+            .responseData { (response) in
+                print(response)
+                completion(.success(1))
+            }
+    }
+    
     func getMyProfile(completion: @escaping (Result<User, MyError>) -> Void) {
         self.session
             .request(MyUserRouter.getMyProfile)
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
-                
                 guard let responseData = response.data else { return }
                 guard let user = try? JSONDecoder().decode(User.self, from: responseData) else { return }
-                
 //                let code = user.code
 //                if code == 1 {
                     completion(.success(user))
@@ -201,6 +216,7 @@ final class MyAlamofireManager {
 //                }
             }
     }
+    
     func renewAccessToken() {
         self.session
             .request(MyOauthRouter.postRefreshToken)
@@ -277,6 +293,7 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
     func postBookmark(bookmark: Bookmark, completion: @escaping (Result<Int, MyError>) -> Void) {
         self.session
             .request(MyUserRouter.postBookMark(bookmark: bookmark))

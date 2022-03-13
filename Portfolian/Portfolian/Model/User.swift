@@ -9,8 +9,6 @@ import Foundation
 import Alamofire
 
 struct User: Codable {
-    static let shared = User(userId: String(), nickName: String(), description: String(), stackList: [String](), photo: String(), github: String(), mail: String())
-//    let code: Int // 수정해야됨
     let userId : String
     let nickName : String
     let description : String
@@ -18,6 +16,16 @@ struct User: Codable {
     let photo : String
     let github : String
     let mail : String
+    
+    init() {
+        userId = String()
+        nickName = String()
+        description = String()
+        stackList = [String]()
+        photo = String()
+        github = String()
+        mail = String()
+    }
 }
 
 struct Bookmark: Codable {
@@ -25,4 +33,21 @@ struct Bookmark: Codable {
     var bookMarked: Bool
 }
 
-
+struct UserProfile {
+    var nickName : String
+    var description : String
+    var stack : [String]
+    var photo : UIImage
+    var github : String
+    var mail : String
+    
+    init() {
+        nickName = String()
+        description = String()
+        stack = [String]()
+        photo = UIImage()
+        github = String()
+        mail = String()
+    }
+}
+var userInfo = UserProfile()

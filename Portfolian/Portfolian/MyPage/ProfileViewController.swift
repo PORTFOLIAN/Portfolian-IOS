@@ -97,6 +97,10 @@ class ProfileViewController: UIViewController {
     lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
+    
+    lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
+
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -105,20 +109,13 @@ class ProfileViewController: UIViewController {
             switch response {
             case .success(let user):
                 if let url = URL(string: user.photo) {
-                    print(url)
                     let data = try? Data(contentsOf: url)
                     self.profileButton.setImage(UIImage(data: data!), for: .normal)
                 }
-//                if user.stackList != [] {
-//                    for stack in user.stackList {
-//                        myTag.names.append(Tag.Name(rawValue: stack)!)
-//                    }
-//                }
-//                myTag.names.append(Tag.Name(rawValue: "backEnd")!)
-//                self.tagCollectionView.reloadData()
-
-                
-                print(myTag)
+                DispatchQueue.main.async {
+                    self.tagCollectionView.reloadData()
+                    self.view.setNeedsLayout()
+                }
             case .failure(let error):
                 print(error)
             default:
@@ -138,7 +135,8 @@ class ProfileViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationItem.leftBarButtonItem = cancelBarButtonItem
+
         view.addSubview(profileButton)
         view.addSubview(lineViewFirst)
         view.addSubview(lineViewSecond)
@@ -238,25 +236,54 @@ class ProfileViewController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    func openLibrary(){
-//        imagePicker.sourceType = .PHPicker
+    func saveAlert(_ title: String) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        let library = UIAlertAction(title: "저장", style: .default) { _ in
+                self.saveProfile()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
+        alert.addAction(library)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true)
+    }
+    
+    func saveProfile() {
+        guard let profileImage = profileButton.imageView?.image else {return}
+        userInfo.nickName = nicknameTextField.text!
+        userInfo.github = githubTextField.text!
+        userInfo.mail = emailTextField.text!
+        var stringTags: [String] = []
+        for tag in myTag.names {
+            stringTags.append(tag.rawValue)
+        }
+        userInfo.stack = stringTags
+        MyAlamofireManager.shared.patchMyProfile(profileImage: profileImage) { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    func openLibrary() {
         phpicker.delegate = self
         
         present(phpicker, animated: true, completion: nil)
-        
     }
-
-    
     
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender {
         case profileButton:
-            alert("프로필 사진을 선택해주세요:)")
+            alert("프로필 사진을 선택해주세요 :)")
         case stackButton:
             registrationType = .MyPage
             
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
+        case cancelBarButtonItem:
+            DispatchQueue.main.async {
+                self.saveAlert("변경 사항을 저장하시겠습니까?")
+            }
+
         default:
             break
         }
@@ -328,6 +355,7 @@ extension ProfileViewController: UICollectionViewDataSource {
     
 extension ProfileViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true)
         let itemProvider = results.first?.itemProvider
         if let itemProvider = itemProvider,
            itemProvider.canLoadObject(ofClass: UIImage.self) {
@@ -343,8 +371,6 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
         } else {
             
         }
-        dismiss(animated: true)
-        
     }
     
 }

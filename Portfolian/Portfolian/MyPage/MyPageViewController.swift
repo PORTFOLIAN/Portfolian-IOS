@@ -31,7 +31,6 @@ class MyPageViewController: UIViewController {
         UIImageView.layer.borderWidth = 1
         UIImageView.layer.borderColor = UIColor.clear.cgColor
         UIImageView.clipsToBounds = true
-
     }
     
     let settingImage = UIImage(named: "Setting")
@@ -64,6 +63,7 @@ class MyPageViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         navigationItem.title = "마이페이지"
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
@@ -77,31 +77,28 @@ class MyPageViewController: UIViewController {
                     let data = try? Data(contentsOf: url)
                     self.profileImage.image = UIImage(data: data!)
                 }
-                if user.stackList != [] {
-                    for stack in user.stackList {
-                        myTag.names.append(Tag.Name(rawValue: stack)!)
-                    }
-                }
-                self.tagCollectionView.reloadData()
-
+                myTag = TagDataStore()
                 
-                print(myTag)
+                DispatchQueue.main.async {
+                    if user.stackList != [] {
+                        for stack in user.stackList {
+                            myTag.names.append(Tag.Name(rawValue: stack)!)
+                        }
+                    }
+                    self.tagCollectionView.reloadData()
+
+                    let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+                    self.tagCollectionView.snp.updateConstraints {
+                        $0.height.equalTo(height)
+                    }
+                    self.view.setNeedsLayout()
+                }
             case .failure(let error):
                 print(error)
             default:
                 break
             }
         }
-        DispatchQueue.main.async {
-            self.tagCollectionView.reloadData()
-
-            let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-            self.tagCollectionView.snp.updateConstraints {
-                $0.height.equalTo(height)
-            }
-        }
-        self.view.setNeedsLayout()
-        
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +150,6 @@ class MyPageViewController: UIViewController {
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
-        
     }
     
     // Mark: SetupLogo
@@ -167,7 +163,6 @@ class MyPageViewController: UIViewController {
             print("push")
         case profileCorrectionButton:
             let profileVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "ProfileVC")
-            print(profileVC)
             self.navigationController?.pushViewController(profileVC, animated: true)
         default:
             break

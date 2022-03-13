@@ -648,7 +648,6 @@ class WritingViewController: UIViewController {
                 
             }
             
-            
         case cancelBarButtonItem:
             if editType == .yet {
                 self.alert("임시 저장하시겠습니까?")

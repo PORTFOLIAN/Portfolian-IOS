@@ -62,7 +62,6 @@ enum MyProjectRouter: URLRequestConvertible {
         case .createProject, .putProject:
             if writingOwnerTag.names != [] {
                 let stringTag = writingOwnerTag.names[0].rawValue
-            
             return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: stringTag)
             } else {
                 return Project(article: parameter!, userId: Jwt.shared.userId, ownerStack: "")

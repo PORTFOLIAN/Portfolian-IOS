@@ -43,7 +43,6 @@ enum MyOauthRouter: URLRequestConvertible {
         case let .postKaKaoToken(token):
             return ["token": token]
         case .postRefreshToken:
-//            return ["userId": Jwt.shared.userId, "refreshToken": Jwt.shared.refreshToken]
             return ["userId": Jwt.shared.userId, "refreshToken": ""]
         case .patchLogout:
             return nil
