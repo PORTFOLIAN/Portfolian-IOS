@@ -47,9 +47,8 @@ class ViewController: UITabBarController {
                 }
                 else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    
                     self.setViewControllers(viewControllers, animated: true)
-
+                    
                     let request: NSFetchRequest<Token> = Token.fetchRequest()
                     let fetchResult = PersistenceManager.shared.fetch(request: request)
                     fetchResult.forEach {
@@ -59,25 +58,7 @@ class ViewController: UITabBarController {
                         REFRESHTOKEN = refreshToken
                         guard let userId = $0.userId else {return}
                         Jwt.shared.userId = userId
-                        }
-                    
-                    
-                    MyAlamofireManager.shared.getMyProfile { response in
-                        switch response {
-                        case .success(let user):
-                            ()
-//                            if user.stackList != [] {
-//                                for stack in user.stackList {
-//                                    myTag.names.append(Tag.Name(rawValue: stack)!)
-//                                }
-//                            }
-                        case .failure(let error):
-                            print(error)
-                        default:
-                            break
-                        }
                     }
-                    
                 }
             }
         } else {
@@ -88,7 +69,6 @@ class ViewController: UITabBarController {
 
     //MARK: Navigation
     private func goToApp() {
-        
         let authView = UIStoryboard.init(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "SigninVC")
         authView.modalPresentationStyle = .fullScreen
         self.present(authView, animated: true, completion: nil)

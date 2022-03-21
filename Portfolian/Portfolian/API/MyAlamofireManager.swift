@@ -8,6 +8,8 @@
 import Foundation
 import Alamofire
 import SwiftyJSON
+import CoreData
+
 final class MyAlamofireManager {
     // 싱글턴 사용
     static let shared = MyAlamofireManager()
@@ -217,26 +219,27 @@ final class MyAlamofireManager {
             }
     }
     
-    func renewAccessToken() {
+    func renewAccessToken(completion: @escaping (Bool) -> Void) {
         self.session
             .request(MyOauthRouter.postRefreshToken)
             .validate(statusCode: 200..<401) // Auth 검증
             .responseJSON { response in
-                
                 guard let responseValue = response.value else { return }
                 let responseJson = JSON(responseValue)
 
-                guard let code = responseJson["code"].int,
-                      let accessToken = responseJson["accessToken"].string else { return }
-
+                guard let code = responseJson["code"].int else { return }
                 if code == 1 {
+                    guard let accessToken = responseJson["accessToken"].string else { return }
                     Jwt.shared.accessToken = accessToken
                     let myToken = JwtToken(accessToken: Jwt.shared.accessToken, refreshToken: REFRESHTOKEN, userId: Jwt.shared.userId)
                     PersistenceManager.shared.insertToken(token: myToken)
-                    
-                    print("갱신할때 있는 refreshToken은 \(REFRESHTOKEN)")
+                    completion(true)
                 } else {
-                    print(MyError.adminError)
+                    let writingRequest: NSFetchRequest<Writing> = Writing.fetchRequest()
+                    let tokenRequest: NSFetchRequest<Token> = Token.fetchRequest()
+                    PersistenceManager.shared.deleteAll(request: writingRequest)
+                    PersistenceManager.shared.deleteAll(request: tokenRequest)
+                    completion(false)
                 }
             }
     }

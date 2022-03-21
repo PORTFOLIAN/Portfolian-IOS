@@ -7,6 +7,7 @@
 
 import Foundation
 import KakaoSDKTalk
+
 struct Project: Codable {
     let article: ProjectArticle
     let userId: String

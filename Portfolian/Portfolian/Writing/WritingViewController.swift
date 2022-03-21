@@ -12,8 +12,6 @@ import CoreData
 import Alamofire
 import SwiftyJSON
 import KakaoSDKCommon
-import simd
-import AVFoundation
 
 class WritingViewController: UIViewController {
     let periodInit = "예시: 3개월, 2021.09 ~ 2021.11"
@@ -34,6 +32,7 @@ class WritingViewController: UIViewController {
         UITextField.placeholder = "제목을 입력하세요."
         UITextField.font = UIFont(name: "NotoSansKR-Bold", size: 24)
     })
+    
     lazy var configuration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
         let title = "본인의 사용 기술을 선택해주세요."
@@ -51,7 +50,6 @@ class WritingViewController: UIViewController {
     lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
-    
     
     lazy var teamConfiguration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
@@ -665,15 +663,11 @@ class WritingViewController: UIViewController {
         case stackButton:
             registrationType = .WritingOwner
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-//            FilterVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(FilterVC, animated: true)
-            print(1)
         case teamStackButton:
             registrationType = .WritingTeam
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-//            FilterVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(FilterVC, animated: true)
-            print(2)
         default:
             print("error?")
         }

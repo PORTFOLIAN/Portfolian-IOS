@@ -12,95 +12,96 @@ import Alamofire
 import SwiftyMarkdown
 import KakaoSDKTemplate
 class WritingSaveViewController: UIViewController {
-    lazy var scrollView = UIScrollView()
-    lazy var contentView = UIView()
+    var scrollView = UIScrollView()
+    var contentView = UIView()
     lazy var editBarButtonItem = UIBarButtonItem(image: UIImage(named: "Edit"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
     lazy var shareBarButtonItem = UIBarButtonItem(image: UIImage(named: "Share"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
 
 
-    lazy var leaderStackTitleLabel = UILabel().then({ UILabel in
+    var leaderStackTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "팀장의 사용 기술"
         UILabel.textColor = .black
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
-    lazy var teamStackTitleLabel = UILabel().then({ UILabel in
+    
+    var teamStackTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "팀원의 사용 기술"
         UILabel.textColor = .black
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
-    lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
-    lazy var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
-    lazy var titleLabel = UILabel().then({ UILabel in
+    var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
+    var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
+    var titleLabel = UILabel().then({ UILabel in
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
     })
-    lazy var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 30)).then({ UIView in
+    var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 30)).then({ UIView in
         let icon = UIImage(named: "AddUser")
         var iconView = UIImageView(image: icon)
         iconView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         UIView.addSubview(iconView)
         UIView.contentMode = .bottom
     })
-    lazy var viewsLabel = UILabel().then({ UILabel in
+    var viewsLabel = UILabel().then({ UILabel in
         let views = 0
         UILabel.text = "조회수"+String(views)
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 12)
         UILabel.textColor = .gray
     })
     
-    lazy var recruitLabel = UILabel().then({ UILabel in
+    var recruitLabel = UILabel().then({ UILabel in
         let numberOfPerson = 0
         UILabel.numberOfLines = 0
         UILabel.text = "모집 인원"+String(numberOfPerson)
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
     })
-    lazy var explainTitleLabel = UILabel().then({ UILabel in
+    var explainTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "주제 설명"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
-    lazy var explainLabel = UILabel().then({ UILabel in
+    var explainLabel = UILabel().then({ UILabel in
         UILabel.text = "리액트를 사용하여 네이버의 로그인 기능을 구현합니다.\n프론트와 백엔드간의 데이터 통신에 대해 이해하고 소켓 프로그래밍 경험을 목표로 합니다."
         UILabel.numberOfLines = 0
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UILabel.sizeToFit()
     })
-    lazy var periodTitleLabel = UILabel().then({ UILabel in
+    var periodTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "프로젝트 기간"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
-    lazy var periodLabel = UILabel().then({ UILabel in
+    var periodLabel = UILabel().then({ UILabel in
         UILabel.text = "2021.11 ~ 2022.01"
         UILabel.numberOfLines = 0
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UILabel.sizeToFit()
     })
-    lazy var optionTitleLabel = UILabel().then({ UILabel in
+    var optionTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "모집 조건"
         UILabel.textColor = .black
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
-    lazy var optionLabel = UILabel().then({ UILabel in
+    var optionLabel = UILabel().then({ UILabel in
         UILabel.text = "자바스크립트에 능숙한 분이면 좋습니다.\n 자바스크립트, 리액트 경험이 없어도 열심히 할 수 있는 분이면 좋습니다.\n백단과의 통신을 위해 백앤드 경험자 환영합니다."
         UILabel.numberOfLines = 0
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UILabel.sizeToFit()
     })
     
-    lazy var proceedTitleLabel = UILabel().then { UILabel in
+    var proceedTitleLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 진행 방식"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     }
     
-    lazy var proceedLabel = UILabel().then { UILabel in
+    var proceedLabel = UILabel().then { UILabel in
         UILabel.text = "주 1회 정해진 요일에 구글 미팅을 통해 회상 회의를 진행합니다.\n한달에 최소 1회는 오프라인 미팅을 합니다.\n장소는 인천, 안양, 건대, 구리 중 랜덤입니다"
         UILabel.numberOfLines = 0
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UILabel.sizeToFit()
     }
     
-    lazy var detailTitleLabel = UILabel().then({ UILabel in
+    var detailTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "프로젝트 상세 설명"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
@@ -116,20 +117,48 @@ class WritingSaveViewController: UIViewController {
         UITextView.isScrollEnabled = false
         UITextView.delegate = self
     })
-    lazy var footerView = UIView().then { UIView in
+    
+    var footerView = UIView()
+    
+    var lineViewFirst = UIView().then({ UIView in
+        UIView.backgroundColor = ColorPortfolian.gray2
+    })
+
+    var lineViewSecond = UIView().then({ UIView in
+        UIView.backgroundColor = ColorPortfolian.gray2
+    })
+    
+    var borderView = UIView().then({ UIView in
+        UIView.backgroundColor = ColorPortfolian.gray2
+    })
+    
+    var profileImageView = UIImageView().then { UIImageView in
+        UIImageView.layer.cornerRadius = 25
+        UIImageView.layer.borderWidth = 1
+        UIImageView.layer.borderColor = UIColor.clear.cgColor
+        UIImageView.contentMode =  .scaleAspectFill
+        UIImageView.clipsToBounds = true
+        UIImageView.image = UIImage(named: "ProfileImage")
     }
-
-    lazy var lineViewFirst = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-
-    lazy var lineViewSecond = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-
-    lazy var lineViewThird = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
+    
+    var managerLabel = UILabel().then { UILabel in
+        UILabel.text = "Team Manager"
+        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+    }
+    
+    var nameLabel = UILabel().then { UILabel in
+        UILabel.text = "Hyle"
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+    }
+    
+    var dynamicButton = UIButton().then { UIButton in
+        UIButton.setTitle("  모집마감  ", for: .normal)
+        UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 20)
+        UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
+        UIButton.layer.borderColor = ColorPortfolian.thema.cgColor
+        UIButton.layer.borderWidth = 1.0
+        UIButton.layer.cornerRadius = 25
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -145,12 +174,21 @@ class WritingSaveViewController: UIViewController {
         periodLabel.text = projectInfo.contents.projectTime
         optionLabel.text = projectInfo.contents.recruitmentCondition
         proceedLabel.text = projectInfo.contents.progress
-        
+        if projectInfo.leader.userId != Jwt.shared.userId {
+            dynamicButton.setTitle("  채팅하기  ", for: .normal)
+        }
         let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
         detailTextView.attributedText = md.attributedString()
         configureLabel(md: md)
-                
-        
+        URLSession.shared.dataTask( with: NSURL(string:projectInfo.leader.photo)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async { [weak self] in
+                if let data = data {
+                    let image = UIImage(data: data)
+                    self?.profileImageView.image = image
+                }
+            }
+        }).resume()
         
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
@@ -182,7 +220,9 @@ class WritingSaveViewController: UIViewController {
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(scrollView)
+        view.addSubview(footerView)
         scrollView.addSubview(contentView)
+        
         contentView.addSubview(tagCollectionView)
         contentView.addSubview(tagsCollectionView)
         contentView.addSubview(leaderStackTitleLabel)
@@ -191,9 +231,6 @@ class WritingSaveViewController: UIViewController {
         contentView.addSubview(recruitLabel)
         contentView.addSubview(lineViewFirst)
         contentView.addSubview(lineViewSecond)
-        contentView.addSubview(lineViewThird)
-        view.addSubview(footerView)
-        
         contentView.addSubview(explainTitleLabel)
         contentView.addSubview(periodTitleLabel)
         contentView.addSubview(optionTitleLabel)
@@ -204,6 +241,11 @@ class WritingSaveViewController: UIViewController {
         contentView.addSubview(optionLabel)
         contentView.addSubview(proceedLabel)
         contentView.addSubview(detailTextView)
+        footerView.addSubview(borderView)
+        footerView.addSubview(profileImageView)
+        footerView.addSubview(managerLabel)
+        footerView.addSubview(nameLabel)
+        footerView.addSubview(dynamicButton)
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(viewsLabel.snp.bottom)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -309,19 +351,44 @@ class WritingSaveViewController: UIViewController {
         detailTextView.snp.makeConstraints { make in
             make.top.equalTo(detailTitleLabel.snp.bottom)
             make.leading.trailing.equalTo(contentView)
-//            make.height.equalTo(1000)
-        }
-        lineViewThird.snp.makeConstraints { make in
-            make.top.equalTo(detailTextView.snp.bottom).offset(50)
-            make.leading.trailing.equalTo(view).inset(10)
-            make.height.equalTo(1)
             make.bottom.equalTo(contentView)
         }
+
         footerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view).inset(10)
             make.height.equalTo(100)
             make.bottom.equalTo(view.snp.bottom)
         }
+        
+        borderView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(view)
+            make.height.equalTo(1)
+            make.top.equalTo(footerView)
+        }
+        
+        profileImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(footerView)
+            make.leading.equalTo(footerView).offset(10)
+            make.height.width.equalTo(60)
+        }
+
+        managerLabel.snp.makeConstraints { make in
+            make.top.equalTo(profileImageView).offset(5)
+            make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(profileImageView).offset(-5)
+            make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+        }
+
+        dynamicButton.snp.makeConstraints { make in
+            make.centerY.equalTo(footerView)
+            make.trailing.equalTo(footerView).offset(-10)
+            make.width.equalTo(100)
+            make.height.equalTo(60)
+        }
+        
         // Do any additional setup after loading the view.
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagCollectionView.delegate = self

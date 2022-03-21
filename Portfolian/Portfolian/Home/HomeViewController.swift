@@ -11,7 +11,6 @@ import SnapKit
 import Alamofire
 import MapKit
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
-    lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
 
     lazy var logo: UIBarButtonItem = {
         let image = UIImage(named: "Logo")?.resizeImage(size: CGSize(width: 150, height: 30)).withRenderingMode(.alwaysOriginal)
@@ -26,10 +25,12 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         button.tag = 2
         return button
     }()
+    
     lazy var viewsCheckBox = UIButton().then({ UIButton in
         UIButton.setImage(UIImage(named: "Checkbox"), for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     })
+    
     lazy var viewsLabel = UILabel().then({ UILabel in
         UILabel.text = "조회 순"
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
@@ -73,11 +74,17 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         return button
     }()
     
+    let refreshControl = UIRefreshControl()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         if SEARCHTOGGLE {
-            let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            var projectSearch: ProjectSearch
+            if let keyword = searchingTag.names.first?.rawValue {
+                projectSearch = ProjectSearch(stack: keyword, sort: "default", keyword: "default")
+            } else {
+                projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            }
             MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
@@ -93,11 +100,16 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
                 }
             }
         }
-        // 엑세스 토큰 갱신
-        print(REFRESHTOKEN, "REFRESH갱신")
-        
         if REFRESHTOKEN != "" {
-            MyAlamofireManager.shared.renewAccessToken()
+            MyAlamofireManager.shared.renewAccessToken() { bool in
+                if !bool {
+                    let vc = SettingViewController()
+                    vc.goToApp()
+                }
+            }
+        } else {
+            let vc = SettingViewController()
+            vc.goToApp()
         }
     }
     override func viewDidLoad() {
@@ -113,6 +125,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         
         subview()
         constraints()
+        initRefresh()
         editType = .yet
 //        self.tableView.separatorStyle = .none
     }
@@ -142,6 +155,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
             registrationType = .Searching
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
+            
         case 4: // push
             print(4)
             
@@ -184,6 +198,14 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
                     }
                 }
             }
+        case refreshControl:
+            print("새로고침 시작")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+            }
+
         default:
             break
         }
@@ -205,11 +227,17 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         navigationItem.titleView = searchController.searchBar
         navigationItem.searchController = searchController
         searchController.isActive = true
-        searchController.searchBar.placeholder = "검색하삼"
+        searchController.searchBar.placeholder = "원하시는 프로젝트를 검색해보세요"
         // 사용자가 다른 뷰 컨트롤러로 이동하면 search bar가 화면에 남아 있지 않도록 합니다.
         definesPresentationContext = true
         // 플레이스홀더를 설정합니다.
     }
+    
+    func initRefresh() {
+            refreshControl.addTarget(self, action: #selector(buttonPressed(_:)), for: .valueChanged)
+            refreshControl.attributedTitle = NSAttributedString(string: "새 프로젝트를 찾는 중입니다:)")
+            tableView.refreshControl = refreshControl
+        }
     
     // MARK: - disappear barButton
     func disappearBarButton() {
@@ -224,6 +252,7 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         setUpItem()
         setUpLogo()
     }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText != "" {
             let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: searchText)
@@ -242,21 +271,20 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
                 }
             }
         }
-        
     }
+    
     func updateSearchResults(for searchController: UISearchController) {
         
     }
+    
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         print(2)
     }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print(1)
-        
-        
     }
 }
-
 
 /*
  // MARK: - Navigation
@@ -272,8 +300,7 @@ extension HomeViewController: BookmarkButtonDelegate {
     func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
         let buttonPosition:CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
         let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
-        print(indexPath)
-        var articleList = projectListInfo.articleList
+        let articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath?[1] ?? 0]
         let projectId = articleInfo.projectId
         var bookMarked = articleInfo.bookMark
@@ -281,7 +308,12 @@ extension HomeViewController: BookmarkButtonDelegate {
         let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
         MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
             if SEARCHTOGGLE {
-                let projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+                var projectSearch: ProjectSearch
+                if let keyword = searchingTag.names.first?.rawValue {
+                    projectSearch = ProjectSearch(stack: keyword, sort: "default", keyword: "default")
+                } else {
+                    projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+                }
                 MyAlamofireManager.shared.getProjectList(searchOption: projectSearch) { result in
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
@@ -344,7 +376,6 @@ extension HomeViewController {
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    
     // 셀의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -354,29 +385,23 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
         cell.cellDelegate = self
-        var articleList = projectListInfo.articleList
+        let articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         cell.titleLabel.text = articleInfo.title
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
         let bookmark = articleInfo.bookMark
 
-        if cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject) != nil {
-            cell.profileImageView.image = cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject)
-            print("캐시 사용")
-        } else {
-                DispatchQueue.main.async {
-                    let profileImage = articleInfo.leader.photo
-                    let data = try? Data(contentsOf: URL(string: profileImage)!)
-                    let image = UIImage(data: data!)
+        URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async { [weak self] in
+                cell.profileImageView.contentMode =  .scaleToFill
+                if let data = data {
+                    let image = UIImage(data: data)
                     cell.profileImageView.image = image
-                    self.cache.setObject(image!, forKey: (indexPath as NSIndexPath).row as AnyObject)
-                    print("통신 사용")
-
                 }
             }
-        
-        
+        }).resume()
 
         if bookmark == true {
             cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
@@ -431,9 +456,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             cell.tagButton3.currentColor(color: tagInfo3.color)
             cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
-
         cell.viewsLabel.text = "조회 \(articleInfo.view)"
-        
         return cell
     }
     
@@ -441,14 +464,13 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print(indexPath)
         
-        var articleList = projectListInfo.articleList
+        let articleList = projectListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
         recruitWriting.newProjectID = projectId
         MyAlamofireManager.shared.getProject(projectID: projectId) { result in
             switch result {
             case .success:
-                
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
                 for tag in projectInfo.stackList{
@@ -457,7 +479,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
                 writingOwnerTag.names.append(tagName)
-
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
                 
@@ -476,27 +497,22 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
             if editingStyle == .delete {
-            
-                var articleList = projectListInfo.articleList
+                let articleList = projectListInfo.articleList
                 let articleInfo = articleList[indexPath[1]]
                 let projectId = articleInfo.projectId
-//                tableView.deleteRows(at: [indexPath], with: .fade)
                 MyAlamofireManager.shared.deleteProject(projectID: projectId) { result in
                     if result == .success(1) {
                         DispatchQueue.main.async {
                             projectListInfo.articleList.remove(at: indexPath.row)
-
                             tableView.reloadData()
                             tableView.setNeedsLayout()
                         }
                     } else {
+                        
                         self.view.makeToast("본인의 글이 아닙니다.", duration: 1.0, position: .center)
                     }
                     
                 }
             }
         }
-}
-struct Toggle {
-    
 }

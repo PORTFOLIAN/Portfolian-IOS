@@ -24,13 +24,14 @@ class MyPageViewController: UIViewController {
     
 
     
-    lazy var profileImage = UIImageView().then { UIImageView in
+    lazy var profileImageView = UIImageView().then { UIImageView in
         lazy var image = UIImage(named: "Profile")
         UIImageView.image = image
         UIImageView.layer.cornerRadius = 50
         UIImageView.layer.borderWidth = 1
         UIImageView.layer.borderColor = UIColor.clear.cgColor
         UIImageView.clipsToBounds = true
+        UIImageView.contentMode =  .scaleAspectFill
     }
     
     let settingImage = UIImage(named: "Setting")
@@ -70,13 +71,20 @@ class MyPageViewController: UIViewController {
         MyAlamofireManager.shared.getMyProfile { response in
             switch response {
             case .success(let user):
+                
                 self.userNameLabel.text = user.nickName
                 self.introduceLabel.text = user.description
-                if let url = URL(string: user.photo) {
-                    print(url)
-                    let data = try? Data(contentsOf: url)
-                    self.profileImage.image = UIImage(data: data!)
-                }
+                
+                URLSession.shared.dataTask( with: NSURL(string:user.photo)! as URL, completionHandler: {
+                    (data, response, error) -> Void in
+                    DispatchQueue.main.async { [weak self] in
+                        
+                        if let data = data {
+                            let image = UIImage(data: data)
+                            self?.profileImageView.image = image
+                        }
+                    }
+                }).resume()
                 myTag = TagDataStore()
                 
                 DispatchQueue.main.async {
@@ -86,13 +94,13 @@ class MyPageViewController: UIViewController {
                         }
                     }
                     self.tagCollectionView.reloadData()
-
                     let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
                     self.tagCollectionView.snp.updateConstraints {
                         $0.height.equalTo(height)
                     }
                     self.view.setNeedsLayout()
                 }
+
             case .failure(let error):
                 print(error)
             default:
@@ -105,7 +113,7 @@ class MyPageViewController: UIViewController {
         
         // Do any additional setup after loading the view.
         setUpItem()
-        view.addSubview(profileImage)
+        view.addSubview(profileImageView)
         view.addSubview(userNameLabel)
         view.addSubview(gitHubButton)
         view.addSubview(emailButton)
@@ -113,28 +121,28 @@ class MyPageViewController: UIViewController {
         view.addSubview(profileCorrectionButton)
         view.addSubview(tagCollectionView)
         view.addSubview(introduceLabel)
-        profileImage.snp.makeConstraints { make in
+        profileImageView.snp.makeConstraints { make in
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.height.width.equalTo(100)
         }
         
         userNameLabel.snp.makeConstraints { make in
-            make.leading.equalTo(profileImage.snp.trailing).offset(20)
-            make.top.equalTo(profileImage).offset(10)
+            make.leading.equalTo(profileImageView.snp.trailing).offset(20)
+            make.top.equalTo(profileImageView).offset(10)
         }
         gitHubButton.snp.makeConstraints { make in
-            make.leading.equalTo(profileImage.snp.trailing).offset(20)
-            make.bottom.equalTo(profileImage).inset(10)
+            make.leading.equalTo(profileImageView.snp.trailing).offset(20)
+            make.bottom.equalTo(profileImageView).inset(10)
         }
         
         emailButton.snp.makeConstraints { make in
             make.leading.equalTo(gitHubButton.snp.trailing).offset(20)
-            make.bottom.equalTo(profileImage).inset(10)
+            make.bottom.equalTo(profileImageView).inset(10)
         }
         profileCorrectionButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.top.equalTo(profileImage.snp.bottom).offset(15)
+            make.top.equalTo(profileImageView.snp.bottom).offset(15)
             make.height.equalTo(40)
         }
         tagCollectionView.snp.makeConstraints { make in
@@ -217,11 +225,10 @@ extension MyPageViewController: UICollectionViewDataSource {
     // 한 섹션에 몇개의 컬렉션 셀을 보여줄지
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return myTag.names.count
-        
     }
+    
     // 셀을 어떻게 보여줄지
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! TagCollectionViewCell
         let tag = myTag.names[indexPath.row]
         let tagInfo = Tag.shared.getTagInfo(tag: tag)
@@ -230,5 +237,4 @@ extension MyPageViewController: UICollectionViewDataSource {
         cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
         return cell
     }
-    
 }

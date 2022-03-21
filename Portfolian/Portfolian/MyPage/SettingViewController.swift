@@ -105,9 +105,7 @@ extension SettingViewController: UITableViewDelegate {
                     Jwt.shared = .init()
                     print(Jwt.shared, "없어졌니 jwt야?")
                 }
-                
                 self.goToApp()
-                
             }
         }
     }

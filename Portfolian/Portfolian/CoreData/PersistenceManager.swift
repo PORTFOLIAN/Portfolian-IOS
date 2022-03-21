@@ -18,13 +18,14 @@ struct Person {
     var proceed: String?
     var detail: String?
 }
+
 struct JwtToken {
     var accessToken: String?
     var refreshToken: String?
     var userId: String?
 }
-class PersistenceManager {
 
+class PersistenceManager {
     static var shared: PersistenceManager = PersistenceManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -50,6 +51,7 @@ class PersistenceManager {
             return []
         }
     }
+    
     @discardableResult
     func insertToken(token: JwtToken) -> Bool {
         // Entity를 가져옴
@@ -72,6 +74,7 @@ class PersistenceManager {
             return false
         }
     }
+    
     @discardableResult
     func insertPerson(person: Person) -> Bool {
         // Entity를 가져옴

@@ -66,4 +66,5 @@ struct ColorPortfolian {
     static let etc = UIColor(rgb: 0x5C5C5C)
     static let gray1 = UIColor(rgb: 0x909090)
     static let gray2 = UIColor(rgb: 0xCCCCCC)
+    static let thema = UIColor(rgb: 0x6F9ACD)
 }

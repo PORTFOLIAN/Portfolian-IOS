@@ -15,17 +15,9 @@ class BaseInterceptor: RequestInterceptor {
         if Jwt.shared.accessToken != "" {
             request.setValue("Bearer " + Jwt.shared.accessToken, forHTTPHeaderField: "Authorization")
         }
-        
-//        request.addValue("application/json; charset = utf-8", forHTTPHeaderField: "Content-Type")
-        // 공통 파라매터 추가
-//        var dictionary = [String : String]()
-//        dictionary.updateValue(API.USER_ID, forKey: "user_id")
-//
-//        do {
-//            request = try URLEncodedFormParameterEncoder().encode(dictionary, into: request)
-//        } catch {
-//            print(error)
-//        }
+        if REFRESHTOKEN != "" {
+            request.setValue("REFRESH=" + REFRESHTOKEN, forHTTPHeaderField: "Cookie")
+        }
         completion(.success(request))
     }
     
@@ -38,7 +30,12 @@ class BaseInterceptor: RequestInterceptor {
         let data = ["statusCode" : statusCode]
         if statusCode == 401 {
             if REFRESHTOKEN != "" {
-                MyAlamofireManager.shared.renewAccessToken()
+                MyAlamofireManager.shared.renewAccessToken() { bool in
+                    if !bool {
+                        let vc = SettingViewController()
+                        vc.goToApp()
+                    }
+                }
             }
         }
         

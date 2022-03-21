@@ -44,8 +44,6 @@ class BookmarkViewController: UIViewController {
         tableView.dataSource = self
         subview()
         constraints()
-        
-       
         // Do any additional setup after loading the view.
     }
     
@@ -54,7 +52,6 @@ class BookmarkViewController: UIViewController {
             self.tableView.reloadData()
             self.tableView.setNeedsLayout()
         }
-
     }
     
     // Mark: SetupLogo
@@ -71,7 +68,6 @@ class BookmarkViewController: UIViewController {
         
         switch sender.tag {
         case 1: // logo
-            
             let HomeVC = UIStoryboard(name: "Home", bundle: nil).instantiateViewController(withIdentifier: "HomeVC")
             HomeVC.modalPresentationStyle = .fullScreen
             self.dismiss(animated: true, completion: nil)
@@ -138,15 +134,13 @@ extension BookmarkViewController: BookmarkButtonDelegate {
         bookMarked.toggle()
         let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
         MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
-           
                 MyAlamofireManager.shared.getBookmarkList { result in
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                         self.view.setNeedsLayout()
                     }
                 }
-            
-    }
+        }
     }
 }
 
@@ -161,15 +155,26 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
         cell.cellDelegate = self
         
-        var articleList = bookmarkListInfo.articleList
+        let articleList = bookmarkListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         cell.titleLabel.text = articleInfo.title
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
         var labelStackCount: Int = 0
         var tagInfo1, tagInfo2, tagInfo3: TagInfo
-        var bookmark = articleInfo.bookMark
+        let bookmark = articleInfo.bookMark
 
+        URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async { [weak self] in
+                cell.profileImageView.contentMode =  .scaleAspectFit
+                if let data = data {
+                    let image = UIImage(data: data)
+                    cell.profileImageView.image = image
+                }
+            }
+        }).resume()
+        
         if bookmark == true {
             cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         } else {
@@ -263,10 +268,8 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         
     }
     
-    
     // 셀의 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 175.0;//Choose your custom row height
     }
-    
 }

@@ -176,7 +176,6 @@ class HomeTableViewCell: UITableViewCell {
         }else{
             sender.setImage(UIImage(named: "Bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
             }
-        
         }
 
     
@@ -187,3 +186,6 @@ class HomeTableViewCell: UITableViewCell {
     
     
 }
+
+
+

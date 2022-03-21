@@ -43,8 +43,6 @@ class TagCollectionViewCell: UICollectionViewCell {
         if clickedTags {
             tagButton.isClicked = true
         }
-        
-        
     }
     
     // 등록 타입별로 상태 초기화

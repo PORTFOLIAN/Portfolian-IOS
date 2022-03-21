@@ -100,18 +100,24 @@ class ProfileViewController: UIViewController {
     
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
 
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
         MyAlamofireManager.shared.getMyProfile { response in
             switch response {
             case .success(let user):
-                if let url = URL(string: user.photo) {
-                    let data = try? Data(contentsOf: url)
-                    self.profileButton.setImage(UIImage(data: data!), for: .normal)
-                }
+                URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
+                    (data, response, error) -> Void in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.profileButton.contentMode =  .scaleAspectFit
+                        if let data = data {
+                            let image = UIImage(data: data)
+                            self?.profileButton.setImage(image, for: .normal)
+                        }
+                    }
+                }).resume()
                 DispatchQueue.main.async {
                     self.tagCollectionView.reloadData()
                     self.view.setNeedsLayout()

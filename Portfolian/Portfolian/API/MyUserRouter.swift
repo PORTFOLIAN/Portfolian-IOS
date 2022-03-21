@@ -95,7 +95,7 @@ enum MyUserRouter: URLRequestConvertible {
             for value in userInfo.stack {
                 multipartFormData.append( "\(value)".data(using: String.Encoding.utf8)!, withName: "stack")
             }
-            multipartFormData.append(profileImage.pngData()!, withName: "photo", fileName: "profile.png", mimeType: "image/png")
+            multipartFormData.append(profileImage.jpegData(compressionQuality: 0.01)!, withName: "photo", fileName: "profile.jpeg", mimeType: "image/jpeg")
         default:
             break
         }
