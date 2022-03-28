@@ -154,6 +154,7 @@ class WritingSaveViewController: UIViewController {
     var dynamicButton = UIButton().then { UIButton in
         UIButton.setTitle("  모집마감  ", for: .normal)
         UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 20)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
         UIButton.layer.borderColor = ColorPortfolian.thema.cgColor
         UIButton.layer.borderWidth = 1.0
@@ -398,8 +399,6 @@ class WritingSaveViewController: UIViewController {
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
         scrollView.delegate = self
-        
-        editType = .yet
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -447,6 +446,12 @@ class WritingSaveViewController: UIViewController {
             self.alert()
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
+        case dynamicButton:
+            if sender.titleLabel?.text == "  채팅하기  " {
+                print("화면이동하기")
+            } else {
+                print("모집마감처리")
+            }
         default:
             print("error?")
         }

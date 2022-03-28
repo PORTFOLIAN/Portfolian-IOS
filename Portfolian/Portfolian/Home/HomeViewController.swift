@@ -11,6 +11,7 @@ import SnapKit
 import Alamofire
 import MapKit
 class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
+    lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
 
     lazy var logo: UIBarButtonItem = {
         let image = UIImage(named: "Logo")?.resizeImage(size: CGSize(width: 150, height: 30)).withRenderingMode(.alwaysOriginal)
@@ -78,6 +79,9 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        cache = NSCache()
+        editType = .yet
+        
         if SEARCHTOGGLE {
             var projectSearch: ProjectSearch
             if let keyword = searchingTag.names.first?.rawValue {
@@ -126,7 +130,6 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         subview()
         constraints()
         initRefresh()
-        editType = .yet
 //        self.tableView.separatorStyle = .none
     }
     
@@ -201,9 +204,10 @@ class HomeViewController: UIViewController, UISearchResultsUpdating, UISearchBar
         case refreshControl:
             print("새로고침 시작")
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                self?.tableView.reloadData()
+                self?.refreshControl.endRefreshing()
+                self?.cache = NSCache()
             }
 
         default:
@@ -366,7 +370,7 @@ extension HomeViewController {
         }
         
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(viewsCheckBox.snp.bottom).offset(10)
+            make.top.equalTo(viewsCheckBox.snp.bottom)
             make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         writeButton.snp.makeConstraints { make in
@@ -391,18 +395,23 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
         let bookmark = articleInfo.bookMark
-
-        URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
-            (data, response, error) -> Void in
-            DispatchQueue.main.async { [weak self] in
-                cell.profileImageView.contentMode =  .scaleToFill
-                if let data = data {
-                    let image = UIImage(data: data)
-                    cell.profileImageView.image = image
+        
+        if cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject) != nil {
+            cell.profileImageView.image = cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject)
+            print("캐시 사용")
+        } else {
+            URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
+                (data, response, error) -> Void in
+                DispatchQueue.main.async { [weak self] in
+                    cell.profileImageView.contentMode =  .scaleToFill
+                    if let data = data {
+                        let image = UIImage(data: data)
+                        cell.profileImageView.image = image
+                        self?.cache.setObject(image!, forKey: (indexPath as NSIndexPath).row as AnyObject)
+                    }
                 }
-            }
-        }).resume()
-
+            }).resume()
+        }
         if bookmark == true {
             cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         } else {
@@ -500,8 +509,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 let articleList = projectListInfo.articleList
                 let articleInfo = articleList[indexPath[1]]
                 let projectId = articleInfo.projectId
-                MyAlamofireManager.shared.deleteProject(projectID: projectId) { result in
+                MyAlamofireManager.shared.deleteProject(projectID: projectId) { [weak self] result in
                     if result == .success(1) {
+                        self?.cache = NSCache()
                         DispatchQueue.main.async {
                             projectListInfo.articleList.remove(at: indexPath.row)
                             tableView.reloadData()
@@ -509,7 +519,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                         }
                     } else {
                         
-                        self.view.makeToast("본인의 글이 아닙니다.", duration: 1.0, position: .center)
+                        self?.view.makeToast("본인의 글이 아닙니다.", duration: 1.0, position: .center)
                     }
                     
                 }

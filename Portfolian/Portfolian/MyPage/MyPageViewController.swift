@@ -22,7 +22,6 @@ class MyPageViewController: UIViewController {
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     }
     
-
     
     lazy var profileImageView = UIImageView().then { UIImageView in
         lazy var image = UIImage(named: "Profile")

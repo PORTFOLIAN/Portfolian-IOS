@@ -10,7 +10,7 @@ import SocketIO
 
 class SocketIOManager: NSObject {
     static let shared = SocketIOManager()
-    var manager = SocketManager(socketURL: URL(string: "http://api.portfolian.site:3001")!, config: [.log(true), .compress])
+    var manager = SocketManager(socketURL: URL(string: "https://api.portfolian.site:443")!, config: [.log(true), .compress])
     var socket: SocketIOClient!
     var myChat = [ChatType]()
     
@@ -27,7 +27,16 @@ class SocketIOManager: NSObject {
             print(chat)
             }
     }
-
+    func receiveMessage(completion: @escaping (ChatType) -> Void) {
+        self.socket.on("receive") { (dataArray, socketAck) in
+            print("***************************************")
+            print(type(of: dataArray))
+            let data = dataArray[0] as! NSDictionary
+            let chat = ChatType(roomId: data["roomId"] as? String ?? "", sender: data["sender"] as? String ?? "", messageContent: data["messageContent"] as! String)
+            completion(chat)
+        }
+    }
+    
     func establishConnection() {
         socket.connect()
     }
@@ -37,11 +46,12 @@ class SocketIOManager: NSObject {
     }
    
     func sendMessage(_ chatType: ChatType) {
-        socket.emit("send", ["roomId" : chatType.roomId, "messageContent" : chatType.messageContent])
+        socket.emit("send", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent])
     }
 }
 
 struct ChatType {
     var roomId = String()
+    var sender = String()
     var messageContent = String()
 }

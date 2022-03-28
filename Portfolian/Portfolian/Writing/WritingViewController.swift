@@ -241,6 +241,9 @@ class WritingViewController: UIViewController {
         self.view.setNeedsLayout()
 
     }
+
+//    override func viewWillDisappear(_ animated: Bool) {
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -290,7 +293,6 @@ class WritingViewController: UIViewController {
         tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
-        
         
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -643,9 +645,7 @@ class WritingViewController: UIViewController {
                         print("실패")
                     }
                 }
-                
             }
-            
         case cancelBarButtonItem:
             if editType == .yet {
                 self.alert("임시 저장하시겠습니까?")

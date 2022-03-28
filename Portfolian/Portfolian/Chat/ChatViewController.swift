@@ -89,6 +89,8 @@ class ChatViewController: UIViewController {
                 chatType.messageContent = sendTextField3.text!
                 chatType.roomId = "test3"
             }
+            let ChatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
+            self.navigationController?.pushViewController(ChatRoomVC, animated: true)
             SocketIOManager.shared.sendMessage(chatType)
         default:
             break

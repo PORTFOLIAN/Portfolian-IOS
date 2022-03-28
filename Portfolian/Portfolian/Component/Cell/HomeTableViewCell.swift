@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import MessageKit
+
 protocol BookmarkButtonDelegate: AnyObject {
     func didTouchBookmarkButton(didClicked: Bool, sender: UIButton)
     

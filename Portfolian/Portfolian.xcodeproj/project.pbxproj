@@ -66,7 +66,11 @@
 		2AFB5427271E372C00B6FFC6 /* UITabBarController+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5426271E372C00B6FFC6 /* UITabBarController+Tag.swift */; };
 		2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */; };
 		511EB1DA27E06C7400CF2EC1 /* SocketIOManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511EB1D927E06C7400CF2EC1 /* SocketIOManger.swift */; };
+		5139CDC827E9BAC800001BAE /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */; };
+		5139CDCA27E9CD7100001BAE /* MyChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC927E9CD7100001BAE /* MyChatCell.swift */; };
+		5139CDCD27E9E17800001BAE /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDCC27E9E17800001BAE /* PaddingLabel.swift */; };
 		51493D5B27E7757A004461D2 /* UIImageView+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51493D5A27E7757A004461D2 /* UIImageView+Link.swift */; };
+		51F5DD4227EB046900D19E3A /* YourChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F5DD4127EB046900D19E3A /* YourChatCell.swift */; };
 		D0C6B329B04EBFFED90F7703 /* Pods_Portfolian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7595C32F23E5C0DE034A2AA8 /* Pods_Portfolian.framework */; };
 /* End PBXBuildFile section */
 
@@ -146,7 +150,11 @@
 		2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		3EE9E46654FFC37768B95F34 /* Pods-Portfolian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Portfolian.debug.xcconfig"; path = "Target Support Files/Pods-Portfolian/Pods-Portfolian.debug.xcconfig"; sourceTree = "<group>"; };
 		511EB1D927E06C7400CF2EC1 /* SocketIOManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOManger.swift; sourceTree = "<group>"; };
+		5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
+		5139CDC927E9CD7100001BAE /* MyChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChatCell.swift; sourceTree = "<group>"; };
+		5139CDCC27E9E17800001BAE /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
 		51493D5A27E7757A004461D2 /* UIImageView+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Link.swift"; sourceTree = "<group>"; };
+		51F5DD4127EB046900D19E3A /* YourChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChatCell.swift; sourceTree = "<group>"; };
 		7595C32F23E5C0DE034A2AA8 /* Pods_Portfolian.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Portfolian.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7D0AEAEF9C4E0E59EC8CB3 /* Pods-Portfolian.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Portfolian.release.xcconfig"; path = "Target Support Files/Pods-Portfolian/Pods-Portfolian.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -169,6 +177,8 @@
 				2A0AA57F27254C4A00C36186 /* HomeTableViewCell.swift */,
 				2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */,
 				2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */,
+				5139CDC927E9CD7100001BAE /* MyChatCell.swift */,
+				51F5DD4127EB046900D19E3A /* YourChatCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -200,6 +210,8 @@
 		2A17B8822722096300A0D598 /* Component */ = {
 			isa = PBXGroup;
 			children = (
+				5139CDCB27E9E16800001BAE /* Label */,
+				2A0AA57A27254B0800C36186 /* Cell */,
 				2A17B8832722097700A0D598 /* Button */,
 			);
 			path = Component;
@@ -337,7 +349,6 @@
 				2ABBF3AE273C6049005A09D0 /* Tag.swift */,
 				2A99DC972755F06B007A28FC /* Project.swift */,
 				2AB7824727706A27004E0408 /* Oauth.swift */,
-				2A0AA57A27254B0800C36186 /* Cell */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -357,6 +368,7 @@
 			children = (
 				2AFB5421271E303B00B6FFC6 /* Chat.storyboard */,
 				2AFB5419271E2FF800B6FFC6 /* ChatViewController.swift */,
+				5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -399,6 +411,14 @@
 				51493D5A27E7757A004461D2 /* UIImageView+Link.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		5139CDCB27E9E16800001BAE /* Label */ = {
+			isa = PBXGroup;
+			children = (
+				5139CDCC27E9E17800001BAE /* PaddingLabel.swift */,
+			);
+			path = Label;
 			sourceTree = "<group>";
 		};
 		D35568106B8C82F8C22F4E00 /* Frameworks */ = {
@@ -551,6 +571,7 @@
 				2A11272E274ADBF500B9564C /* MyLogger.swift in Sources */,
 				2A16479C27713DA900A84554 /* Writing+CoreDataProperties.swift in Sources */,
 				2AFB53FC271C0FEF00B6FFC6 /* SigninViewController.swift in Sources */,
+				5139CDCA27E9CD7100001BAE /* MyChatCell.swift in Sources */,
 				2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */,
 				2A11272C274AD5D800B9564C /* BaseInterceptor.swift in Sources */,
 				2A947C59274BFA3D00331586 /* Model.xcdatamodeld in Sources */,
@@ -572,6 +593,7 @@
 				2A17B8852722099300A0D598 /* TagButton.swift in Sources */,
 				2AFB541C271E300200B6FFC6 /* SettingViewController.swift in Sources */,
 				2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */,
+				51F5DD4227EB046900D19E3A /* YourChatCell.swift in Sources */,
 				2A7F82FA27667629004735B4 /* MyPageViewController.swift in Sources */,
 				2AB7824827706A27004E0408 /* Oauth.swift in Sources */,
 				2A17B87F2721E6C200A0D598 /* FilterViewController.swift in Sources */,
@@ -581,12 +603,14 @@
 				2AFB53E7271C0EC900B6FFC6 /* SceneDelegate.swift in Sources */,
 				2AFB5416271E2FE100B6FFC6 /* HomeViewController.swift in Sources */,
 				2A99DC962755EE04007A28FC /* MyError.swift in Sources */,
+				5139CDCD27E9E17800001BAE /* PaddingLabel.swift in Sources */,
 				2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */,
 				2AFB541A271E2FF800B6FFC6 /* ChatViewController.swift in Sources */,
 				2AAC68B3277C5D4400DF27B1 /* Response.swift in Sources */,
 				2A16479D27713DA900A84554 /* Token+CoreDataClass.swift in Sources */,
 				2A0AA58127254C4A00C36186 /* HomeTableViewCell.swift in Sources */,
 				2A99DC982755F06B007A28FC /* Project.swift in Sources */,
+				5139CDC827E9BAC800001BAE /* ChatRoomViewController.swift in Sources */,
 				2AFB5404271C478500B6FFC6 /* NicknameViewController.swift in Sources */,
 				2A0676A8276328B800E42E9F /* ProfileViewController.swift in Sources */,
 				2A561612272A7B4300C08793 /* UIImage+resize.swift in Sources */,
