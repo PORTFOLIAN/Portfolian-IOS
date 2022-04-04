@@ -181,7 +181,7 @@ class WritingSaveViewController: UIViewController {
         let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
         detailTextView.attributedText = md.attributedString()
         configureLabel(md: md)
-        URLSession.shared.dataTask( with: NSURL(string:projectInfo.leader.photo)! as URL, completionHandler: {
+        URLSession.shared.dataTask( with: NSURL(string: projectInfo.leader.photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
             DispatchQueue.main.async { [weak self] in
                 if let data = data {
@@ -279,7 +279,7 @@ class WritingSaveViewController: UIViewController {
         
         tagCollectionView.snp.makeConstraints { make in
             make.top.equalTo(leaderStackTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.height.equalTo(0)
         }
         
@@ -289,7 +289,7 @@ class WritingSaveViewController: UIViewController {
         }
         tagsCollectionView.snp.makeConstraints { make in
             make.top.equalTo(teamStackTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.height.equalTo(0)
         }
         leftUIView.snp.makeConstraints { make in
@@ -448,7 +448,11 @@ class WritingSaveViewController: UIViewController {
             self.navigationController?.popViewController(animated: true)
         case dynamicButton:
             if sender.titleLabel?.text == "  채팅하기  " {
-                print("화면이동하기")
+                chatRootType = .project
+                profileType = .yourProjectProfile
+                let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
+                self.navigationController?.pushViewController(chatRoomVC, animated: true)
+                
             } else {
                 print("모집마감처리")
             }

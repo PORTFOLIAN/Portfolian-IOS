@@ -39,7 +39,6 @@ class BookmarkViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpLogo()
-        setUpItem()
         tableView.delegate = self
         tableView.dataSource = self
         subview()
@@ -57,10 +56,6 @@ class BookmarkViewController: UIViewController {
     // Mark: SetupLogo
     func setUpLogo() {
         navigationItem.leftBarButtonItem = logo
-    }
-    
-    func setUpItem() {
-        navigationItem.rightBarButtonItems = [push, filter]
     }
     
     //MARK: - ButtonPressed
@@ -167,13 +162,14 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
             DispatchQueue.main.async { [weak self] in
-                cell.profileImageView.contentMode =  .scaleAspectFit
+                cell.profileImageView.contentMode =  .scaleToFill
                 if let data = data {
                     let image = UIImage(data: data)
                     cell.profileImageView.image = image
                 }
             }
         }).resume()
+        
         
         if bookmark == true {
             cell.bookmarkButton.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)

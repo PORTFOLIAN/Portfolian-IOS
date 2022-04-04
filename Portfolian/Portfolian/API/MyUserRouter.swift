@@ -12,7 +12,7 @@ import SwiftyJSON
 enum MyUserRouter: URLRequestConvertible {
     // 검색 관련 api
     case patchNickName(nickName: String)
-    case getMyProfile
+    case getProfile(userId: String)
     case patchMyProfile(profileImage: UIImage)
     case deleteUserId
     case postBookMark(bookmark: Bookmark)
@@ -25,7 +25,7 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName, .patchMyProfile:
             return .patch
-        case .getMyProfile:
+        case .getProfile:
             return .get
         case .deleteUserId:
             return .delete
@@ -40,8 +40,10 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName:
             return "\(Jwt.shared.userId)/nickName"
-        case .getMyProfile, .patchMyProfile:
+        case .patchMyProfile:
             return "\(Jwt.shared.userId)/info"
+        case let .getProfile(userId):
+            return "\(userId)/info"
         case .deleteUserId:
             return "\(Jwt.shared.userId)"
         case .postBookMark, .arrangeProject:
@@ -55,7 +57,7 @@ enum MyUserRouter: URLRequestConvertible {
             return ["nickName": nickName]
         case let .postBookMark(bookmark):
             return bookmark
-        case let .patchMyProfile:
+        case .patchMyProfile:
             return [
                 "nickName": userInfo.nickName,
                 "description": userInfo.description,
@@ -77,7 +79,7 @@ enum MyUserRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
         case .postBookMark:
             request = try JSONParameterEncoder().encode(parameter as? Bookmark, into: request)
-        case .getMyProfile, .deleteUserId, .arrangeProject, .patchMyProfile:
+        case .getProfile, .deleteUserId, .arrangeProject, .patchMyProfile:
             return request
         }
         return request

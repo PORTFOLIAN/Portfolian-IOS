@@ -36,16 +36,13 @@ class ViewController: UITabBarController {
                 if let error = error {
                     if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
                         //로그인 필요
-                        
                         self.goToApp()
-                        
                     }
                     else {
                         //기타 에러
                         print("에러 : \(error)")
                     }
-                }
-                else {
+                } else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                     self.setViewControllers(viewControllers, animated: true)
                     
@@ -73,5 +70,9 @@ class ViewController: UITabBarController {
         authView.modalPresentationStyle = .fullScreen
         self.present(authView, animated: true, completion: nil)
     }
-    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        if item.tag == 4 {
+            profileType = .myProfile
+        }
+    }
 }

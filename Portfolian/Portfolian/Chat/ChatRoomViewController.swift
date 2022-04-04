@@ -11,17 +11,39 @@ import SnapKit
 import Then
 
 class ChatRoomViewController: UIViewController {
+    var isYourFirstChat = true
+    
+    var chatRoomId = String()
+    
     lazy var tableView = UITableView().then { make in
         make.register(MyChatCell.self, forCellReuseIdentifier: "MyChatCell")
         make.register(YourChatCell.self, forCellReuseIdentifier: "YourChatCell")
+        make.register(YourProfileChatCell.self, forCellReuseIdentifier: "YourProfileChatCell")
     }
     
-    var footerView = UIView()
+    var headerLabel = UILabel().then { UILabel in
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UILabel.textColor = .black
+        UILabel.textAlignment = .center
+    }
+    
+    var lineViewFirst = UIView().then { UIView in
+        UIView.backgroundColor = ColorPortfolian.gray2
+    }
+    
+    var lineViewSecond = UIView().then { UIView in
+        UIView.backgroundColor = ColorPortfolian.gray2
+    }
+    
+    var footerView = UIView().then { _ in }
     
     var textView = UITextView().then { UITextView in
         UITextView.backgroundColor = .white
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 18)
         UITextView.layer.cornerRadius = 20
+    }
+    
+    lazy var leaveBarButtonItem = UIBarButtonItem(image: UIImage(named: "leave"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
     }
     
     var sendButton = UIButton().then { UIButton in
@@ -30,22 +52,38 @@ class ChatRoomViewController: UIViewController {
     }
     
     var myChat: [ChatType] = []
-    
-    var socket: SocketIOClient!
-    
+        
     @objc func buttonPressed(_ sender: UIButton) {
-        if textView.text != "" {
-            let chat = ChatType(roomId: "\(Jwt.shared.userId) - 상대UID", sender: "\(Jwt.shared.userId)", messageContent: textView.text)
-            SocketIOManager.shared.sendMessage(chat)
-            myChat.append(chat)
-            updateChat(count: myChat.count) {
-                print("채팅 송신")
+        if sender == sendButton {
+            if textView.text != "" {
+                let chat = ChatType(roomId: chatRoomId, sender: Jwt.shared.userId, messageContent: textView.text, date: Date.now)
+                SocketIOManager.shared.sendMessage(chat)
+                myChat.append(chat)
+                updateChat(count: myChat.count) {
+                    print("채팅 송신")
+                }
             }
+        } else if sender == leaveBarButtonItem {
+            MyAlamofireManager.shared.exitChatRoom(chatRoomId: chatRoomId, completion: { response in
+                switch response {
+                case .success():
+                    self.navigationController?.popViewController(animated: true)
+                case let .failure(myError):
+                    print(myError)
+                }
+            })
+        } else {
+            
+            let vc = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "MyPageVC")
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     
     var footerViewBottomConstraint: Constraint? = nil
-    
+    var textViewHeightConstraint: Constraint? = nil
+    var footerViewHeightConstraint: Constraint? = nil
+    var profileImage = UIImage()
+
     // 노티피케이션을 추가하는 메서드
     func addKeyboardNotifications() {
         // 키보드가 나타날 때 앱에게 알리는 메서드 추가
@@ -78,14 +116,17 @@ class ChatRoomViewController: UIViewController {
         self.footerViewBottomConstraint?.update(inset: keyboardHeight - self.view.safeAreaInsets.bottom)
         UIView.animate(withDuration: duration, delay: 0, options: [UIView.AnimationOptions(rawValue: curve)], animations: { [self] in
             self.view.layoutIfNeeded()
-        }) { iscompleted in
-            if iscompleted {
-                if !self.myChat.isEmpty {
-                    let lastIndex = IndexPath(row: self.myChat.count - 1, section: 0)
-                    self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: true)
-                }
+            tableView.isHidden = true
+            if !self.myChat.isEmpty {
+                var lastIndex = IndexPath(row: self.myChat.count - 2, section: 0)
+                self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: false)
+                tableView.isHidden = false
+                lastIndex = IndexPath(row: self.myChat.count - 1, section: 0)
+                self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: true)
             }
-        }
+            tableView.isHidden = false
+        })
+        
     }
     
     // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
@@ -100,6 +141,7 @@ class ChatRoomViewController: UIViewController {
         UIView.animate(withDuration: duration.doubleValue, delay: 0, options: [UIView.AnimationOptions(rawValue: UInt(curve.intValue))], animations: { [self] in
             self.view.layoutIfNeeded()
         })
+
     }
     
     // 채팅 업데이트
@@ -116,19 +158,16 @@ class ChatRoomViewController: UIViewController {
     // 서버로부터 메시지 받을때 채팅창 업데이트
     func bindMsg() {
         SocketIOManager.shared.receiveMessage() { chat in
-            self.myChat.append(chat)
-            self.updateChat(count: self.myChat.count) {
-                print("Get Message") }
+            if chat.roomId == self.chatRoomId {
+                self.myChat.append(chat)
+                self.updateChat(count: self.myChat.count) {
+                    print("Get Message") }
+            }
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        SocketIOManager.shared.closeConnection()
-        socket = SocketIOManager.shared.socket
-        SocketIOManager.shared.establishConnection()
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -136,25 +175,46 @@ class ChatRoomViewController: UIViewController {
         
         hideKeyboard()
         bindMsg()
-
+        view.addSubview(lineViewFirst)
+        view.addSubview(lineViewSecond)
         view.addSubview(tableView)
+        view.addSubview(headerLabel)
         view.addSubview(footerView)
         footerView.addSubview(textView)
         footerView.addSubview(sendButton)
+        lineViewFirst.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(1)
+        }
+        
+        headerLabel.snp.makeConstraints { make in
+            make.top.equalTo(lineViewFirst.snp.bottom).offset(3)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(30)
+        }
+        
+        lineViewSecond.snp.makeConstraints { make in
+            make.top.equalTo(headerLabel.snp.bottom).offset(3)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(1)
+        }
+        
         tableView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(footerView.snp.top).constraint
+            make.top.equalTo(lineViewSecond.snp.bottom)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(footerView.snp.top)
         }
         footerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view)
-            make.height.equalTo(50)
+            make.height.equalTo(textView.snp.height).offset(10)
             footerViewBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide).constraint
         }
         textView.snp.makeConstraints { make in
             make.centerY.equalTo(footerView)
             make.leading.equalTo(footerView).offset(10)
             make.trailing.equalTo(sendButton.snp.leading)
-            make.height.equalTo(40)
+            textViewHeightConstraint = make.height.equalTo(40).constraint
         }
         sendButton.snp.makeConstraints { make in
             make.centerY.equalTo(footerView)
@@ -163,24 +223,63 @@ class ChatRoomViewController: UIViewController {
             make.height.equalTo(40)
         }
         footerView.backgroundColor = .systemGray5
+        tableView.allowsSelection = false
+        textView.delegate = self
+        navigationItem.rightBarButtonItems = [leaveBarButtonItem]
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        let photo = chatRootType == .project ? projectInfo.leader.photo : chatRoom.user.photo
+        URLSession.shared.dataTask(with: NSURL(string: photo)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async {
+                if let data = data {
+                    if let image = UIImage(data: data) {
+                        self.profileImage = image
+                    }
+                }
+            }
+        }).resume()
+        if chatRootType == .project {
+            MyAlamofireManager.shared.fetchRoomId(userId: projectInfo.leader.userId , projectId: projectInfo.projectId) { response in
+                switch response {
+                case let .success(chatRoomId):
+                    self.chatRoomId = chatRoomId
+                case .failure:
+                    print("실패")
+                }
+            }
+            headerLabel.text = projectInfo.title
+            navigationItem.title = projectInfo.leader.nickName
+        } else {
+            self.chatRoomId = chatRoom.chatRoomId
+            headerLabel.text = chatRoom.projectTitle
+            navigationItem.title = chatRoom.user.nickName
+        }
+        
+        
         addKeyboardNotifications()
         self.tabBarController?.tabBar.isHidden = true
+        let chat = ChatType(roomId: chatRoomId, sender: Jwt.shared.userId, messageContent: "", date: Date.now)
+        SocketIOManager.shared.enterMessage(chat)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+        myChat = [ChatType]()
+
         self.tabBarController?.tabBar.isHidden = false
         removeKeyboardNotifications()
+
+        let chat = ChatType(roomId: chatRoomId, sender: Jwt.shared.userId, messageContent: "", date: Date.now)
+        SocketIOManager.shared.leaveMessage(chat)
     }
 }
 
 extension ChatRoomViewController: UITableViewDelegate {
+    
 }
 
 extension ChatRoomViewController: UITableViewDataSource {
@@ -189,7 +288,16 @@ extension ChatRoomViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellId = self.myChat[indexPath.row].sender == Jwt.shared.userId ? "MyChatCell" : "YourChatCell"
+        var cellId = String()
+        if self.myChat[indexPath.row].sender == Jwt.shared.userId {
+            cellId = "MyChatCell"
+            isYourFirstChat = true
+        } else if self.isYourFirstChat {
+            cellId = "YourProfileChatCell"
+            isYourFirstChat = false
+        } else {
+            cellId = "YourChatCell"
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         if cellId == "MyChatCell" {
             if let myChatCell = cell as? MyChatCell {
@@ -199,8 +307,22 @@ extension ChatRoomViewController: UITableViewDataSource {
             if let yourChatCell = cell as? YourChatCell {
                 yourChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
             }
+            if let yourProfileChatCell = cell as? YourProfileChatCell {
+                yourProfileChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
+                yourProfileChatCell.profileButton.setImage(profileImage, for: .normal)
+            }
         }
         return cell
+    }
+}
+
+extension ChatRoomViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let size = CGSize(width: textView.bounds.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        if estimatedSize.height <= 100 {
+            self.textViewHeightConstraint?.update(offset: estimatedSize.height)
+        }
     }
 }
 
@@ -228,6 +350,7 @@ extension UIViewController {
 //        footerView.frame.origin.y = view.bounds.height - view.safeAreaInsets.bottom - footerView.bounds.height
 //        tableView.contentInset = UIEdgeInsets.zero
 //        tableView.verticalScrollIndicatorInsets = tableView.contentInset
+
 
 
 

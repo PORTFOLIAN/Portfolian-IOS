@@ -52,6 +52,11 @@ class HomeTableViewCell: UITableViewCell {
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 15
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.clear.cgColor
+        imageView.clipsToBounds = true
+        imageView.contentMode =  .scaleAspectFill
         imageView.image = UIImage(named: "ProfileImage")
         return imageView
     }()

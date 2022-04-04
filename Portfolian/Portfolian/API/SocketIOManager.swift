@@ -17,22 +17,13 @@ class SocketIOManager: NSObject {
     override init() {
         super.init()
         socket = self.manager.defaultSocket
-        
-        socket.on("receive") { dataArray, ack in
-            var chat = ChatType()
-            print(type(of: dataArray))
-            let data = dataArray[0] as! NSDictionary
-            chat.messageContent = data["messageContent"] as! String
-            self.myChat.append(chat)
-            print(chat)
-            }
     }
     func receiveMessage(completion: @escaping (ChatType) -> Void) {
         self.socket.on("receive") { (dataArray, socketAck) in
             print("***************************************")
             print(type(of: dataArray))
             let data = dataArray[0] as! NSDictionary
-            let chat = ChatType(roomId: data["roomId"] as? String ?? "", sender: data["sender"] as? String ?? "", messageContent: data["messageContent"] as! String)
+            let chat = ChatType(roomId: data["roomId"] as? String ?? "", sender: data["sender"] as? String ?? "", messageContent: data["messageContent"] as! String, date: data["Date"] as? Date ?? Date.now)
             completion(chat)
         }
     }
@@ -46,7 +37,15 @@ class SocketIOManager: NSObject {
     }
    
     func sendMessage(_ chatType: ChatType) {
-        socket.emit("send", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent])
+        socket.emit("send", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+    }
+    
+    func leaveMessage(_ chatType: ChatType) {
+        socket.emit("notice:leave", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+    }
+    
+    func enterMessage(_ chatType: ChatType) {
+        socket.emit("notice:enter", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
     }
 }
 
@@ -54,4 +53,5 @@ struct ChatType {
     var roomId = String()
     var sender = String()
     var messageContent = String()
+    var date = Date()
 }

@@ -50,4 +50,6 @@ struct UserProfile {
         mail = String()
     }
 }
+
+
 var userInfo = UserProfile()

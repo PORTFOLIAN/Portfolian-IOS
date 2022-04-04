@@ -9,6 +9,7 @@ import UIKit
 import KakaoSDKCommon
 import GoogleSignIn
 import CoreData
+import SocketIO
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -23,6 +24,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
               // Show the app's signed-in state.
             }
           }
+        var socket: SocketIOClient!
+
+        SocketIOManager.shared.closeConnection()
+        socket = SocketIOManager.shared.socket
+        SocketIOManager.shared.establishConnection()
         return true
     }
 

@@ -105,7 +105,7 @@ class ProfileViewController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        MyAlamofireManager.shared.getMyProfile { response in
+        MyAlamofireManager.shared.getProfile(userId: Jwt.shared.userId) { response in
             switch response {
             case .success(let user):
                 URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {

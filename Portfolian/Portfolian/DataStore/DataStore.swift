@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 var registrationType: RegistrationType?
 var editType: EditType?
+var chatRootType: ChatRootType?
+var profileType: ProfileType?
 enum RegistrationType {
     case Searching
     case WritingTeam
@@ -20,6 +22,19 @@ enum EditType {
     case edit
     case yet
 }
+
+enum ChatRootType {
+    case project
+    case chatRoom
+}
+
+enum ProfileType {
+    case myProfile
+    case yourProfile
+    case yourProjectProfile
+}
+
+
 struct DataStore {
     var user: User?
 }

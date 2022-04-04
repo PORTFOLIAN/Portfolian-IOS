@@ -20,7 +20,6 @@ class SettingViewController: UIViewController {
     }
     
     let settingMenu = [
-        "푸쉬 알림 설정",
         "버전",
         "로그아웃",
         "회원 탈퇴"
@@ -53,15 +52,11 @@ extension SettingViewController: UITableViewDelegate {
         
         switch (indexPath.row) {
         case 0:
-            print("화면이동 1")
-            
-           
-        case 1:
             print("화면이동 2")
             let version = "1.0.0"
             view.makeToast("현재 버전은 \(version)입니다.😶‍🌫️", duration: 1.0, position: .center)
             
-        case 2:
+        case 1:
             logoutKakao()
         default:
             unlinkKakao()

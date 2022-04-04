@@ -35,9 +35,7 @@ class MyPageViewController: UIViewController {
     
     let settingImage = UIImage(named: "Setting")
     lazy var setting = UIBarButtonItem(image: settingImage, style: .plain, target: self, action: #selector(buttonPressed(_:)))
-    let pushImage = UIImage(named: "Push")
     
-    lazy var push = UIBarButtonItem(image: pushImage, style: .plain, target: self, action: #selector(buttonPressed(_:)))
     lazy var userNameLabel = UILabel().then { UILabel in
         UILabel.text = "댕댕아 사랑해"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
@@ -54,7 +52,11 @@ class MyPageViewController: UIViewController {
     }
     
     lazy var profileCorrectionButton = UIButton().then { UIButton in
-        UIButton.setTitle("프로필 수정", for: .normal)
+        if profileType == .myProfile {
+            UIButton.setTitle("프로필 수정", for: .normal)
+        } else {
+            UIButton.setTitle("", for: .normal)
+        }
         UIButton.setTitleColor(.black, for: .normal)
         UIButton.layer.borderWidth = 1
         UIButton.layer.cornerRadius = 8
@@ -67,13 +69,19 @@ class MyPageViewController: UIViewController {
         navigationItem.title = "마이페이지"
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        MyAlamofireManager.shared.getMyProfile { response in
+        let userId: String
+        if profileType == .yourProfile {
+            userId = chatRoom.user.userId
+        } else if profileType == .yourProjectProfile {
+            userId = projectInfo.leader.userId
+        } else {
+            userId = Jwt.shared.userId
+        }
+        MyAlamofireManager.shared.getProfile(userId: userId) { response in
             switch response {
             case .success(let user):
-                
                 self.userNameLabel.text = user.nickName
                 self.introduceLabel.text = user.description
-                
                 URLSession.shared.dataTask( with: NSURL(string:user.photo)! as URL, completionHandler: {
                     (data, response, error) -> Void in
                     DispatchQueue.main.async { [weak self] in
@@ -106,6 +114,12 @@ class MyPageViewController: UIViewController {
                 break
             }
         }
+        if profileType != .myProfile {
+            profileCorrectionButton.snp.updateConstraints { make in
+                make.height.equalTo(0)
+            }
+        }
+        
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,8 +180,6 @@ class MyPageViewController: UIViewController {
         case setting:
             let SettingVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "SettingVC")
             self.navigationController?.pushViewController(SettingVC, animated: true)
-        case push:
-            print("push")
         case profileCorrectionButton:
             let profileVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "ProfileVC")
             self.navigationController?.pushViewController(profileVC, animated: true)
@@ -177,7 +189,7 @@ class MyPageViewController: UIViewController {
         
     }
     func setUpItem() {
-        navigationItem.rightBarButtonItems = [setting, push]
+        navigationItem.rightBarButtonItem = setting
     }
     /*
      // MARK: - Navigation

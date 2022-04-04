@@ -203,9 +203,9 @@ final class MyAlamofireManager {
             }
     }
     
-    func getMyProfile(completion: @escaping (Result<User, MyError>) -> Void) {
+    func getProfile(userId: String, completion: @escaping (Result<User, MyError>) -> Void) {
         self.session
-            .request(MyUserRouter.getMyProfile)
+            .request(MyUserRouter.getProfile(userId: userId))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
@@ -311,6 +311,76 @@ final class MyAlamofireManager {
                     completion(.success(code))
                 } else {
                     completion(.failure(.retryError))
+                }
+            }
+    }
+    func fetchRoomId(userId: String, projectId: String, completion: @escaping (Result<String, MyError>) -> Void) {
+        self.session
+            .request(MyChatRouter.postChatRoom(userId: userId, projectId: projectId))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string,
+                      let chatRoomId = responseJson["chatRoomId"].string
+                else { return }
+                if code == 1 {
+                    completion(.success(chatRoomId))
+                } else if code == -99 {
+                    // accessToken 갱신
+                    
+                } else {
+                    completion(.failure(.testError))
+                }
+            }
+    }
+    
+    func fetchChatRoomList(completion: @escaping (Result<ChatRoomList, MyError>) -> Void) {
+        self.session
+            .request(MyChatRouter.getChatRoomList)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let chatRoomList = try? JSONDecoder().decode(ChatRoomList.self, from: responseData) else { return }
+                let code = chatRoomList.code
+                if code == 1 {
+                    completion(.success(chatRoomList))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+    }
+    
+    func fetchChatMessageList(chatRoomId: String, completion: @escaping (Result<ChatMessageList, MyError>) -> Void) {
+        self.session
+            .request(MyChatRouter.getChatMessageList(chatRoomId: chatRoomId))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let chatMessageList = try? JSONDecoder().decode(ChatMessageList.self, from: responseData) else { return }
+                let code = chatMessageList.code
+                if code == 1 {
+                    completion(.success(chatMessageList))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+    }
+    
+    func exitChatRoom(chatRoomId: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+        self.session
+            .request(MyChatRouter.getChatRoomList)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(.networkError))
                 }
             }
     }

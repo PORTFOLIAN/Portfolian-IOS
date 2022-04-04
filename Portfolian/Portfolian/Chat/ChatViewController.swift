@@ -11,162 +11,99 @@ import Then
 import SocketIO
 
 class ChatViewController: UIViewController {
-    lazy var messageLabel = UILabel().then { label in
-        label.text = "채팅"
-        label.font = UIFont(name: "NotoSansKR-Medium", size: 20)
+    var tableView = UITableView().then { UITableView in
+        UITableView.register(ChatRoomCell.self, forCellReuseIdentifier: "ChatRoomCell")
     }
     
-    lazy var sendTextField1 = UITextField().then { UITextField in
-        UITextField.placeholder = "보내보삼"
-        UITextField.leftViewMode = .always
-        UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 18)
+    let titleLabel = UILabel().then { UILabel in
+        UILabel.text = "채팅"
+        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
+        UILabel.textAlignment = .left
     }
-    
-    lazy var sendTextField2 = UITextField().then { UITextField in
-        UITextField.placeholder = "보내보삼"
-        UITextField.leftViewMode = .always
-        UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 18)
-    }
-    
-    lazy var sendTextField3 = UITextField().then { UITextField in
-        UITextField.placeholder = "보내보삼"
-        UITextField.leftViewMode = .always
-        UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 18)
-    }
-    
-    lazy var connectSocketButton = UIButton().then { UIButton in
-        UIButton.setTitle("소켓 연결", for: .normal)
-        UIButton.setTitleColor(.black, for: .normal)
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
-    
-    lazy var disconnectSocketButton = UIButton().then { UIButton in
-        UIButton.setTitle("소켓 종료", for: .normal)
-        UIButton.setTitleColor(.black, for: .normal)
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
-    
-    lazy var sendSocketButton1 = UIButton().then { UIButton in
-        UIButton.setTitle("전송", for: .normal)
-        UIButton.setTitleColor(.black, for: .normal)
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
-    
-    lazy var sendSocketButton2 = UIButton().then { UIButton in
-        UIButton.setTitle("전송", for: .normal)
-        UIButton.setTitleColor(.black, for: .normal)
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
-    
-    lazy var sendSocketButton3 = UIButton().then { UIButton in
-        UIButton.setTitle("전송", for: .normal)
-        UIButton.setTitleColor(.black, for: .normal)
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
-    
+        
     var chatType = ChatType()
-
-    @objc func buttonPressed(_ sender: UIButton) {
-        switch sender {
-        case connectSocketButton:
-            SocketIOManager.shared.establishConnection()
-        case disconnectSocketButton:
-            SocketIOManager.shared.closeConnection()
-        case sendSocketButton1:
-            if (sendTextField1.text != nil) {
-                chatType.messageContent = sendTextField1.text!
-                chatType.roomId = "test1"
+    
+    var chatRoomList = ChatRoomList()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        MyAlamofireManager.shared.fetchChatRoomList { result in
+            switch result{
+            case let .success(chatRoomList):
+                self.chatRoomList = chatRoomList
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
+                }
+            default:
+                print("오류")
             }
-            SocketIOManager.shared.sendMessage(chatType)
-        case sendSocketButton2:
-            if (sendTextField2.text != nil) {
-                chatType.messageContent = sendTextField2.text!
-                chatType.roomId = "test2"
-            }
-            SocketIOManager.shared.sendMessage(chatType)
-        case sendSocketButton3:
-            if (sendTextField3.text != nil) {
-                chatType.messageContent = sendTextField3.text!
-                chatType.roomId = "test3"
-            }
-            let ChatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
-            self.navigationController?.pushViewController(ChatRoomVC, animated: true)
-            SocketIOManager.shared.sendMessage(chatType)
-        default:
-            break
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addSubview(messageLabel)
-        view.addSubview(disconnectSocketButton)
-        view.addSubview(connectSocketButton)
-        view.addSubview(sendSocketButton1)
-        view.addSubview(sendSocketButton2)
-        view.addSubview(sendSocketButton3)
-
-        view.addSubview(sendTextField1)
-        view.addSubview(sendTextField2)
-        view.addSubview(sendTextField3)
-        messageLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(view.safeAreaLayoutGuide.snp.top).offset(50)
-            make.centerX.equalTo(self.view.snp.centerX)
-        }
-        connectSocketButton.snp.makeConstraints { make in
-            make.top.equalTo(messageLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(messageLabel)
-            make.height.equalTo(20)
-        }
-        disconnectSocketButton.snp.makeConstraints { make in
-            make.top.equalTo(connectSocketButton.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(connectSocketButton)
-            make.height.equalTo(20)
-        }
-        
-        sendTextField1.snp.makeConstraints { make in
-            make.top.equalTo(disconnectSocketButton.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(disconnectSocketButton)
-            make.height.equalTo(20)
-        }
-        sendSocketButton1.snp.makeConstraints { make in
-            make.top.equalTo(sendTextField1.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(sendTextField1)
-            make.height.equalTo(20)
-        }
-        sendTextField2.snp.makeConstraints { make in
-            make.top.equalTo(sendSocketButton1.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(sendSocketButton1)
-            make.height.equalTo(20)
-        }
-        sendSocketButton2.snp.makeConstraints { make in
-            make.top.equalTo(sendTextField2.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(sendTextField2)
-            make.height.equalTo(20)
-        }
-        sendTextField3.snp.makeConstraints { make in
-            make.top.equalTo(sendSocketButton2.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(sendSocketButton2)
-            make.height.equalTo(20)
-        }
-        sendSocketButton3.snp.makeConstraints { make in
-            make.top.equalTo(sendTextField3.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(sendTextField3)
-            make.height.equalTo(20)
+        view.addSubview(tableView)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         // Do any additional setup after loading the view.
     }
+}
 
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
+    // 셀의 개수
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return chatRoomList.chatRoomList.count
     }
-    */
-
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatRoomCell", for: indexPath) as! ChatRoomCell
+        let chatRoomInfo = chatRoomList.chatRoomList[indexPath[1]]
+        
+        let dateStr = chatRoomInfo.newChatDate // Date 형태의 String
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let date = dateFormatter.date(from: dateStr)
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateFormat = "MM월 dd일" // 2020년 08월 13일 오후 04시 30분
+        let convertStr = myDateFormatter.string(from: date!)
+        cell.dateLabel.text = convertStr
+        
+        cell.lastChatLabel.text = chatRoomInfo.newChatContent
+        cell.projectLabel.text = chatRoomInfo.projectTitle
+        cell.titleLabel.text = chatRoomInfo.user.nickName
+        URLSession.shared.dataTask( with: NSURL(string: chatRoomInfo.user.photo)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async { [weak self] in
+                if let data = data {
+                    let image = UIImage(data: data)
+                    cell.profileImageView.image = image
+                }
+            }
+        }).resume()
+        return cell
+    }
+    
+    // 셀이 선택 되었을 때
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("채팅방으로 넘어가기")
+        chatRootType = .chatRoom
+        profileType = .yourProfile
+        chatRoom = chatRoomList.chatRoomList[indexPath[1]]
+        print(chatRoom)
+        let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
+        self.navigationController?.pushViewController(chatRoomVC, animated: true)
+    }
+    
+    
+    // 셀의 크기 지정
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 90.0;//Choose your custom row height
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    }
 }
