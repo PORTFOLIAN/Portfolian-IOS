@@ -13,7 +13,7 @@ class YourProfileChatCell: UITableViewCell {
     var profileButton = UIButton().then { UIButton in
         UIButton.layer.cornerRadius = 15
         UIButton.layer.borderWidth = 1
-        UIButton.layer.borderColor = UIColor.clear.cgColor
+        UIButton.layer.borderColor = UIColor.black.cgColor
         UIButton.clipsToBounds = true
         UIButton.contentMode = .scaleAspectFill
         let vc = ChatRoomViewController()

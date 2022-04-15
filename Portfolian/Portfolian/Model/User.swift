@@ -41,15 +41,14 @@ struct UserProfile {
     var github : String
     var mail : String
     
-    init() {
-        nickName = String()
-        description = String()
-        stack = [String]()
-        photo = UIImage()
-        github = String()
-        mail = String()
-    }
+//    init() {
+//        nickName = String()
+//        description = String()
+//        stack = [String]()
+//        photo = UIImage()
+//        github = String()
+//        mail = String()
+//    }
 }
 
 
-var userInfo = UserProfile()

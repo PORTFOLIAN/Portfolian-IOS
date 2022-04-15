@@ -19,12 +19,6 @@ struct Person {
     var detail: String?
 }
 
-struct JwtToken {
-    var accessToken: String?
-    var refreshToken: String?
-    var userId: String?
-}
-
 class PersistenceManager {
     static var shared: PersistenceManager = PersistenceManager()
     
@@ -49,29 +43,6 @@ class PersistenceManager {
         } catch {
             print(error.localizedDescription)
             return []
-        }
-    }
-    
-    @discardableResult
-    func insertToken(token: JwtToken) -> Bool {
-        // Entity를 가져옴
-        let entity = NSEntityDescription.entity(forEntityName: "Token", in: self.context)
-        // NSManagedObject를 만들어줌
-        if let entity = entity {
-            let managedObject = NSManagedObject(entity: entity, insertInto: self.context)
-            managedObject.setValue(token.accessToken, forKey: "accessToken")
-            managedObject.setValue(token.refreshToken, forKey: "refreshToken")
-            managedObject.setValue(token.userId, forKey: "userId")
-
-            do {
-                try context.save()
-                return true
-            } catch {
-                print(error.localizedDescription)
-                return false
-            }
-        } else {
-            return false
         }
     }
     
@@ -102,7 +73,7 @@ class PersistenceManager {
             return false
         }
     }
-    
+
     @discardableResult
     func deleteAll<T: NSManagedObject>(request: NSFetchRequest<T>) -> Bool {
         let request: NSFetchRequest<NSFetchRequestResult> = T.fetchRequest()

@@ -24,12 +24,10 @@ class ChatRoomCell: UITableViewCell {
     }
     
     var profileImageView = UIImageView().then { UIImageView in
-        UIImageView.image = UIImage(named: "ProfileImage")
         UIImageView.layer.cornerRadius = 20
         UIImageView.layer.borderWidth = 1
-        UIImageView.layer.borderColor = UIColor.clear.cgColor
+        UIImageView.layer.borderColor = UIColor.black.cgColor
         UIImageView.clipsToBounds = true
-        UIImageView.contentMode =  .scaleToFill
     }
     
     var dateLabel = UILabel().then { UILabel in
@@ -91,6 +89,7 @@ class ChatRoomCell: UITableViewCell {
         }
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+            make.trailing.equalTo(self.snp.centerX).offset(10)
             make.bottom.equalTo(profileImageView.snp.centerY)
         }
         lastChatLabel.snp.makeConstraints { make in
@@ -104,6 +103,7 @@ class ChatRoomCell: UITableViewCell {
             make.top.equalTo(dateLabel.snp.bottom)
             make.leading.equalTo(self.snp.centerX).offset(20)
             make.trailing.equalTo(dateLabel)
+            make.bottom.lessThanOrEqualTo(self).offset(5)
         }
         numLabel.snp.makeConstraints { make in
             make.centerY.equalTo(dateLabel)

@@ -9,6 +9,7 @@ import Foundation
 
 struct Jwt: Codable {
     static var shared = Jwt()
+    
     let code: Int
     let isNew: Bool
     var accessToken: String
@@ -21,5 +22,15 @@ struct Jwt: Codable {
     }
 }
 
+struct JwtToken {
+    static var shared = JwtToken()
 
-
+    var accessToken: String
+    var refreshToken: String
+    var userId: String
+    init() {
+        self.accessToken = ""
+        self.refreshToken = ""
+        self.userId = ""
+    }
+}

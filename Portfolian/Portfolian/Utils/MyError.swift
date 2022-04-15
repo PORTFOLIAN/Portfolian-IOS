@@ -13,4 +13,5 @@ enum MyError : String, Error {
     case getProjectListError = "프로젝트를 가져오지 못했습니다."
     case networkError = "네트워크 연결을 확인해주세요"
     case adminError = "관리자에게 문의하세요"
+    case accessError = "올바르지 않은 access_token입니다."
 }

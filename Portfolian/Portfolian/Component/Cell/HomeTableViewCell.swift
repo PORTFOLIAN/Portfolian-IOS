@@ -51,13 +51,12 @@ class HomeTableViewCell: UITableViewCell {
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "profileImage")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 15
         imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.clear.cgColor
+        imageView.layer.borderColor = UIColor.black.cgColor
         imageView.clipsToBounds = true
-        imageView.contentMode =  .scaleAspectFill
-        imageView.image = UIImage(named: "ProfileImage")
         return imageView
     }()
     
@@ -118,7 +117,7 @@ class HomeTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been impl")
     }
-    
+
     func addTarget() {
         bookmarkButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
     }
@@ -177,13 +176,12 @@ class HomeTableViewCell: UITableViewCell {
     @objc func buttonPressed(_ sender: UIButton) {
         cellDelegate?.didTouchBookmarkButton(didClicked: isClicked,sender: sender)
         if isClicked == true{
-            sender.setImage(UIImage(named: "BookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            sender.setImage(UIImage(named: "bookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         }else{
-            sender.setImage(UIImage(named: "Bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            sender.setImage(UIImage(named: "bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
             }
         }
 
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state

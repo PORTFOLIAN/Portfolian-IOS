@@ -12,7 +12,6 @@ let SPACINGROW = 20
 let SPACINGCOL = 10
 let IDENTIFIER = "TagCollectionViewCell"
 var SEARCHTOGGLE : Bool = true
-var REFRESHTOKEN = ""
 enum API {
     static let BASE_URL : String = "https://api.portfolian.site:443/"
     static let USER_ID : String = "test1"
@@ -27,8 +26,8 @@ enum NOTIFICATION {
         static let AUTH_FAIL = "authentication_fail"
     }
 }
+
 struct ColorPortfolian {
-    
     // MARK: - TagColor
     /// TextField, TextView 배경 색
     static let frontEnd = UIColor(rgb: 0xAACFF2)

@@ -11,6 +11,14 @@ var registrationType: RegistrationType?
 var editType: EditType?
 var chatRootType: ChatRootType?
 var profileType: ProfileType?
+var loginType: LoginType?
+
+enum LoginType: Int {
+    case kakao
+    case apple
+    case no
+}
+
 enum RegistrationType {
     case Searching
     case WritingTeam
@@ -35,9 +43,7 @@ enum ProfileType {
 }
 
 
-struct DataStore {
-    var user: User?
-}
+
 
 
 struct TagDataStore {

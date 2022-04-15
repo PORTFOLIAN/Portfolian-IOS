@@ -17,7 +17,4 @@ extension UIImage {
         
         return UIImage(cgImage: self.cgImage!, scale: self.scale * ratio, orientation: self.imageOrientation)
     }
-    
-    
 }
-
