@@ -26,7 +26,7 @@ class HomeTableViewCell: UITableViewCell {
     lazy var bookmarkButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "Bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+        button.setImage(UIImage(named: "Bookmark")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
         return button
     }()
     
@@ -176,9 +176,10 @@ class HomeTableViewCell: UITableViewCell {
     @objc func buttonPressed(_ sender: UIButton) {
         cellDelegate?.didTouchBookmarkButton(didClicked: isClicked,sender: sender)
         if isClicked == true{
-            sender.setImage(UIImage(named: "bookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            sender.setImage(UIImage(named: "bookmarkFill")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
+
         }else{
-            sender.setImage(UIImage(named: "bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            sender.setImage(UIImage(named: "bookmark"), for: .normal)
             }
         }
 

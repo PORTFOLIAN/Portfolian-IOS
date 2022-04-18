@@ -36,7 +36,6 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "next")?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = ColorPortfolian.more
-//        button.setImage(UIImage(named: "next")?.withTintColor(ColorPortfolian.thema).withRenderingMode(.alwaysTemplate), for: .selected)
         return button
     }()
 
@@ -61,13 +60,10 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
             nicknameTextField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -100),
             nicknameTextField.topAnchor.constraint(equalTo: containerView.centerYAnchor),
             nicknameTextField.heightAnchor.constraint(equalToConstant: 40),
-
             nextButton.centerYAnchor.constraint(equalTo: nicknameTextField.centerYAnchor),
             nextButton.leftAnchor.constraint(equalTo: nicknameTextField.rightAnchor, constant: 20),
-            
             nextButton.heightAnchor.constraint(equalToConstant: 50),
         ])
-        
         // Do any additional setup after loading the view.
         nicknameTextField.delegate = self
         nextButton.addTarget(self, action: #selector(ButtonHandler(_:)), for: .touchUpInside)
@@ -76,7 +72,6 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: - Buttonhandler
     @objc func ButtonHandler(_ sender: UIButton) {
-//        mainVC.modalPresentationStyle = .fullScreen
         if checkNickname(nicknameTextField) == true {
             MyAlamofireManager.shared.patchNickName(nickName: nicknameTextField.text!) { result in
                 switch result{
@@ -84,16 +79,12 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
                     self.goToHome()
                 case .failure(let error):
                     print(error)
-                    
                 }
-                
             }
-            }
-            
         }
         
-    
-    
+    }
+        
     //MARK: - swipeGesture
     func swipeRecognizer() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
@@ -122,7 +113,7 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
     }
     
     //MARK: - Limit 10 letters
-    func limitNicknameTenLetters(_ textField: UITextField, nickname: String) {
+    private func limitNicknameTenLetters(_ textField: UITextField, nickname: String) {
         let nicknameCharacterLimit = 10
         let endIndex: String.Index = nickname.index(nickname.startIndex, offsetBy: nicknameCharacterLimit)
         textField.text = String(nickname[..<endIndex])
@@ -130,7 +121,7 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
     }
     
     //MARK: - NickName Check
-    func checkNickname(_ textField: UITextField) -> Bool {
+    private func checkNickname(_ textField: UITextField) -> Bool {
         if textField.text?.isEmpty == true {
             return false
         } else {
@@ -142,11 +133,12 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         sceneDelegate.goHome()
       }
     }
+    
     //MARK: Hide Keyboard
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-    }
+}
     /*
     // MARK: - Navigation
 

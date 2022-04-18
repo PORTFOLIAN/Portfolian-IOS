@@ -137,7 +137,6 @@ class ChatRoomViewController: UIViewController {
             }
             tableView.isHidden = false
         })
-        
     }
     
     // 키보드가 사라졌다는 알림을 받으면 실행할 메서드

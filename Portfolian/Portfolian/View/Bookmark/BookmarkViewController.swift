@@ -172,9 +172,9 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         }.resume()
         
         if bookmark == true {
-            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
         } else {
-            cell.bookmarkButton.setImage(UIImage(named: "bookmark2")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+            cell.bookmarkButton.setImage(UIImage(named: "bookmark"), for: .normal)
         }
         cell.tagButton1.informTextInfo(text: "", fontSize: 16)
         cell.tagButton1.currentColor(color: .clear)

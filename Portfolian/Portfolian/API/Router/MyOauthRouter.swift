@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 
 enum MyOauthRouter: URLRequestConvertible {
-    // 어스 관련 api
+    // auth 관련 api
     case postKaKaoToken(token: String)
     case postRefreshToken
     case patchLogout

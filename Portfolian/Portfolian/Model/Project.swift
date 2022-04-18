@@ -15,9 +15,9 @@ struct Project: Codable {
 }
 
 struct ProjectSearch: Codable{
-    let stack: String
-    let sort: String
-    let keyword: String
+    var stack: String
+    var sort: String
+    var keyword: String
 }
 
 struct ProjectArticle: Codable {

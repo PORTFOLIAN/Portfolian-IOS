@@ -10,6 +10,8 @@ import KakaoSDKAuth
 import KakaoSDKUser
 import GoogleSignIn
 import SwiftyJSON
+import AuthenticationServices
+
 //import AVFoundation
 //import MapKit
 import Toast_Swift
@@ -46,7 +48,6 @@ class SigninViewController: UIViewController {
     
     let googleLoginButton: GIDSignInButton = {
         let button = GIDSignInButton()
-        button.colorScheme = .light
         button.style = .wide
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -61,10 +62,8 @@ class SigninViewController: UIViewController {
         return button
     }()
     
-    let appleLoginButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
-        button.imageView?.contentMode = .scaleToFill
+    let appleLoginButton: ASAuthorizationAppleIDButton = {
+        let button = ASAuthorizationAppleIDButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -94,19 +93,18 @@ class SigninViewController: UIViewController {
             introduceLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 90),
             introduceLabel.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 20),
             introduceLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 20),
-            
-            googleLoginButton.topAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 50),
-            googleLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            googleLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            kakaoLoginButton.topAnchor.constraint(equalTo: googleLoginButton.bottomAnchor, constant: 10),
-            kakaoLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 3),
-            kakaoLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -3),
-            kakaoLoginButton.heightAnchor.constraint(equalToConstant: 45),
-            noLoginButton.topAnchor.constraint(equalTo: kakaoLoginButton.bottomAnchor, constant: 10),
+            noLoginButton.topAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 50),
             noLoginButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 3),
             noLoginButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -3),
             noLoginButton.heightAnchor.constraint(equalToConstant: 45),
-            appleLoginButton.topAnchor.constraint(equalTo: noLoginButton.bottomAnchor, constant: 10),
+            kakaoLoginButton.topAnchor.constraint(equalTo: noLoginButton.bottomAnchor, constant: 50),
+            kakaoLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 3),
+            kakaoLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -3),
+            kakaoLoginButton.heightAnchor.constraint(equalToConstant: 45),
+            googleLoginButton.topAnchor.constraint(equalTo: kakaoLoginButton.bottomAnchor, constant: 10),
+            googleLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            googleLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            appleLoginButton.topAnchor.constraint(equalTo: googleLoginButton.bottomAnchor, constant: 10),
             appleLoginButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 3),
             appleLoginButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -3),
             appleLoginButton.heightAnchor.constraint(equalToConstant: 45),

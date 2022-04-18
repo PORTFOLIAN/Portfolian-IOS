@@ -228,6 +228,7 @@ final class MyAlamofireManager {
                 if code == 1 {
                     guard let accessToken = responseJson["accessToken"].string else { return }
                     KeychainManager.shared.create(key: "accessToken", token: accessToken)
+                    JwtToken.shared.accessToken = accessToken
                     completion(true)
                 } else {
                     let writingRequest: NSFetchRequest<Writing> = Writing.fetchRequest()

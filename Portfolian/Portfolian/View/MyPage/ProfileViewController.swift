@@ -106,6 +106,7 @@ class ProfileViewController: UIViewController {
     var emailLineView = UIView().then { UIView in
         UIView.backgroundColor = .systemGray5
     }
+    var estimateHeight: CGFloat = 0
     
     lazy var configuration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
@@ -331,14 +332,13 @@ class ProfileViewController: UIViewController {
             alert("프로필 사진을 선택해주세요 :)")
         case stackButton:
             registrationType = .MyPage
-            
+            view.endEditing(true)
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
         case cancelBarButtonItem:
             DispatchQueue.main.async {
                 self.saveAlert("변경 사항을 저장하시겠습니까?")
             }
-
         default:
             break
         }
@@ -428,12 +428,22 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
 
 extension ProfileViewController: UITextViewDelegate {
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        introduceTextView.snp.updateConstraints { make in
-            make.bottom.equalTo(profileButton.snp.bottom).offset(30)
-        }
-        self.view.layoutIfNeeded()
+        estimateHeight = view.frame.height - stackButton.frame.origin.y
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: { [self] in
+            view.frame.origin.y -= estimateHeight
+            self.view.layoutIfNeeded()
+        })
         return true
     }
+    
+    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: { [self] in
+            view.frame.origin.y += estimateHeight
+            self.view.layoutIfNeeded()
+        })
+        return true
+    }
+    
     func textViewDidChange(_ textView: UITextView) {
         let size = CGSize(width: textView.bounds.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)

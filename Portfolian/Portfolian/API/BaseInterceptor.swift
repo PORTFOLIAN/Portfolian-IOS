@@ -33,7 +33,7 @@ class BaseInterceptor: RequestInterceptor {
             if statusCode == 401 {
                 MyAlamofireManager.shared.renewAccessToken() { bool in
                     if bool {
-                        completion(.retry)
+                        completion(.retryWithDelay(0.5))
                     } else {
                         self.goToSignin()
                     }
