@@ -60,7 +60,6 @@ class BookmarkViewController: UIViewController {
     
     //MARK: - ButtonPressed
     @objc private func barButtonPressed(_ sender: UIBarButtonItem) {
-        
         switch sender.tag {
         case 1: // logo
             let HomeVC = UIStoryboard(name: "Home", bundle: nil).instantiateViewController(withIdentifier: "HomeVC")
@@ -80,26 +79,10 @@ class BookmarkViewController: UIViewController {
     }
     
     // MARK: - disappear barButton
-    
     func disappearBarButton() {
         navigationItem.leftBarButtonItems = nil
         navigationItem.rightBarButtonItems = nil
     }
-    
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        
-    }
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
 }
 
 extension BookmarkViewController {
@@ -121,25 +104,24 @@ extension BookmarkViewController: BookmarkButtonDelegate {
     func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
         let buttonPosition:CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
         let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
-        var articleList = bookmarkListInfo.articleList
+        let articleList = bookmarkListInfo.articleList
         let articleInfo = articleList[indexPath?[1] ?? 0]
         let projectId = articleInfo.projectId
         var bookMarked = articleInfo.bookMark
         bookMarked.toggle()
         let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
         MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
-                MyAlamofireManager.shared.getBookmarkList { result in
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        self.view.setNeedsLayout()
-                    }
+            MyAlamofireManager.shared.getBookmarkList { result in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.view.setNeedsLayout()
                 }
+            }
         }
     }
 }
 
 extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
-    
     // 셀의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bookmarkListInfo.articleList.count
@@ -221,7 +203,6 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
             cell.tagButton3.currentColor(color: tagInfo3.color)
             cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
-
         cell.viewsLabel.text = "조회 \(articleInfo.view)"
         
         return cell
@@ -230,14 +211,13 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print(indexPath)
-        var articleList = bookmarkListInfo.articleList
+        let articleList = bookmarkListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
         recruitWriting.newProjectID = projectId
         MyAlamofireManager.shared.getProject(projectID: projectId) { result in
             switch result {
             case .success:
-                
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
                 for tag in projectInfo.stackList{
@@ -251,11 +231,10 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
                 
             case .failure(let error):
-//                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
+                //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
                 print("\(error)######")
+            }
         }
-        }
-        
     }
     
     // 셀의 크기 지정

@@ -10,6 +10,7 @@ import SocketIO
 
 class SocketIOManager: NSObject {
     static let shared = SocketIOManager()
+    
     var manager = SocketManager(socketURL: URL(string: "https://api.portfolian.site:443")!, config: [.log(true), .compress])
     var socket: SocketIOClient!
     var myChat = [ChatType]()

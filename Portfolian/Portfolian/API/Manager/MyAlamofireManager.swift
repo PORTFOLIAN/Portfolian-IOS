@@ -231,10 +231,15 @@ final class MyAlamofireManager {
                     JwtToken.shared.accessToken = accessToken
                     completion(true)
                 } else {
-                    let writingRequest: NSFetchRequest<Writing> = Writing.fetchRequest()
-                    PersistenceManager.shared.deleteAll(request: writingRequest)
+                    let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                    let request = PersistenceManager.shared.fetch(request: requestWriting)
+                    if !request.isEmpty {
+                        PersistenceManager.shared.deleteAll(request: requestWriting)
+                    }
                     KeychainManager.shared.delete(key: "accessToken")
                     KeychainManager.shared.delete(key: "refreshToken")
+                    KeychainManager.shared.delete(key: "userId")
+                    JwtToken.shared = JwtToken()
                     completion(false)
                 }
             }

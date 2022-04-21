@@ -83,5 +83,8 @@ class ViewController: UITabBarController {
         if item.tag == 4 {
             profileType = .myProfile
         }
+        if item.tag == 1 {
+            profileType = .yourProjectProfile
+        }
     }
 }

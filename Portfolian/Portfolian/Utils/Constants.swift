@@ -21,12 +21,6 @@ enum SocketIO {
     static let BASE_URL : String = "http://3.36.84.11:3001/"
 }
 
-enum NOTIFICATION {
-    enum API {
-        static let AUTH_FAIL = "authentication_fail"
-    }
-}
-
 struct ColorPortfolian {
     // MARK: - TagColor
     /// TextField, TextView 배경 색

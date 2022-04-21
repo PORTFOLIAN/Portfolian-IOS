@@ -364,7 +364,3 @@ extension UIViewController {
 //        footerView.frame.origin.y = view.bounds.height - view.safeAreaInsets.bottom - footerView.bounds.height
 //        tableView.contentInset = UIEdgeInsets.zero
 //        tableView.verticalScrollIndicatorInsets = tableView.contentInset
-
-
-
-

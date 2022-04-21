@@ -59,11 +59,7 @@ class ChatRoomCell: UITableViewCell {
      
         setup()
     }
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        containerView.frame = containerView.frame.inset(by: UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0))
-    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been impl")
     }
@@ -82,29 +78,35 @@ class ChatRoomCell: UITableViewCell {
             make.top.equalTo(self)
             make.bottom.equalTo(self).offset(-8)
         }
+        
         profileImageView.snp.makeConstraints { make in
             make.centerY.equalTo(containerView)
             make.leading.equalTo(containerView)
             make.width.height.equalTo(50)
         }
+        
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
             make.trailing.equalTo(self.snp.centerX).offset(10)
             make.bottom.equalTo(profileImageView.snp.centerY)
         }
+        
         lastChatLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
             make.top.equalTo(profileImageView.snp.centerY)
         }
+        
         dateLabel.snp.makeConstraints { make in
             make.top.trailing.equalTo(containerView)
         }
+        
         projectLabel.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom)
             make.leading.equalTo(self.snp.centerX).offset(20)
             make.trailing.equalTo(dateLabel)
             make.bottom.lessThanOrEqualTo(self).offset(5)
         }
+        
         numLabel.snp.makeConstraints { make in
             make.centerY.equalTo(dateLabel)
             make.trailing.equalTo(dateLabel.snp.leading).offset(-10)
@@ -115,8 +117,6 @@ class ChatRoomCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
-    
-    
 }
 
 

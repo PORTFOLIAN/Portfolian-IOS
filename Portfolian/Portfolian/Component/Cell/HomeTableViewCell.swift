@@ -12,21 +12,18 @@ protocol BookmarkButtonDelegate: AnyObject {
     
 }
 class HomeTableViewCell: UITableViewCell {
-    // CustomCell.swift
-    var cnt = 0
     var cellDelegate: BookmarkButtonDelegate?
     var isClicked = false
     lazy var containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         return view
     }()
     
     lazy var bookmarkButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "Bookmark")?.resizeImage(size: CGSize(width: 15, height: 20)), for: .normal)
+        button.setImage(UIImage(named: "Bookmark"), for: .normal)
         return button
     }()
     
@@ -107,13 +104,10 @@ class HomeTableViewCell: UITableViewCell {
         // 컨텐츠뷰 클릭을 가능하게 만들어주기.
         setUserInteraction()
         addTarget()
-        setup()
+        setupSubview()
+        setupConstraints()
     }
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        containerView.frame = containerView.frame.inset(by: UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0))
-    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been impl")
     }
@@ -127,8 +121,7 @@ class HomeTableViewCell: UITableViewCell {
         tagStackView.isUserInteractionEnabled = false
     }
     
-    func setup() {
-
+    private func setupSubview() {
         self.addSubview(containerView)
         containerView.addSubview(bookmarkButton)
         containerView.addSubview(titleLabel)
@@ -139,13 +132,16 @@ class HomeTableViewCell: UITableViewCell {
         tagStackView.addArrangedSubview(tagButton2)
         tagStackView.addArrangedSubview(tagButton3)
         containerView.addSubview(numberOftagsLabel)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
             containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
             containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
 
-            bookmarkButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -10),
+            bookmarkButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
             bookmarkButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
             bookmarkButton.widthAnchor.constraint(equalToConstant: 30),
             bookmarkButton.heightAnchor.constraint(equalToConstant: 40),
@@ -153,7 +149,6 @@ class HomeTableViewCell: UITableViewCell {
             titleLabel.topAnchor.constraint(equalTo: bookmarkButton.bottomAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: bookmarkButton.leadingAnchor, constant: 7),
             titleLabel.trailingAnchor.constraint(equalTo: profileImageView.leadingAnchor, constant: -10),
-//            titleLabel.bottomAnchor.constraint(equalTo: tagView.topAnchor, constant: 20),
 
             profileImageView.topAnchor.constraint(equalTo: bookmarkButton.bottomAnchor),
             profileImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
@@ -175,20 +170,12 @@ class HomeTableViewCell: UITableViewCell {
     
     @objc func buttonPressed(_ sender: UIButton) {
         cellDelegate?.didTouchBookmarkButton(didClicked: isClicked,sender: sender)
-        if isClicked == true{
-            sender.setImage(UIImage(named: "bookmarkFill")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
-
-        }else{
-            sender.setImage(UIImage(named: "bookmark"), for: .normal)
-            }
-        }
+    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
-    
-    
 }
 
 

@@ -25,7 +25,7 @@ class WritingViewController: UIViewController {
     lazy var saveBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(buttonPressed(_:)))
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
-
+    
     lazy var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     
     lazy var titleTextField = UITextField().then({ UITextField in
@@ -198,22 +198,22 @@ class WritingViewController: UIViewController {
                     
                     self.recruitTextField.text = String(projectInfo.capacity)
                     self.recruitTextField.textColor = .black
-
+                    
                     self.explainTextView.text = projectInfo.contents.subjectDescription
                     self.explainTextView.textColor = .black
-
+                    
                     self.periodTextView.text = projectInfo.contents.projectTime
                     self.periodTextView.textColor = .black
-
+                    
                     self.optionTextView.text = projectInfo.contents.recruitmentCondition
                     self.optionTextView.textColor = .black
-
+                    
                     self.proceedTextView.text = projectInfo.contents.progress
                     self.proceedTextView.textColor = .black
-
+                    
                     self.detailTextView.text = projectInfo.contents.description
                     self.detailTextView.textColor = .black
-
+                    
                     
                 case .failure(let error):
                     //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
@@ -227,7 +227,7 @@ class WritingViewController: UIViewController {
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
             self.tagsCollectionView.reloadData()
-
+            
             var height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
             self.tagCollectionView.snp.updateConstraints {
                 $0.height.equalTo(height)
@@ -239,11 +239,11 @@ class WritingViewController: UIViewController {
             }
         }
         self.view.setNeedsLayout()
-
+        
     }
-
-//    override func viewWillDisappear(_ animated: Bool) {
-//    }
+    
+    //    override func viewWillDisappear(_ animated: Bool) {
+    //    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -289,7 +289,7 @@ class WritingViewController: UIViewController {
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
-
+        
         tagsCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: IDENTIFIER)
         tagsCollectionView.delegate = self
         tagsCollectionView.dataSource = self
@@ -314,7 +314,7 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(1)
         }
-//
+        //
         stackButton.snp.makeConstraints { make in
             make.top.equalTo(lineViewFirst).offset(10)
             make.leading.equalTo(lineViewFirst)
@@ -336,7 +336,7 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(lineViewFirst)
             make.height.equalTo(0)
         }
-                                               
+        
         lineViewSecond.snp.makeConstraints { make in
             make.top.equalTo(tagsCollectionView.snp.bottom).offset(10)
             make.leading.trailing.equalTo(contentView)
@@ -501,7 +501,7 @@ class WritingViewController: UIViewController {
                 writingOwnerTag.names = []
             }
             print("writingTag: \(writingOwnerTag.names)")
-
+            
             if $0.teamTags != nil {
                 writingTeamTag.names = []
                 for tag in $0.teamTags! {
@@ -580,10 +580,10 @@ class WritingViewController: UIViewController {
             
             let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
             if editType == .yet {
-            MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success:
+                MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case .success:
                         MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
                             switch result {
                             case .success:
@@ -603,11 +603,11 @@ class WritingViewController: UIViewController {
                                 print("\(error)")
                             }
                         }
-                    
-                case .failure(let error):
+                        
+                    case .failure(let error):
                         self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
+                    }
                 }
-            }
             } else {
                 MyAlamofireManager.shared.putProject(projectArticle: projectArticle) { result in
                     switch result {
@@ -768,7 +768,5 @@ extension WritingViewController: UICollectionViewDataSource {
             cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
             return cell
         }
-        
     }
-    
 }

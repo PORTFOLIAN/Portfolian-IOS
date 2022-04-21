@@ -29,29 +29,44 @@ class BaseInterceptor: RequestInterceptor {
             return
         }
         let data = ["statusCode" : statusCode]
-//        if loginType != .no {
-            if statusCode == 401 {
-                MyAlamofireManager.shared.renewAccessToken() { bool in
-                    if bool {
-                        completion(.retryWithDelay(0.5))
-                    } else {
-                        self.goToSignin()
+        if statusCode == 401 {
+            MyAlamofireManager.shared.renewAccessToken() { bool in
+                if bool {
+                    completion(.retryWithDelay(0.5))
+                } else {
+                    self.toast { Bool in
+                        if (Bool) {
+                            self.goToSignin()
+                        }
                     }
                 }
-            } else if statusCode == 403 || statusCode == 404{
-                self.goToSignin()
             }
-//        }
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION.API.AUTH_FAIL), object: nil, userInfo:  data)
+        } else if statusCode == 403 || statusCode == 404{
+            self.toast { Bool in
+                if (Bool) {
+                    self.goToSignin()
+                }
+            }
+        }
         completion(.doNotRetry)
     }
     
     private func goToSignin() {
-        DispatchQueue.main.async {
+        let time = DispatchTime.now() + .milliseconds(750)
+        DispatchQueue.main.asyncAfter(deadline: time) {
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                 sceneDelegate.goToSignIn()
             }
+        }
+    }
+    
+    private func toast(_ completion: @escaping (Bool)->(Void)) {
+        DispatchQueue.main.async {
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.window?.rootViewController?.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
+                completion(true)
+            }
+            completion(false)
         }
     }
 }

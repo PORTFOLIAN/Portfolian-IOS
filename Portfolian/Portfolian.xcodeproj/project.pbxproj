@@ -33,7 +33,7 @@
 		2AB7824A2770DB13004E0408 /* MyUserRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB782492770DB13004E0408 /* MyUserRouter.swift */; };
 		2ABBF3AF273C6049005A09D0 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3AE273C6049005A09D0 /* Tag.swift */; };
 		2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */; };
-		2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B3273C7A95005A09D0 /* DataStore.swift */; };
+		2ABBF3B4273C7A95005A09D0 /* TagDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B3273C7A95005A09D0 /* TagDataStore.swift */; };
 		2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */; };
 		2AC842D72772BFE900A8CE60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */; };
 		2ACAE0A527597DF200A250ED /* BasicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */; };
@@ -64,6 +64,7 @@
 		2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB5428271E374500B6FFC6 /* UIColor+Hex.swift */; };
 		5107DE40280021C700AD64E3 /* UIButton+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107DE3F280021C700AD64E3 /* UIButton+URL.swift */; };
 		511EB1DA27E06C7400CF2EC1 /* SocketIOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511EB1D927E06C7400CF2EC1 /* SocketIOManager.swift */; };
+		511FA1FF28113EDD0001CC11 /* TypeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511FA1FE28113EDD0001CC11 /* TypeStore.swift */; };
 		5139CDC827E9BAC800001BAE /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */; };
 		5139CDCA27E9CD7100001BAE /* MyChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC927E9CD7100001BAE /* MyChatCell.swift */; };
 		5139CDCD27E9E17800001BAE /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDCC27E9E17800001BAE /* PaddingLabel.swift */; };
@@ -117,7 +118,7 @@
 		2AB782492770DB13004E0408 /* MyUserRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUserRouter.swift; sourceTree = "<group>"; };
 		2ABBF3AE273C6049005A09D0 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		2ABBF3B0273C681D005A09D0 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
-		2ABBF3B3273C7A95005A09D0 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		2ABBF3B3273C7A95005A09D0 /* TagDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagDataStore.swift; sourceTree = "<group>"; };
 		2ABBF3B7273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTableViewCell.swift; sourceTree = "<group>"; };
@@ -151,6 +152,7 @@
 		3EE9E46654FFC37768B95F34 /* Pods-Portfolian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Portfolian.debug.xcconfig"; path = "Target Support Files/Pods-Portfolian/Pods-Portfolian.debug.xcconfig"; sourceTree = "<group>"; };
 		5107DE3F280021C700AD64E3 /* UIButton+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+URL.swift"; sourceTree = "<group>"; };
 		511EB1D927E06C7400CF2EC1 /* SocketIOManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOManager.swift; sourceTree = "<group>"; };
+		511FA1FE28113EDD0001CC11 /* TypeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeStore.swift; sourceTree = "<group>"; };
 		5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
 		5139CDC927E9CD7100001BAE /* MyChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChatCell.swift; sourceTree = "<group>"; };
 		5139CDCC27E9E17800001BAE /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
@@ -264,7 +266,8 @@
 		2ABBF3B2273C7A64005A09D0 /* DataStore */ = {
 			isa = PBXGroup;
 			children = (
-				2ABBF3B3273C7A95005A09D0 /* DataStore.swift */,
+				2ABBF3B3273C7A95005A09D0 /* TagDataStore.swift */,
+				511FA1FE28113EDD0001CC11 /* TypeStore.swift */,
 			);
 			path = DataStore;
 			sourceTree = "<group>";
@@ -635,7 +638,7 @@
 				2AFB5427271E372C00B6FFC6 /* UITabBarController+Tag.swift in Sources */,
 				2ABBF3B1273C681D005A09D0 /* TagCollectionViewCell.swift in Sources */,
 				2AFB53E5271C0EC900B6FFC6 /* AppDelegate.swift in Sources */,
-				2ABBF3B4273C7A95005A09D0 /* DataStore.swift in Sources */,
+				2ABBF3B4273C7A95005A09D0 /* TagDataStore.swift in Sources */,
 				2A28E0CB2755532700061B11 /* WritingSaveViewController.swift in Sources */,
 				2A16479B27713DA900A84554 /* Writing+CoreDataClass.swift in Sources */,
 				2A17B88827220B7100A0D598 /* Constants.swift in Sources */,
@@ -656,6 +659,7 @@
 				2AFB5416271E2FE100B6FFC6 /* HomeViewController.swift in Sources */,
 				2A99DC962755EE04007A28FC /* MyError.swift in Sources */,
 				5107DE40280021C700AD64E3 /* UIButton+URL.swift in Sources */,
+				511FA1FF28113EDD0001CC11 /* TypeStore.swift in Sources */,
 				5139CDCD27E9E17800001BAE /* PaddingLabel.swift in Sources */,
 				2AFB5429271E374500B6FFC6 /* UIColor+Hex.swift in Sources */,
 				2AFB541A271E2FF800B6FFC6 /* ChatViewController.swift in Sources */,

@@ -68,8 +68,11 @@ class KeychainManager {
             kSecAttrAccount: key
         ]
         
-        let status = SecItemDelete(keyChainQuery)
-        assert(status == noErr, "토큰 삭제에 실패하였습니다., status code = \(status)")
+        SecItemDelete(keyChainQuery)
+//        if status == noErr {
+//
+//        }
+//        assert(status == noErr, "토큰 삭제에 실패하였습니다., status code = \(status)")
     }
     
 //    // HTTPHeaders 구성

@@ -26,10 +26,10 @@ class PaddingLabel: UILabel {
     }
     
     func configureLabel() {
-        textEdgeInsets.left = 16
-        textEdgeInsets.bottom = 4
-        textEdgeInsets.right = 16
-        textEdgeInsets.top = 4
+        self.textEdgeInsets.left = 16
+        self.textEdgeInsets.bottom = 4
+        self.textEdgeInsets.right = 16
+        self.textEdgeInsets.top = 4
         self.numberOfLines = 0
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true

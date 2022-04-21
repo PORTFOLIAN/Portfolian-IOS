@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
          <BreakpointContent
             uuid = "32F998CD-8F70-4485-A0AF-F6F19F700DE7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             nameForDebugger = "TVCDebug"
             ignoreCount = "0"
             continueAfterRunningActions = "No"

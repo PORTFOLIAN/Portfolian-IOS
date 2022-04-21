@@ -76,7 +76,6 @@ class TagButton: UIButton {
                 }
             }
         }
-        
     }
     
     override init(frame: CGRect) {

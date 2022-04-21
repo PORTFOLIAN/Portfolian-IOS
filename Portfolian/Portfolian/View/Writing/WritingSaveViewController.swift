@@ -40,6 +40,7 @@ class WritingSaveViewController: UIViewController {
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
     })
+    
     var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 30)).then({ UIView in
         let icon = UIImage(named: "addUser")
         var iconView = UIImageView(image: icon)
@@ -135,7 +136,7 @@ class WritingSaveViewController: UIViewController {
         UIView.backgroundColor = ColorPortfolian.gray2
     })
     
-    var profileButton = UIButton().then { UIButton in
+    lazy var profileButton = UIButton().then { UIButton in
         UIButton.layer.cornerRadius = 25
         UIButton.layer.borderWidth = 1
         UIButton.layer.borderColor = UIColor.black.cgColor
@@ -154,7 +155,7 @@ class WritingSaveViewController: UIViewController {
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     }
     
-    var dynamicButton = UIButton().then { UIButton in
+    lazy var dynamicButton = UIButton().then { UIButton in
         UIButton.setTitle("  모집마감  ", for: .normal)
         UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 20)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -168,7 +169,6 @@ class WritingSaveViewController: UIViewController {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
         registrationType = .Writing
-//        let newProjectID = recruitWriting.newProjectID as String
         
         print("WritingSaveViewController \(writingTeamTag.names)")
         titleLabel.text = projectInfo.title
@@ -178,9 +178,19 @@ class WritingSaveViewController: UIViewController {
         periodLabel.text = projectInfo.contents.projectTime
         optionLabel.text = projectInfo.contents.recruitmentCondition
         proceedLabel.text = projectInfo.contents.progress
+        
+        writingTeamTag.names = []
+        writingOwnerTag.names = []
+        for tag in projectInfo.stackList {
+            guard let tagName = Tag.Name(rawValue: tag) else { return }
+            writingTeamTag.names.append(tagName)
+        }
+        guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+        writingOwnerTag.names.append(tagName)
         if projectInfo.leader.userId != JwtToken.shared.userId  {
             dynamicButton.setTitle("  채팅하기  ", for: .normal)
         }
+        
         let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
         detailTextView.attributedText = md.attributedString()
         configureLabel(md: md)
@@ -193,7 +203,7 @@ class WritingSaveViewController: UIViewController {
                 }
             }
         }).resume()
-        
+        nameLabel.text = projectInfo.leader.nickName
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
             var height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
@@ -417,8 +427,6 @@ class WritingSaveViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "수정하기", style: .default) { _ in
-            print("채워진 writing으로 가는데 getProject resistrationType처럼 글작성, 글수정이라는 걸 만들어준다. push로 해주고 <누르면 임시저장 같은거 없이 바로 뒤로가기 해주고 저장눌러도 바로 뒤로가기 해주기")
-            
             editType = .edit
             let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
             self.navigationController?.pushViewController(WritingVC, animated: true)
@@ -444,7 +452,7 @@ class WritingSaveViewController: UIViewController {
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
         case dynamicButton:
-            if sender.titleLabel?.text == "  채팅하기  " {
+            if sender.titleLabel?.text?.trimmingCharacters(in: [" "]) == "채팅하기" {
                 chatRootType = .project
                 profileType = .yourProjectProfile
                 let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")

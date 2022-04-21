@@ -194,6 +194,7 @@ class SigninViewController: UIViewController {
                 print(error)
             }
             else {
+                
                 print("logout() success.")
             }
         }

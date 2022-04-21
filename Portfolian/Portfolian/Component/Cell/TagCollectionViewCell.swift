@@ -127,7 +127,6 @@ extension TagCollectionViewCell: TagToggleButtonDelegate {
                 storeWritingTeamData(didClicked: didClicked)
             default:
                 storeMyPageData(didClicked: didClicked)
-                
         }
     }
 }

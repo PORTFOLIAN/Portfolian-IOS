@@ -83,6 +83,7 @@ extension SettingViewController: UITableViewDelegate {
                 KeychainManager.shared.delete(key: "userId")
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
+                JwtToken.shared = JwtToken()
                 self.goToApp()
             }
         }
@@ -105,7 +106,7 @@ extension SettingViewController: UITableViewDelegate {
                     KeychainManager.shared.delete(key: "refreshToken")
                     KeychainManager.shared.delete(key: "accessToken")
                     KeychainManager.shared.delete(key: "userId")
-                    JwtToken.shared.userId  = .init()
+                    JwtToken.shared = JwtToken()
                 }
                 self.goToApp()
             }
@@ -149,14 +150,3 @@ extension SettingViewController: UITableViewDataSource {
     }
     
 }
-    //MARK: - setupAutoLayout
-    
-
-
-
-    
-    
-
-
-    
-

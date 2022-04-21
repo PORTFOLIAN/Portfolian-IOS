@@ -128,5 +128,4 @@ struct Article: Codable {
 var recruitWriting = RecruitWriting()
 var projectListInfo = ProjectListInfo()
 var bookmarkListInfo = ProjectListInfo()
-
 var projectInfo = ProjectInfo()

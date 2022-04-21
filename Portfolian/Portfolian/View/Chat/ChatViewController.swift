@@ -78,7 +78,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = chatRoomInfo.user.nickName
         URLSession.shared.dataTask( with: NSURL(string: chatRoomInfo.user.photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 if let data = data {
                     let image = UIImage(data: data)
                     cell.profileImageView.image = image

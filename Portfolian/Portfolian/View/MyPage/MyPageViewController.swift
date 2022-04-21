@@ -24,7 +24,6 @@ class MyPageViewController: UIViewController {
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     }
     
-    
     lazy var profileImageView = UIImageView().then { UIImageView in
         lazy var image = UIImage(named: "profile")
         UIImageView.image = image
@@ -80,19 +79,11 @@ class MyPageViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
         let userId: String
-        if profileType == .yourProfile {
+        if profileType == .yourProfile || profileType == .yourProjectProfile {
             userId = chatRoom.user.userId
             navigationItem.title = "유저 프로필"
             navigationItem.leftBarButtonItem = cancelBarButtonItem
-
             navigationItem.rightBarButtonItem = nil
-
-        } else if profileType == .yourProjectProfile {
-            userId = projectInfo.leader.userId
-            navigationItem.title = "유저 프로필"
-            navigationItem.leftBarButtonItem = cancelBarButtonItem
-            navigationItem.rightBarButtonItem = nil
-
         } else {
             userId = JwtToken.shared.userId
             titleLabel.text = "마이 프로필"
@@ -132,8 +123,6 @@ class MyPageViewController: UIViewController {
 
             case .failure(let error):
                 print(error)
-            default:
-                break
             }
         }
         if profileType != .myProfile {
@@ -240,17 +229,8 @@ class MyPageViewController: UIViewController {
     func setUpItem() {
         navigationItem.rightBarButtonItem = setting
     }
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
 }
+
 extension MyPageViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(SPACINGROW)

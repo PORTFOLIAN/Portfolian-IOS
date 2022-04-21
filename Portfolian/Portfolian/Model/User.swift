@@ -40,15 +40,6 @@ struct UserProfile {
     var photo : UIImage
     var github : String
     var mail : String
-    
-//    init() {
-//        nickName = String()
-//        description = String()
-//        stack = [String]()
-//        photo = UIImage()
-//        github = String()
-//        mail = String()
-//    }
 }
 
 

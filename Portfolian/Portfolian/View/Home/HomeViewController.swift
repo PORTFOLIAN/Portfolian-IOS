@@ -157,7 +157,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         switch sender {
         case writeButton:
             let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
-            WritingVC.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(WritingVC, animated: true)
         case viewsCheckBox:
             viewsCheckBox.isSelected = true
@@ -471,22 +470,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         MyAlamofireManager.shared.getProject(projectID: projectId) { result in
             switch result {
             case .success:
-                writingTeamTag.names = []
-                writingOwnerTag.names = []
-                for tag in projectInfo.stackList {
-                    guard let tagName = Tag.Name(rawValue: tag) else { return }
-                    writingTeamTag.names.append(tagName)
-                }
-                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
-                writingOwnerTag.names.append(tagName)
-                
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                
-                
-                
+                                
             case .failure(let error):
-                //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
                 print("\(error)######")
             }
         }

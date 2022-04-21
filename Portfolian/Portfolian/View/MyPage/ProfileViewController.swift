@@ -11,11 +11,18 @@ import Then
 import PhotosUI
 class ProfileViewController: UIViewController {
     lazy var profileButton = UIButton().then { UIButton in
-        lazy var image = UIImage(named: "profile")
+        var image = UIImage(named: "profile")
         UIButton.setImage(image, for: .normal)
         UIButton.layer.cornerRadius = 35
         UIButton.layer.borderWidth = 1
         UIButton.clipsToBounds = true
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    }
+    
+    lazy var profileTextButton = UIButton().then { UIButton in
+        UIButton.setTitle("프로필 사진 수정", for: .normal)
+        UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
+        UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Bold", size: 16)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
         
@@ -32,9 +39,15 @@ class ProfileViewController: UIViewController {
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout()).then { UICollectionView in
         
     }
+    
     var containerView = UIView().then { UIView in
         UIView.layer.borderColor = UIColor.systemGray5.cgColor
         UIView.layer.borderWidth = 1
+    }
+    
+    var scrollView = UIScrollView().then { UIScrollView in
+        UIScrollView.layer.borderColor = UIColor.systemGray5.cgColor
+        UIScrollView.layer.borderWidth = 1
     }
     
     lazy var nickNameLabel = UILabel().then { UILabel in
@@ -79,7 +92,6 @@ class ProfileViewController: UIViewController {
         UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 16)
         UITextField.layer.cornerRadius = 10
         UITextField.backgroundColor = .white
-
     }
     
     lazy var emailTextField = UITextField().then { UITextField in
@@ -156,8 +168,6 @@ class ProfileViewController: UIViewController {
                 self.view.setNeedsLayout()
             case .failure(let error):
                 print(error)
-            default:
-                break
             }
         }
     }
@@ -165,36 +175,45 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = cancelBarButtonItem
-        view.addSubview(containerView)
-        view.addSubview(profileButton)
-        containerView.addSubview(nickNameLabel)
-        containerView.addSubview(githubLabel)
-        containerView.addSubview(emailLabel)
-        containerView.addSubview(introduceLabel)
-        containerView.addSubview(nicknameTextField)
-        containerView.addSubview(githubTextField)
-        containerView.addSubview(emailTextField)
-        containerView.addSubview(githubAddressLabel)
-        containerView.addSubview(introduceTextView)
-        containerView.addSubview(nicknameLineView)
-        containerView.addSubview(githubLineView)
-        containerView.addSubview(emailLineView)
-        view.addSubview(stackButton)
-        view.addSubview(tagCollectionView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(profileButton)
+        scrollView.addSubview(profileTextButton)
+        scrollView.addSubview(containerView)
+        scrollView.addSubview(nickNameLabel)
+        scrollView.addSubview(githubLabel)
+        scrollView.addSubview(emailLabel)
+        scrollView.addSubview(introduceLabel)
+        scrollView.addSubview(nicknameTextField)
+        scrollView.addSubview(githubTextField)
+        scrollView.addSubview(emailTextField)
+        scrollView.addSubview(githubAddressLabel)
+        scrollView.addSubview(introduceTextView)
+        scrollView.addSubview(nicknameLineView)
+        scrollView.addSubview(githubLineView)
+        scrollView.addSubview(emailLineView)
+        scrollView.addSubview(stackButton)
+        scrollView.addSubview(tagCollectionView)
         
+        scrollView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        containerView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(scrollView.contentLayoutGuide)
+            make.height.equalTo(scrollView.contentLayoutGuide)
+            make.bottom.equalTo(tagCollectionView)
+        }
         profileButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(scrollView).offset(10)
             make.centerX.equalTo(view.center)
             make.width.height.equalTo(100)
         }
-
-        containerView.snp.makeConstraints { make in
-            make.top.equalTo(profileButton.snp.bottom).offset(20)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(introduceTextView.snp.bottom).offset(20)
+        profileTextButton.snp.makeConstraints { make in
+            make.top.equalTo(profileButton.snp.bottom)
+            make.centerX.equalTo(view.center)
         }
+
         nickNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(containerView).offset(10)
+            make.top.equalTo(profileTextButton).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(10)
         }
         nicknameTextField.snp.makeConstraints { make in
@@ -252,7 +271,7 @@ class ProfileViewController: UIViewController {
         }
 
         stackButton.snp.makeConstraints { make in
-            make.top.equalTo(containerView.snp.bottom).offset(20)
+            make.top.equalTo(introduceTextView.snp.bottom).offset(20)
             make.leading.equalTo(view.safeAreaLayoutGuide)
         }
         
@@ -275,8 +294,6 @@ class ProfileViewController: UIViewController {
                 self.introduceTextView.text = user.description
             case .failure(let error):
                 print(error)
-            default:
-                break
             }
         }
     }
@@ -328,7 +345,7 @@ class ProfileViewController: UIViewController {
     
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender {
-        case profileButton:
+        case profileButton, profileTextButton:
             alert("프로필 사진을 선택해주세요 :)")
         case stackButton:
             registrationType = .MyPage
@@ -342,18 +359,7 @@ class ProfileViewController: UIViewController {
         default:
             break
         }
-        
     }
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
 }
 
 extension ProfileViewController: UICollectionViewDelegateFlowLayout {
@@ -377,15 +383,7 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         }
         let size = button.frame.size
         return CGSize(width: size.width, height: size.height + 10)
-        
-        
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
-        //        TagCOllectionViewCell에서 contentView.isUserInteractionEnabled = true 해주면 함수 동작함. 대신 색이 안 나옴.
-    }
-    
 }
 
 extension ProfileViewController: UICollectionViewDataSource {
@@ -428,18 +426,23 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
 
 extension ProfileViewController: UITextViewDelegate {
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        estimateHeight = view.frame.height - stackButton.frame.origin.y
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: { [self] in
-            view.frame.origin.y -= estimateHeight
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { [weak self] in
+            guard let self = self else { return }
+            self.scrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 300, right: 0.0)
+            self.estimateHeight = self.scrollView.contentSize.height - self.scrollView.bounds.size.height + self.scrollView.contentInset.bottom
+            let bottomOffset = CGPoint(x: 0, y: self.estimateHeight/2)
+            self.scrollView.setContentOffset(bottomOffset, animated: true)
         })
         return true
     }
-    
+
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: { [self] in
-            view.frame.origin.y += estimateHeight
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { [weak self] in
+            guard let self = self else { return }
+            print(self.scrollView.contentInset)
+            self.scrollView.contentInset = .zero
+            self.scrollView.setContentOffset(.zero, animated: true)
+            print(self.scrollView.contentInset)
         })
         return true
     }
