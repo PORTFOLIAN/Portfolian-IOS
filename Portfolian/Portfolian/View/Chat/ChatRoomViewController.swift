@@ -151,7 +151,6 @@ class ChatRoomViewController: UIViewController {
         UIView.animate(withDuration: duration.doubleValue, delay: 0, options: [UIView.AnimationOptions(rawValue: UInt(curve.intValue))], animations: { [self] in
             self.view.layoutIfNeeded()
         })
-
     }
     
     // 채팅 업데이트
@@ -171,9 +170,16 @@ class ChatRoomViewController: UIViewController {
             if chat.roomId == self.chatRoomId && chat.sender != JwtToken.shared.userId  {
                 self.myChat.append(chat)
                 self.updateChat(count: self.myChat.count) {
-                    print("Get Message") }
+                    print("Get Message")
+                }
+                SocketIOManager.shared.readMessage(self.chatRoomId)
             }
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        chatRoomId = ""
     }
     
     override func viewDidLoad() {
@@ -236,11 +242,11 @@ class ChatRoomViewController: UIViewController {
         textView.delegate = self
         navigationItem.rightBarButtonItems = [leaveBarButtonItem]
         bindMsg()
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
 
         let photo = chatRootType == .project ? projectInfo.leader.photo : chatRoom.user.photo
         URLSession.shared.dataTask(with: NSURL(string: photo)! as URL, completionHandler: {
@@ -258,6 +264,7 @@ class ChatRoomViewController: UIViewController {
                 switch response {
                 case let .success(chatRoomId):
                     self.chatRoomId = chatRoomId
+                    
                 case .failure:
                     print("실패")
                 }
@@ -266,12 +273,29 @@ class ChatRoomViewController: UIViewController {
             headerLabel.text = projectInfo.title
             navigationItem.title = projectInfo.leader.nickName
         } else {
+            
             self.chatRoomId = chatRoom.chatRoomId
             self.receiverId = chatRoom.user.userId
             headerLabel.text = chatRoom.projectTitle
             navigationItem.title = chatRoom.user.nickName
         }
-        
+//        MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: chatRoomId) { result in
+//            switch result {
+//            case let .success(chatMessageList):
+//                for chat in chatMessageList.chatList {
+//                    var chatType: ChatType
+//                    if chat.senderId == JwtToken.shared.userId {
+//                        chatType = ChatType(roomId: self.chatRoomId, sender: chat.senderId, receiver: self.receiverId, messageContent: chat.messageContents, date: chat.date)
+//                    } else {
+//                        chatType = ChatType(roomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContents, date: chat.date)
+//                    }
+//                    self.myChat.append(chatType)
+//                }
+//                SocketIOManager.shared.readMessage(self.chatRoomId)
+//            default:
+//                break
+//            }
+//        }
         
         addKeyboardNotifications()
         self.tabBarController?.tabBar.isHidden = true

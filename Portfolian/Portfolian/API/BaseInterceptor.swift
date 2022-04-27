@@ -28,9 +28,9 @@ class BaseInterceptor: RequestInterceptor {
             completion(.doNotRetryWithError(error))
             return
         }
-        let data = ["statusCode" : statusCode]
         if statusCode == 401 {
-            MyAlamofireManager.shared.renewAccessToken() { bool in
+            MyAlamofireManager.shared.renewAccessToken() { [weak self] bool in
+                guard let self = self else { return }
                 if bool {
                     completion(.retryWithDelay(0.5))
                 } else {
@@ -41,12 +41,14 @@ class BaseInterceptor: RequestInterceptor {
                     }
                 }
             }
-        } else if statusCode == 403 || statusCode == 404{
-            self.toast { Bool in
-                if (Bool) {
+        } else if statusCode == 403 || statusCode == 404 {
+            self.toast { [weak self] Bool in
+                guard let self = self else { return }
+                if Bool {
                     self.goToSignin()
                 }
             }
+
         }
         completion(.doNotRetry)
     }

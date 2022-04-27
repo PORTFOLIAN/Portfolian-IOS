@@ -20,6 +20,12 @@ class SocketIOManager: NSObject {
         socket = self.manager.defaultSocket
     }
     
+    func connectCheck(completion: @escaping (Bool) -> Void) {
+        self.socket.on("connection") { _, _ in
+            completion(true)
+        }
+    }
+
     func receiveMessage(completion: @escaping (ChatType) -> Void) {
         self.socket.on("chat:receive") { (dataArray, socketAck) in            
             print("***************************************")
@@ -52,6 +58,10 @@ class SocketIOManager: NSObject {
     
     func enterMessage(_ chatType: ChatType) {
         socket.emit("notice:enter", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+    }
+    
+    func readMessage(_ roomId: String) {
+        socket.emit("chat:read", ["roomId" : roomId, "userId" : JwtToken.shared.userId])
     }
 }
 

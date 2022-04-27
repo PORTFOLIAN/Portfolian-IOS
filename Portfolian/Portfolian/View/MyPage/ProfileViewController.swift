@@ -213,7 +213,7 @@ class ProfileViewController: UIViewController {
         }
 
         nickNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileTextButton).offset(10)
+            make.top.equalTo(profileTextButton.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(10)
         }
         nicknameTextField.snp.makeConstraints { make in

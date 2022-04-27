@@ -79,8 +79,13 @@ class MyPageViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
         let userId: String
-        if profileType == .yourProfile || profileType == .yourProjectProfile {
+        if profileType == .yourProfile {
             userId = chatRoom.user.userId
+            navigationItem.title = "유저 프로필"
+            navigationItem.leftBarButtonItem = cancelBarButtonItem
+            navigationItem.rightBarButtonItem = nil
+        } else if profileType == .yourProjectProfile {
+            userId = projectInfo.leader.userId
             navigationItem.title = "유저 프로필"
             navigationItem.leftBarButtonItem = cancelBarButtonItem
             navigationItem.rightBarButtonItem = nil
@@ -110,7 +115,9 @@ class MyPageViewController: UIViewController {
                 DispatchQueue.main.async {
                     if user.stackList != [] {
                         for stack in user.stackList {
-                            myTag.names.append(Tag.Name(rawValue: stack)!)
+                            if Tag.Name(rawValue: stack) != nil {
+                                myTag.names.append(Tag.Name(rawValue: stack)!)
+                            }
                         }
                     }
                     self.tagCollectionView.reloadData()

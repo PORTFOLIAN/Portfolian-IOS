@@ -84,6 +84,7 @@ extension SettingViewController: UITableViewDelegate {
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
                 JwtToken.shared = JwtToken()
+                SocketIOManager.shared.closeConnection()
                 self.goToApp()
             }
         }
@@ -108,6 +109,7 @@ extension SettingViewController: UITableViewDelegate {
                     KeychainManager.shared.delete(key: "userId")
                     JwtToken.shared = JwtToken()
                 }
+                SocketIOManager.shared.closeConnection()
                 self.goToApp()
             }
         }

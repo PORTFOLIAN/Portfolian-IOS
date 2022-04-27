@@ -76,6 +76,12 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     var searchKeyword = ""
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if loginType != .no {
+            MyAlamofireManager.shared.renewAccessToken { Bool in
+            }
+        }
+        
         setUpItem()
         setUpLogo()
         cache = NSCache()
@@ -115,7 +121,14 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         constraints()
         initRefresh()
         //        self.tableView.separatorStyle = .none
-        
+        if loginType != .no {
+            SocketIOManager.shared.establishConnection()
+            SocketIOManager.shared.connectCheck { Bool in
+                if Bool {
+                    SocketIOManager.shared.sendAuth()
+                }
+            }
+        }
     }
     
     // Mark: SetupLogo
