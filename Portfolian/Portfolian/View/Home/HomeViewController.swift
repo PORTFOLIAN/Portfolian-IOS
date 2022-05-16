@@ -75,6 +75,18 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     let refreshControl = UIRefreshControl()
     var projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
     var searchKeyword = ""
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        guard let viewController = navigationController?.topViewController else { return }
+        if String(describing: type(of: viewController)) == "WritingSaveViewController" ||
+            String(describing: type(of: viewController)) == "WritingViewController"{
+            self.tabBarController?.tabBar.isHidden = true
+
+        }
+    }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -212,6 +224,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
         
     }
+    
+    
     
     //MARK: - Search bar
     func configureSearchController(){

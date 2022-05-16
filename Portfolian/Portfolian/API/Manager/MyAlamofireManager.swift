@@ -137,7 +137,7 @@ final class MyAlamofireManager {
             .responseData { response in
                 guard let responseData = response.data else { return }
                 do {
-                    bookmarkListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
+                    let bookmarkListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
                     let code = projectListInfo.code
                     if code == 1 {
                         completion(.success(bookmarkListInfo))

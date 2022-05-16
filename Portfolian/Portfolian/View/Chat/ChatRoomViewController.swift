@@ -71,7 +71,6 @@ class ChatRoomViewController: UIViewController {
                 SocketIOManager.shared.sendMessage(chat)
                 myChat.append(chat)
                 updateChat(count: myChat.count) {
-                    print("채팅 송신")
                 }
             }
         } else if sender == leaveBarButtonItem {

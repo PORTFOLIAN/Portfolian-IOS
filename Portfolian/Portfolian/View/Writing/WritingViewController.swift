@@ -252,9 +252,6 @@ class WritingViewController: UIViewController {
         
     }
     
-    //    override func viewWillDisappear(_ animated: Bool) {
-    //    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "글쓰기"
@@ -474,6 +471,13 @@ class WritingViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            self.tabBarController?.tabBar.isHidden = false
+        }
+    }
+    
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColorColorPortfolian.baseBlack]
@@ -640,7 +644,6 @@ class WritingViewController: UIViewController {
                 MyAlamofireManager.shared.putProject(projectArticle: projectArticle) { result in
                     switch result {
                     case .success:
-                        print("성공")
                         MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
                             switch result {
                             case .success:

@@ -164,12 +164,11 @@ class WritingSaveViewController: UIViewController {
         UIButton.layer.borderWidth = 1.0
         UIButton.layer.cornerRadius = 20
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         registrationType = .Writing
         
-        print("WritingSaveViewController \(writingTeamTag.names)")
         titleLabel.text = projectInfo.title
         viewsLabel.text = "조회수 " + String(projectInfo.view)
         recruitLabel.text = "모집인원 " + String(projectInfo.capacity)
@@ -421,6 +420,9 @@ class WritingSaveViewController: UIViewController {
         default:
             break
         }
+        if isMovingFromParent {
+            self.tabBarController?.tabBar.isHidden = false
+        }
     }
     
     func alert() {
@@ -433,7 +435,6 @@ class WritingSaveViewController: UIViewController {
         }
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
-            print("삭제하고 홈화면으로 가기")
             self.navigationController?.popViewController(animated: true)
         }
         

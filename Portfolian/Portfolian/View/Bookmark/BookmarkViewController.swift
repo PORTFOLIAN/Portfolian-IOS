@@ -8,25 +8,12 @@
 import UIKit
 
 class BookmarkViewController: UIViewController {
+    var bookmarkListInfo = ProjectListInfo()
     lazy var logo: UILabel = {
         let logo = UILabel()
         logo.text = "북마크"
         logo.font = UIFont(name: "NotoSansKR-Bold", size: 20)
         return logo
-    }()
-    
-    lazy var filter: UIBarButtonItem = {
-        let image = UIImage(named: "filter")
-        let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
-        button.tag = 2
-        return button
-    }()
-    
-    lazy var push: UIBarButtonItem = {
-        let image = UIImage(named: "Push")
-        let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
-        button.tag = 3
-        return button
     }()
     
     lazy var tableView: UITableView = {
@@ -49,10 +36,27 @@ class BookmarkViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         MyAlamofireManager.shared.getBookmarkList { result in
+            switch result {
+            case .success(let projectListInfo):
+                self.bookmarkListInfo = projectListInfo
+            default:
+                break
+            }
             self.tableView.reloadData()
             self.tableView.setNeedsLayout()
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        guard let viewController = navigationController?.topViewController else { return }
+        if String(describing: type(of: viewController)) == "WritingSaveViewController" ||
+            String(describing: type(of: viewController)) == "WritingViewController"{
+            self.tabBarController?.tabBar.isHidden = true
+
+        }
+    }
+    
     // Mark: SetupLogo
     func setUpLogo() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: logo)
@@ -65,13 +69,7 @@ class BookmarkViewController: UIViewController {
             let HomeVC = UIStoryboard(name: "Home", bundle: nil).instantiateViewController(withIdentifier: "HomeVC")
             HomeVC.modalPresentationStyle = .fullScreen
             self.dismiss(animated: true, completion: nil)
-            
-        case 2: // filter
-            let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
-            FilterVC.modalPresentationStyle = .fullScreen
-            self.navigationController?.pushViewController(FilterVC, animated: true)
-        case 3: // push
-            print(4)
+
         default:
             print("error")
             

@@ -11,7 +11,7 @@ class BaseNavigationController: UINavigationController {
     
     private var duringTransition = false
     private var disabledPopVCs = [ViewController.self]
-    var currentViewController : UIViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         interactivePopGestureRecognizer?.delegate = self
@@ -28,16 +28,14 @@ class BaseNavigationController: UINavigationController {
 
 extension BaseNavigationController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        currentViewController = viewController
+        
         if viewControllers.count > 1 {
             navigationController.tabBarController?.tabBar.isHidden = true
         }
     }
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        if currentViewController == viewController {
-            if viewControllers.count == 1 {
-                navigationController.tabBarController?.tabBar.isHidden = false
-            }
+        if viewControllers.count == 1 {
+            navigationController.tabBarController?.tabBar.isHidden = false
         }
         self.duringTransition = false
     }

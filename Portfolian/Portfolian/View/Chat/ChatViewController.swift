@@ -90,7 +90,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("채팅방으로 넘어가기")
         chatRootType = .chatRoom
         profileType = .yourProfile
         chatRoom = chatRoomList.chatRoomList[indexPath[1]]
