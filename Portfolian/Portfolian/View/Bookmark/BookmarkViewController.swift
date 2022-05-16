@@ -47,12 +47,12 @@ class BookmarkViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         MyAlamofireManager.shared.getBookmarkList { result in
             self.tableView.reloadData()
             self.tableView.setNeedsLayout()
         }
     }
-    
     // Mark: SetupLogo
     func setUpLogo() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: logo)
@@ -107,16 +107,13 @@ extension BookmarkViewController: BookmarkButtonDelegate {
         let articleList = bookmarkListInfo.articleList
         let articleInfo = articleList[indexPath?[1] ?? 0]
         let projectId = articleInfo.projectId
-        var bookMarked = articleInfo.bookMark
-        bookMarked.toggle()
-        let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
-        MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
-            MyAlamofireManager.shared.getBookmarkList { result in
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.view.setNeedsLayout()
-                }
-            }
+        bookmarkListInfo.articleList.remove(at: indexPath?[1] ?? 0)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+        tableView.deleteRows(at: [indexPath!], with: .fade)
+        let bookmark = Bookmark(projectId: projectId, bookMarked: false)
+        MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { _ in
         }
     }
 }
@@ -154,40 +151,40 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         }.resume()
         
         if bookmark == true {
-            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
+            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill"), for: .normal)
         } else {
             cell.bookmarkButton.setImage(UIImage(named: "bookmark"), for: .normal)
         }
-        cell.tagButton1.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton1.informTextInfo(text: "", fontSize: 14)
         cell.tagButton1.currentColor(color: .clear)
-        cell.tagButton2.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton2.informTextInfo(text: "", fontSize: 14)
         cell.tagButton2.currentColor(color: .clear)
-        cell.tagButton3.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton3.informTextInfo(text: "", fontSize: 14)
         cell.tagButton3.currentColor(color: .clear)
         cell.numberOftagsLabel.text = ""
         switch lenStackList {
         case 1:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
             
         case 2:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
             
         case 3:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
-            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 14)
             cell.tagButton3.currentColor(color: tagInfo3.color)
             
         default:
@@ -195,11 +192,11 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
-            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 14)
             cell.tagButton3.currentColor(color: tagInfo3.color)
             cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
@@ -210,7 +207,6 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀이 선택 되었을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print(indexPath)
         let articleList = bookmarkListInfo.articleList
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
@@ -239,6 +235,6 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀의 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 175.0;//Choose your custom row height
+        return 150.0;//Choose your custom row height
     }
 }

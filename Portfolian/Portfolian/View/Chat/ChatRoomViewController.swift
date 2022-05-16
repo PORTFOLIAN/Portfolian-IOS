@@ -22,12 +22,12 @@ class ChatRoomViewController: UIViewController {
         make.register(MyChatCell.self, forCellReuseIdentifier: "MyChatCell")
         make.register(YourChatCell.self, forCellReuseIdentifier: "YourChatCell")
         make.register(YourProfileChatCell.self, forCellReuseIdentifier: "YourProfileChatCell")
+        make.register(NoticeCell.self, forCellReuseIdentifier: "NoticeCell")
     }
     
     var headerLabel = UILabel().then { UILabel in
-        
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
-        UILabel.textColor = .black
+        UILabel.textColor = ColorPortfolian.baseBlack
         UILabel.textAlignment = .center
     }
     
@@ -48,7 +48,7 @@ class ChatRoomViewController: UIViewController {
     }
     
     lazy var leaveBarButtonItem = UIBarButtonItem(image: UIImage(named: "leave"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
-        UIBarButtonItem.tintColor = .black
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
     
     var sendButton = UIButton().then { UIButton in
@@ -58,13 +58,18 @@ class ChatRoomViewController: UIViewController {
     
     var myChat: [ChatType] = []
         
+    var index = 0
     @objc func buttonPressed(_ sender: UIButton) {
         if sender == sendButton {
             if textView.text != "" {
-                let chat = ChatType(roomId: chatRoomId, sender: JwtToken.shared.userId , receiver: receiverId, messageContent: textView.text)
+                let now = Date()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                let time = dateFormatter.string(from: now)
+                let chat = ChatType(chatRoomId: chatRoomId, sender: JwtToken.shared.userId, receiver: receiverId, messageContent: textView.text, messageType: "Chat", date: time)
+                self.isYourFirstChat = true
                 SocketIOManager.shared.sendMessage(chat)
                 myChat.append(chat)
-                print("\n\n\n@@@@\(myChat)@@@@\n\n\n")
                 updateChat(count: myChat.count) {
                     print("채팅 송신")
                 }
@@ -73,7 +78,6 @@ class ChatRoomViewController: UIViewController {
             MyAlamofireManager.shared.exitChatRoom(chatRoomId: chatRoomId, completion: { response in
                 switch response {
                 case .success():
-                    print("방나가기 기능")
                     self.navigationController?.popViewController(animated: true)
                 case let .failure(myError):
                     print(myError)
@@ -127,8 +131,8 @@ class ChatRoomViewController: UIViewController {
         UIView.animate(withDuration: duration, delay: 0, options: [UIView.AnimationOptions(rawValue: curve)], animations: { [self] in
             self.view.layoutIfNeeded()
             tableView.isHidden = true
-
-            if !self.myChat.isEmpty {
+            print(myChat.count)
+            if self.myChat.count > 3 {
                 var lastIndex = IndexPath(row: self.myChat.count - 2, section: 0)
                 self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: false)
                 tableView.isHidden = false
@@ -167,8 +171,27 @@ class ChatRoomViewController: UIViewController {
     // 서버로부터 메시지 받을때 채팅창 업데이트
     func bindMsg() {
         SocketIOManager.shared.receiveMessage() { chat in
-            if chat.roomId == self.chatRoomId && chat.sender != JwtToken.shared.userId  {
-                self.myChat.append(chat)
+            var chatType: ChatType
+            if chat.chatRoomId == self.chatRoomId && chat.sender != JwtToken.shared.userId  {
+                if chat.messageType == "Notice" {
+                    chatType = chat
+                    chatType.firstChat = false
+                    self.isYourFirstChat = true
+                } else if chat.sender == JwtToken.shared.userId {
+                    chatType = chat
+                    chatType.firstChat = false
+                    self.isYourFirstChat = true
+                } else {
+                    if self.isYourFirstChat {
+                        chatType = chat
+                        chatType.firstChat = true
+                        self.isYourFirstChat = false
+                    } else {
+                        chatType = chat
+                        chatType.firstChat = false
+                    }
+                }
+                self.myChat.append(chatType)
                 self.updateChat(count: self.myChat.count) {
                     print("Get Message")
                 }
@@ -180,6 +203,7 @@ class ChatRoomViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         chatRoomId = ""
+        myChat = []
     }
     
     override func viewDidLoad() {
@@ -202,19 +226,16 @@ class ChatRoomViewController: UIViewController {
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(1)
         }
-        
         headerLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineViewFirst.snp.bottom).offset(3)
+            make.top.equalTo(lineViewFirst.snp.bottom).offset(1)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.height.equalTo(30)
         }
-        
         lineViewSecond.snp.makeConstraints { make in
             make.top.equalTo(headerLabel.snp.bottom).offset(3)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(1)
         }
-        
         tableView.snp.makeConstraints { make in
             make.top.equalTo(lineViewSecond.snp.bottom)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -247,7 +268,6 @@ class ChatRoomViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-
         let photo = chatRootType == .project ? projectInfo.leader.photo : chatRoom.user.photo
         URLSession.shared.dataTask(with: NSURL(string: photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
@@ -259,60 +279,136 @@ class ChatRoomViewController: UIViewController {
                 }
             }
         }).resume()
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let date = dateFormatter.string(from: now)
         if chatRootType == .project {
-            MyAlamofireManager.shared.fetchRoomId(userId: projectInfo.leader.userId , projectId: projectInfo.projectId) { response in
-                switch response {
-                case let .success(chatRoomId):
-                    self.chatRoomId = chatRoomId
-                    
-                case .failure:
-                    print("실패")
-                }
-            }
             self.receiverId = projectInfo.leader.userId
             headerLabel.text = projectInfo.title
             navigationItem.title = projectInfo.leader.nickName
-        } else {
+            MyAlamofireManager.shared.fetchRoomId(userId: receiverId, projectId: projectInfo.projectId) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case let .success(roomId):
+                    self.chatRoomId = roomId
+                    MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: self.chatRoomId) { [weak self] result in
+                        guard let self = self else { return }
+                        switch result {
+                        case let .success(chatMessageList):
+                            
+                            
+                            self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
+                            self.index = self.myChat.count
+                            self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
+                            if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
+                                    self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date), at: self.index)
+                            }
+                            SocketIOManager.shared.readMessage(self.chatRoomId)
+                            self.scrollToMiddle()
+                            
+                        default:
+                            break
+                        }
+                    }
+                case .failure:
+                    break
+                }
             
+            }
+           
+           
+        } else {
             self.chatRoomId = chatRoom.chatRoomId
             self.receiverId = chatRoom.user.userId
             headerLabel.text = chatRoom.projectTitle
             navigationItem.title = chatRoom.user.nickName
+            MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: chatRoomId) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case let .success(chatMessageList):
+                    
+                    self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
+                    self.index = self.myChat.count
+                    self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
+                    if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
+                            self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date, firstChat: false), at: self.index)
+                    }
+                    SocketIOManager.shared.readMessage(self.chatRoomId)
+                    self.scrollToMiddle()
+                default:
+                    break
+                }
+            }
         }
-//        MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: chatRoomId) { result in
-//            switch result {
-//            case let .success(chatMessageList):
-//                for chat in chatMessageList.chatList {
-//                    var chatType: ChatType
-//                    if chat.senderId == JwtToken.shared.userId {
-//                        chatType = ChatType(roomId: self.chatRoomId, sender: chat.senderId, receiver: self.receiverId, messageContent: chat.messageContents, date: chat.date)
-//                    } else {
-//                        chatType = ChatType(roomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContents, date: chat.date)
-//                    }
-//                    self.myChat.append(chatType)
-//                }
-//                SocketIOManager.shared.readMessage(self.chatRoomId)
-//            default:
-//                break
-//            }
-//        }
+        
         
         addKeyboardNotifications()
-        self.tabBarController?.tabBar.isHidden = true
-//        let chat = ChatType(roomId: chatRoomId, sender: JwtToken.shared.userId, messageContent: "", date: Date.now)
-//        SocketIOManager.shared.enterMessage(chat)
-//        myChat.append(chat)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.tabBarController?.tabBar.isHidden = false
+        myChat = []
         removeKeyboardNotifications()
 
 //        let chat = ChatType(roomId: chatRoomId, sender: JwtToken.shared.userId, messageContent: "", date: Date.now)
 //        SocketIOManager.shared.leaveMessage(chat)
 //        myChat.append(chat)
+    }
+    
+    func scrollToMiddle() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.tableView.reloadData()
+            if self.myChat.count > 2 && self.index != 0 {
+                let indexPath = IndexPath(row: self.index - 1, section: 0)
+                print(self.index)
+                self.tableView.scrollToRow(at: indexPath, at: .middle, animated: false)
+                self.tableView.reloadData()
+            }
+        }
+    }
+    func makeOldBubbleChat(chatList: [ChatLists.OldChatList]) {
+        for chat in chatList {
+            var chatType: ChatType
+            if chat.messageType == "Notice" {
+                chatType = ChatType(chatRoomId: self.chatRoomId, sender: chat.sender ?? "", receiver: self.receiverId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                self.isYourFirstChat = true
+            } else if chat.sender == JwtToken.shared.userId {
+                chatType = ChatType(chatRoomId: self.chatRoomId, sender: chat.sender ?? "", receiver: self.receiverId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                self.isYourFirstChat = true
+            } else {
+                if self.isYourFirstChat {
+                    chatType = ChatType(chatRoomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: true)
+                    self.isYourFirstChat = false
+                } else {
+                    chatType = ChatType(chatRoomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                }
+            }
+            self.myChat.append(chatType)
+        }
+    }
+    
+    func makeNewBubbleChat(chatList: [ChatLists.NewChatList]) {
+        for chat in chatList {
+            var chatType: ChatType
+            if chat.messageType == "Notice" {
+                chatType = ChatType(chatRoomId: self.chatRoomId, sender: chat.sender ?? "", receiver: self.receiverId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                self.isYourFirstChat = true
+            } else if chat.sender == JwtToken.shared.userId {
+                chatType = ChatType(chatRoomId: self.chatRoomId, sender: chat.sender ?? "", receiver: self.receiverId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                self.isYourFirstChat = true
+            } else {
+                if self.isYourFirstChat {
+                    chatType = ChatType(chatRoomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: true)
+                    self.isYourFirstChat = false
+                } else {
+                    chatType = ChatType(chatRoomId: self.chatRoomId, sender: self.receiverId, receiver: JwtToken.shared.userId, messageContent: chat.messageContent, messageType: chat.messageType, date: chat.date, firstChat: false)
+                }
+            }
+            self.myChat.append(chatType)
+        }
     }
 }
 
@@ -327,29 +423,49 @@ extension ChatRoomViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cellId = String()
-        if self.myChat[indexPath.row].sender == JwtToken.shared.userId  {
+        
+        if self.myChat[indexPath.row].sender == JwtToken.shared.userId {
             cellId = "MyChatCell"
-            isYourFirstChat = true
-        } else if self.isYourFirstChat {
+        } else if self.myChat[indexPath.row].messageType == "Notice" {
+            cellId = "NoticeCell"
+        } else if self.myChat[indexPath.row].firstChat {
             cellId = "YourProfileChatCell"
-            isYourFirstChat = false
         } else {
             cellId = "YourChatCell"
         }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
+        let dateStr = self.myChat[indexPath.row].date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let date = dateFormatter.date(from: dateStr)
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateFormat = "HH:mm"
+        let convertStr = myDateFormatter.string(from: date!)
         if cellId == "MyChatCell" {
             if let myChatCell = cell as? MyChatCell {
                 myChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
+                
+                myChatCell.dateLabel.text = convertStr
             }
-        } else {
-            if let yourChatCell = cell as? YourChatCell {
-                yourChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
+        } else if cellId == "NoticeCell" {
+            if let noticeCell = cell as? NoticeCell {
+                noticeCell.chatLabel.text = self.myChat[indexPath.row].messageContent
             }
-            if let yourProfileChatCell = cell as? YourProfileChatCell {
-                yourProfileChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
-                yourProfileChatCell.profileButton.setImage(profileImage, for: .normal)
-            }
+        } else if let yourChatCell = cell as? YourChatCell {
+            yourChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
+            yourChatCell.dateLabel.text = convertStr
+
+        } else if let yourProfileChatCell = cell as? YourProfileChatCell {
+            yourProfileChatCell.chatLabel.text = self.myChat[indexPath.row].messageContent
+            yourProfileChatCell.profileButton.setImage(self.profileImage, for: .normal)
+            yourProfileChatCell.dateLabel.text = convertStr
+
         }
+        
+        
+        
+        print(cellId, indexPath)
         return cell
     }
 }
@@ -388,3 +504,11 @@ extension UIViewController {
 //        footerView.frame.origin.y = view.bounds.height - view.safeAreaInsets.bottom - footerView.bounds.height
 //        tableView.contentInset = UIEdgeInsets.zero
 //        tableView.verticalScrollIndicatorInsets = tableView.contentInset
+
+//맨 처음 시작 NewChatList에 "대화가 시작되었습니다."만 있고
+//여기까지 읽으셨습니다 없어야됨
+//
+//그대로 다시 들어갔을 때 oldChatList에 "대화가 시작되었습니다."만 있고
+//여기까지 읽으셨습니다 없어야됨
+//
+//다 읽고 나와서 그대로 다시 들어갔을 때 "여기까지 읽으셨습니다" 없어야됨

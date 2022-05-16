@@ -42,13 +42,11 @@ class BaseInterceptor: RequestInterceptor {
                 }
             }
         } else if statusCode == 403 || statusCode == 404 {
-            self.toast { [weak self] Bool in
-                guard let self = self else { return }
-                if Bool {
-                    self.goToSignin()
+            guard let url = request.response?.url else { return }
+            if url != URL(string: "https://api.portfolian.site:443/users/info") {
+                self.toast { Bool in
                 }
             }
-
         }
         completion(.doNotRetry)
     }

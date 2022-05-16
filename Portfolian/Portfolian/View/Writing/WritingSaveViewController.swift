@@ -15,7 +15,7 @@ class WritingSaveViewController: UIViewController {
     var scrollView = UIScrollView()
     var contentView = UIView()
     lazy var editBarButtonItem = UIBarButtonItem(image: UIImage(named: "edit"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
-        UIBarButtonItem.tintColor = .black
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
 
     }
     
@@ -24,13 +24,13 @@ class WritingSaveViewController: UIViewController {
 
     var leaderStackTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "팀장의 사용 기술"
-        UILabel.textColor = .black
+        UILabel.textColor = ColorPortfolian.baseBlack
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     
     var teamStackTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "팀원의 사용 기술"
-        UILabel.textColor = .black
+        UILabel.textColor = ColorPortfolian.baseBlack
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     })
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
@@ -83,7 +83,7 @@ class WritingSaveViewController: UIViewController {
     })
     var optionTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "모집 조건"
-        UILabel.textColor = .black
+        UILabel.textColor = ColorPortfolian.baseBlack
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     var optionLabel = UILabel().then({ UILabel in
@@ -112,7 +112,7 @@ class WritingSaveViewController: UIViewController {
     
     lazy var detailTextView = UITextView().then ({ UITextView in
         UITextView.text = "어쩌구 저쩌구"
-        UITextView.textColor = .black
+        UITextView.textColor = ColorPortfolian.baseBlack
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UITextView.isEditable = false
 //        UITextView.isSelectable = false
@@ -137,9 +137,9 @@ class WritingSaveViewController: UIViewController {
     })
     
     lazy var profileButton = UIButton().then { UIButton in
-        UIButton.layer.cornerRadius = 25
+        UIButton.layer.cornerRadius = 30
         UIButton.layer.borderWidth = 1
-        UIButton.layer.borderColor = UIColor.black.cgColor
+        UIButton.layer.borderColor = ColorPortfolian.baseBlack.cgColor
         UIButton.contentMode =  .scaleAspectFill
         UIButton.clipsToBounds = true
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -156,18 +156,17 @@ class WritingSaveViewController: UIViewController {
     }
     
     lazy var dynamicButton = UIButton().then { UIButton in
-        UIButton.setTitle("  모집마감  ", for: .normal)
-        UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 20)
+        UIButton.setTitle("  채팅하기  ", for: .normal)
+        UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 16)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
         UIButton.layer.borderColor = ColorPortfolian.thema.cgColor
         UIButton.layer.borderWidth = 1.0
-        UIButton.layer.cornerRadius = 25
+        UIButton.layer.cornerRadius = 20
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = true
         registrationType = .Writing
         
         print("WritingSaveViewController \(writingTeamTag.names)")
@@ -187,8 +186,10 @@ class WritingSaveViewController: UIViewController {
         }
         guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
         writingOwnerTag.names.append(tagName)
-        if projectInfo.leader.userId != JwtToken.shared.userId  {
-            dynamicButton.setTitle("  채팅하기  ", for: .normal)
+        if projectInfo.leader.userId == JwtToken.shared.userId  {
+            dynamicButton.setTitle("  모집마감  ", for: .normal)
+            dynamicButton.backgroundColor = ColorPortfolian.thema
+            dynamicButton.setTitleColor(.white, for: .normal)
         }
         
         let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
@@ -362,7 +363,7 @@ class WritingSaveViewController: UIViewController {
         detailTextView.snp.makeConstraints { make in
             make.top.equalTo(detailTitleLabel.snp.bottom)
             make.leading.trailing.equalTo(contentView)
-            make.bottom.equalTo(contentView)
+            make.bottom.equalTo(contentView).inset(300)
         }
 
         footerView.snp.makeConstraints { make in
@@ -397,7 +398,7 @@ class WritingSaveViewController: UIViewController {
             make.centerY.equalTo(footerView)
             make.trailing.equalTo(footerView).offset(-10)
             make.width.equalTo(100)
-            make.height.equalTo(60)
+            make.height.equalTo(40)
         }
         
         // Do any additional setup after loading the view.
@@ -413,7 +414,6 @@ class WritingSaveViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.tabBarController?.tabBar.isHidden = false
         switch editType {
         case .yet:
             writingTeamTag.names = []
@@ -430,7 +430,6 @@ class WritingSaveViewController: UIViewController {
             editType = .edit
             let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
             self.navigationController?.pushViewController(WritingVC, animated: true)
-            
         }
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
@@ -452,15 +451,30 @@ class WritingSaveViewController: UIViewController {
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
         case dynamicButton:
-            if sender.titleLabel?.text?.trimmingCharacters(in: [" "]) == "채팅하기" {
-                chatRootType = .project
-                profileType = .yourProjectProfile
-                let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
-                self.navigationController?.pushViewController(chatRoomVC, animated: true)
-                
+            if loginType == .no {
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
             } else {
-                print("모집마감처리")
-            }
+                if sender.titleLabel?.text?.trimmingCharacters(in: [" "]) == "채팅하기" {
+                    chatRootType = .project
+                    profileType = .yourProjectProfile
+                    let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
+                    self.navigationController?.pushViewController(chatRoomVC, animated: true)
+                } else {
+                    let complete = projectInfo.status == 1 ? false : true
+                    MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { result in
+                        switch result {
+                        case .success:
+                            if complete {
+                                self.dynamicButton.backgroundColor = .clear
+                            } else {
+                                self.dynamicButton.backgroundColor = ColorPortfolian.gray2
+                            }
+                        case .failure:
+                            break
+                        }
+                    }
+                }
+             }
         case profileButton:
             
             profileType = .yourProjectProfile

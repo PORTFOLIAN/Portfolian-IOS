@@ -22,30 +22,25 @@ class ViewController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        let viewControllers: [UIViewController] = [
+            initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarHomeFill"), tag: 1),
+            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarBookmark"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
+            initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "tabbarChat"), selectedIcon: UIImage(named: "tabbarChatFill"), tag: 3),
+            initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "tabbarMyPage"), selectedIcon: UIImage(named: "tabbarMyPageFill"), tag: 4)
+        ]
         loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
         switch loginType {
         case .kakao:
-            kakaoAutoLogin()
+            kakaoAutoLogin(viewControllers: viewControllers)
         case .no:
-            let viewControllers: [UIViewController] = [
-                initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "home"), tag: 1),
-                initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "bookmark"), tag: 2),
-                initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "chat"), tag: 3),
-                initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "myPage"), tag: 4)
-            ]
             self.setViewControllers(viewControllers, animated: true)
         default:
             goToSiginIn()
         }
     }
     
-    private func kakaoAutoLogin() {
-        let viewControllers: [UIViewController] = [
-            initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "home"), tag: 1),
-            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "bookmark"), tag: 2),
-            initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "chat"), tag: 3),
-            initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "myPage"), tag: 4)
-        ]
+    private func kakaoAutoLogin(viewControllers: [UIViewController]) {
         if (AuthApi.hasToken()) {
             UserApi.shared.accessTokenInfo { (_, _) in
                 //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
@@ -87,4 +82,5 @@ class ViewController: UITabBarController {
             profileType = .yourProjectProfile
         }
     }
+    
 }

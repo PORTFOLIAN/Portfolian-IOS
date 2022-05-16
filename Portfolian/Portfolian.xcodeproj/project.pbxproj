@@ -65,10 +65,13 @@
 		5107DE40280021C700AD64E3 /* UIButton+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107DE3F280021C700AD64E3 /* UIButton+URL.swift */; };
 		511EB1DA27E06C7400CF2EC1 /* SocketIOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511EB1D927E06C7400CF2EC1 /* SocketIOManager.swift */; };
 		511FA1FF28113EDD0001CC11 /* TypeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511FA1FE28113EDD0001CC11 /* TypeStore.swift */; };
+		5138D9CD2827F54A0057799A /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5138D9CC2827F54A0057799A /* NoticeCell.swift */; };
 		5139CDC827E9BAC800001BAE /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */; };
 		5139CDCA27E9CD7100001BAE /* MyChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDC927E9CD7100001BAE /* MyChatCell.swift */; };
 		5139CDCD27E9E17800001BAE /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139CDCC27E9E17800001BAE /* PaddingLabel.swift */; };
 		51493D5B27E7757A004461D2 /* UIImageView+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51493D5A27E7757A004461D2 /* UIImageView+URL.swift */; };
+		514FC8F4281BFD6900D2B761 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514FC8F3281BFD6900D2B761 /* WebViewController.swift */; };
+		5167EC132831C03D00B0BE76 /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5167EC122831C03D00B0BE76 /* BaseNavigationController.swift */; };
 		5185704927F8319700612885 /* MyChatRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5185704827F8319700612885 /* MyChatRouter.swift */; };
 		5185704B27F89F8800612885 /* YourProfileChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5185704A27F89F8800612885 /* YourProfileChatCell.swift */; };
 		5185704D27F9753400612885 /* ChatRoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5185704C27F9753400612885 /* ChatRoomCell.swift */; };
@@ -153,10 +156,14 @@
 		5107DE3F280021C700AD64E3 /* UIButton+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+URL.swift"; sourceTree = "<group>"; };
 		511EB1D927E06C7400CF2EC1 /* SocketIOManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOManager.swift; sourceTree = "<group>"; };
 		511FA1FE28113EDD0001CC11 /* TypeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeStore.swift; sourceTree = "<group>"; };
+		5138D9CC2827F54A0057799A /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		5139CDC727E9BAC800001BAE /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
 		5139CDC927E9CD7100001BAE /* MyChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChatCell.swift; sourceTree = "<group>"; };
 		5139CDCC27E9E17800001BAE /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
 		51493D5A27E7757A004461D2 /* UIImageView+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+URL.swift"; sourceTree = "<group>"; };
+		514FC8F3281BFD6900D2B761 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		5167EC122831C03D00B0BE76 /* BaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
+		5167EC142832522300B0BE76 /* Portfolian.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Portfolian.entitlements; sourceTree = "<group>"; };
 		5185704827F8319700612885 /* MyChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChatRouter.swift; sourceTree = "<group>"; };
 		5185704A27F89F8800612885 /* YourProfileChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourProfileChatCell.swift; sourceTree = "<group>"; };
 		5185704C27F9753400612885 /* ChatRoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomCell.swift; sourceTree = "<group>"; };
@@ -188,6 +195,7 @@
 				2ACAE0A427597DF200A250ED /* BasicTableViewCell.swift */,
 				5139CDC927E9CD7100001BAE /* MyChatCell.swift */,
 				51F5DD4127EB046900D19E3A /* YourChatCell.swift */,
+				5138D9CC2827F54A0057799A /* NoticeCell.swift */,
 				5185704A27F89F8800612885 /* YourProfileChatCell.swift */,
 			);
 			path = Cell;
@@ -303,6 +311,7 @@
 		2AFB53E3271C0EC900B6FFC6 /* Portfolian */ = {
 			isa = PBXGroup;
 			children = (
+				5167EC142832522300B0BE76 /* Portfolian.entitlements */,
 				2AFB53F2271C0EC900B6FFC6 /* Info.plist */,
 				2AC842D62772BFE900A8CE60 /* GoogleService-Info.plist */,
 				5107DE412800235800AD64E3 /* Delegate */,
@@ -323,6 +332,7 @@
 			isa = PBXGroup;
 			children = (
 				2AFB53EA271C0EC900B6FFC6 /* Main.storyboard */,
+				5167EC122831C03D00B0BE76 /* BaseNavigationController.swift */,
 				2AFB53E8271C0EC900B6FFC6 /* ViewController.swift */,
 			);
 			path = Main;
@@ -396,6 +406,7 @@
 				2A0676A7276328B800E42E9F /* ProfileViewController.swift */,
 				2AFB541B271E300200B6FFC6 /* SettingViewController.swift */,
 				2A7F82F927667629004735B4 /* MyPageViewController.swift */,
+				514FC8F3281BFD6900D2B761 /* WebViewController.swift */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";
@@ -436,14 +447,14 @@
 			isa = PBXGroup;
 			children = (
 				2AFB53EF271C0EC900B6FFC6 /* LaunchScreen.storyboard */,
-				2AFB53F8271C0F8D00B6FFC6 /* Main */,
-				2AFB53FF271C11D400B6FFC6 /* Auth */,
 				2AFB5412271E2F7300B6FFC6 /* Home */,
-				2A28E0C52755529C00061B11 /* Writing */,
 				2AFB5413271E2F8200B6FFC6 /* Bookmark */,
-				2A17B87D2721E69800A0D598 /* Filter */,
+				2A28E0C52755529C00061B11 /* Writing */,
 				2AFB5410271E2F5A00B6FFC6 /* Chat */,
 				2AFB5414271E2FC100B6FFC6 /* MyPage */,
+				2AFB53F8271C0F8D00B6FFC6 /* Main */,
+				2A17B87D2721E69800A0D598 /* Filter */,
+				2AFB53FF271C11D400B6FFC6 /* Auth */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -621,15 +632,18 @@
 				2A947C55274BC99B00331586 /* MyProjectRouter.swift in Sources */,
 				5185704D27F9753400612885 /* ChatRoomCell.swift in Sources */,
 				51493D5B27E7757A004461D2 /* UIImageView+URL.swift in Sources */,
+				514FC8F4281BFD6900D2B761 /* WebViewController.swift in Sources */,
 				2A11272E274ADBF500B9564C /* MyLogger.swift in Sources */,
 				2A16479C27713DA900A84554 /* Writing+CoreDataProperties.swift in Sources */,
 				2AFB53FC271C0FEF00B6FFC6 /* SigninViewController.swift in Sources */,
 				5139CDCA27E9CD7100001BAE /* MyChatCell.swift in Sources */,
+				5167EC132831C03D00B0BE76 /* BaseNavigationController.swift in Sources */,
 				2AD02A7B272C3A9F00945DC5 /* WritingViewController.swift in Sources */,
 				2A11272C274AD5D800B9564C /* BaseInterceptor.swift in Sources */,
 				5185704B27F89F8800612885 /* YourProfileChatCell.swift in Sources */,
 				2A947C59274BFA3D00331586 /* Model.xcdatamodeld in Sources */,
 				2AFB540F271C92B200B6FFC6 /* User.swift in Sources */,
+				5138D9CD2827F54A0057799A /* NoticeCell.swift in Sources */,
 				2AB7824627706932004E0408 /* MyOauthRouter.swift in Sources */,
 				51CA6F902808102F00B01F3E /* KeychainManager.swift in Sources */,
 				5185704F27F990FA00612885 /* Chat.swift in Sources */,
@@ -818,23 +832,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Portfolian/Portfolian.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z6ZLWTKRJ7;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Portfolian/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yi-sang.Portfolian";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -847,23 +867,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Portfolian/Portfolian.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z6ZLWTKRJ7;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Portfolian/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yi-sang.Portfolian";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -13,7 +13,7 @@ class ProfileViewController: UIViewController {
     lazy var profileButton = UIButton().then { UIButton in
         var image = UIImage(named: "profile")
         UIButton.setImage(image, for: .normal)
-        UIButton.layer.cornerRadius = 35
+        UIButton.layer.cornerRadius = 50
         UIButton.layer.borderWidth = 1
         UIButton.clipsToBounds = true
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -145,9 +145,14 @@ class ProfileViewController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { response in
+        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] response in
+            guard let self = self else { return }
             switch response {
             case .success(let user):
+                self.nicknameTextField.text = user.nickName
+                self.githubTextField.text = user.github
+                self.emailTextField.text = user.mail
+                self.introduceTextView.text = user.description
                 URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
                     (data, response, error) -> Void in
                     DispatchQueue.main.async { [weak self] in
@@ -285,22 +290,10 @@ class ProfileViewController: UIViewController {
         tagCollectionView.dataSource = self
         introduceTextView.delegate = self
         hideKeyboard()
-        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { response in
-            switch response {
-            case .success(let user):
-                self.nicknameTextField.text = user.nickName
-                self.githubTextField.text = user.github
-                self.emailTextField.text = user.mail
-                self.introduceTextView.text = user.description
-            case .failure(let error):
-                print(error)
-            }
-        }
     }
 
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColor.black]
         let library = UIAlertAction(title: "사진 앨범", style: .default) { _ in
             self.openLibrary()
         }

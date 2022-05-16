@@ -60,4 +60,6 @@ struct ColorPortfolian {
     static let gray1 = UIColor(rgb: 0x909090)
     static let gray2 = UIColor(rgb: 0xCCCCCC)
     static let thema = UIColor(rgb: 0x6F9ACD)
+    static let noclickTag = UIColor(rgb: 0xEAEAEA)
+    static let baseBlack = UIColor(rgb: 0x343A40)
 }

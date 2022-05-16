@@ -115,7 +115,7 @@ struct Article: Codable {
     let description: String
     let capacity: Int
     let view: Int
-    let bookMark: Bool
+    var bookMark: Bool
     let status: Int
     
     let leader: Leader

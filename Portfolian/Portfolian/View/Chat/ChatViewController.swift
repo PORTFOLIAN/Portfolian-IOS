@@ -102,8 +102,30 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀의 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 90.0;//Choose your custom row height
+        return 120.0;//Choose your custom row height
     }
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제", handler: { action, view, completionHaldler in
+            MyAlamofireManager.shared.exitChatRoom(chatRoomId: self.chatRoomList.chatRoomList[indexPath[1]].chatRoomId, completion: { response in
+                MyAlamofireManager.shared.fetchChatRoomList { [weak self] result in
+                    guard let self = self else { return }
+                    switch result{
+                    case let .success(chatRoomList):
+                        self.chatRoomList = chatRoomList
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+                    default:
+                        print("오류")
+                    }
+                }
+            })
+            completionHaldler(true)
+        })
+        deleteAction.backgroundColor = ColorPortfolian.thema
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }

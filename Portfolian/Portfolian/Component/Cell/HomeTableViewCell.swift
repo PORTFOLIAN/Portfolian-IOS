@@ -16,6 +16,9 @@ class HomeTableViewCell: UITableViewCell {
     var isClicked = false
     lazy var containerView: UIView = {
         let view = UIView()
+        view.layer.cornerRadius = 20
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.systemGray4.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -50,9 +53,9 @@ class HomeTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profileImage")
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 15
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.cornerRadius = 20
+        imageView.layer.borderWidth = 0.4
+        imageView.layer.borderColor = UIColor.systemGray4.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -68,7 +71,7 @@ class HomeTableViewCell: UITableViewCell {
     
     lazy var tagButton1: TagButton = {
         lazy var button = TagButton()
-        button.informTextInfo(text: "Illustrator", fontSize: 14)
+        button.informTextInfo(text: "Illustrator", fontSize: 10)
         button.currentColor(color: ColorPortfolian.illustrator)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -76,7 +79,7 @@ class HomeTableViewCell: UITableViewCell {
     
     lazy var tagButton2: TagButton = {
         let button = TagButton()
-        button.informTextInfo(text: "Front-end", fontSize: 14)
+        button.informTextInfo(text: "Front-end", fontSize: 12)
         button.currentColor(color: ColorPortfolian.frontEnd)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -84,7 +87,7 @@ class HomeTableViewCell: UITableViewCell {
     
     lazy var tagButton3: TagButton = {
         let button = TagButton()
-        button.informTextInfo(text: "Typescript", fontSize: 14)
+        button.informTextInfo(text: "Typescript", fontSize: 12)
         button.currentColor(color: ColorPortfolian.typescript)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -93,7 +96,7 @@ class HomeTableViewCell: UITableViewCell {
     lazy var numberOftagsLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        label.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -142,25 +145,25 @@ class HomeTableViewCell: UITableViewCell {
             containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
 
             bookmarkButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
-            bookmarkButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            bookmarkButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 25),
             bookmarkButton.widthAnchor.constraint(equalToConstant: 30),
             bookmarkButton.heightAnchor.constraint(equalToConstant: 40),
             
             titleLabel.topAnchor.constraint(equalTo: bookmarkButton.bottomAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: bookmarkButton.leadingAnchor, constant: 7),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30),
             titleLabel.trailingAnchor.constraint(equalTo: profileImageView.leadingAnchor, constant: -10),
 
-            profileImageView.topAnchor.constraint(equalTo: bookmarkButton.bottomAnchor),
+            profileImageView.topAnchor.constraint(equalTo: bookmarkButton.bottomAnchor, constant: -5),
             profileImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
             profileImageView.heightAnchor.constraint(equalToConstant: 40),
             profileImageView.widthAnchor.constraint(equalToConstant: 40),
 
-            viewsLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 10),
+            viewsLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 5),
             viewsLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor),
 
             tagStackView.topAnchor.constraint(equalTo: viewsLabel.bottomAnchor, constant: 5),
-            tagStackView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: -5),
-            tagStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -5),
+            tagStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant:  25),
+            tagStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
             
             numberOftagsLabel.topAnchor.constraint(equalTo: viewsLabel.bottomAnchor, constant: 5),
             numberOftagsLabel.leadingAnchor.constraint(equalTo: tagStackView.trailingAnchor, constant: 10),

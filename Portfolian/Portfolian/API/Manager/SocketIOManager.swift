@@ -31,7 +31,7 @@ class SocketIOManager: NSObject {
             print("***************************************")
             print(dataArray)
             let data = dataArray[0] as! NSDictionary
-            let chat = ChatType(roomId: data["roomId"] as? String ?? "", sender: data["sender"] as? String ?? "", receiver: data["receiver"] as? String ?? "", messageContent: data["messageContent"] as! String, date: data["date"] as! String)
+            let chat = ChatType(chatRoomId: data["chatRoomId"] as? String ?? "", sender: data["sender"] as? String ?? "", receiver: data["receiver"] as? String ?? "", messageContent: data["messageContent"] as! String, messageType: data["messageType"] as? String ?? "", date: data["date"] as? String ?? "")
             completion(chat)
         }
     }
@@ -49,26 +49,36 @@ class SocketIOManager: NSObject {
     }
     
     func sendMessage(_ chatType: ChatType) {
-        socket.emit("chat:send", ["roomId" : chatType.roomId, "sender" : chatType.sender, "receiver" : chatType.receiver, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+        socket.emit("chat:send", ["chatRoomId" : chatType.chatRoomId, "sender" : chatType.sender, "receiver" : chatType.receiver, "messageContent" : chatType.messageContent, "date": chatType.date, "messageType" : chatType.messageType])
     }
     
     func leaveMessage(_ chatType: ChatType) {
-        socket.emit("notice:leave", ["roomId" : chatType.roomId, "sender" : chatType.sender, "receiver" : chatType.receiver, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let time = dateFormatter.string(from: now)
+        socket.emit("notice:leave", ["chatRoomId" : chatType.chatRoomId, "sender" : chatType.sender, "receiver" : chatType.receiver, "messageContent" : chatType.messageContent, "date": "\(time)", "messageType" : chatType.messageType])
     }
     
     func enterMessage(_ chatType: ChatType) {
-        socket.emit("notice:enter", ["roomId" : chatType.roomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(chatType.date)"])
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let time = dateFormatter.string(from: now)
+        socket.emit("notice:enter", ["chatRoomId" : chatType.chatRoomId, "sender" : chatType.sender, "messageContent" : chatType.messageContent, "date": "\(time)", "messageType" : chatType.messageType])
     }
     
     func readMessage(_ roomId: String) {
-        socket.emit("chat:read", ["roomId" : roomId, "userId" : JwtToken.shared.userId])
+        socket.emit("chat:read", ["chatRoomId" : roomId, "userId" : JwtToken.shared.userId])
     }
 }
 
 struct ChatType {
-    var roomId = String()
+    var chatRoomId = String()
     var sender = String()
     var receiver = String()
     var messageContent = String()
+    var messageType = String()
     var date = String()
+    var firstChat = Bool()
 }

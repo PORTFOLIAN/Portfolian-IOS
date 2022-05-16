@@ -10,25 +10,43 @@ import Foundation
 struct ChatMessageList: Codable {
     let code: Int
     let message: String
-    var chatList: [Chat]
+    var chatList: ChatLists
     init() {
         self.code = 0
         self.message = ""
-        self.chatList = [Chat]()
+        self.chatList = ChatLists()
     }
 }
 
-struct Chat: Codable {
-    let chatType: String
-    let senderId: String
-    let messageContents: String
-    let date: String
+struct ChatLists: Codable {
+    let newChatList: [NewChatList]
+    let oldChatList: [OldChatList]
+    
+    struct NewChatList: Codable {
+        let sender: String?
+        let messageContent: String
+        let messageType: String
+        let date: String
+    }
+
+    struct OldChatList: Codable {
+        let sender: String?
+        let messageContent: String
+        let messageType: String
+        let date: String
+    }
+    
+    init() {
+        self.oldChatList = [OldChatList]()
+        self.newChatList = [NewChatList]()
+    }
 }
+
 
 struct ChatRoomList: Codable {
     let code: Int
     let message: String
-    let chatRoomList: [ChatRoom]
+    var chatRoomList: [ChatRoom]
     
     init() {
         code = 0

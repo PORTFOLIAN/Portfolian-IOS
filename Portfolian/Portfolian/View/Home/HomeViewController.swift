@@ -9,7 +9,8 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
-import MapKit
+import Toast_Swift
+
 class HomeViewController: UIViewController, UISearchBarDelegate {
     lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
     
@@ -24,7 +25,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         let image = UIImage(named: "search")
         let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
         button.tag = 2
-        button.tintColor = .black
+        button.tintColor = ColorPortfolian.baseBlack
         return button
     }()
     
@@ -36,7 +37,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     lazy var viewsLabel = UILabel().then { UILabel in
         UILabel.text = "조회 순"
-        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     }
     lazy var latestCheckBox = UIButton().then { UIButton in
         UIButton.setImage(UIImage(named: "checkboxFill"), for: .normal)
@@ -46,13 +47,13 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     lazy var latestLabel = UILabel().then { UILabel in
         UILabel.text = "최신 순"
-        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
     }
     
     lazy var filter: UIBarButtonItem = {
         let image = UIImage(named: "filter")
         let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(barButtonPressed(_:)))
-        button.tintColor = .black
+        button.tintColor = ColorPortfolian.baseBlack
         return button
     }()
     
@@ -65,7 +66,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     lazy var writeButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "write")?.resizeImage(size: CGSize(width: 80, height: 80)), for: .normal)
+        button.setImage(UIImage(named: "write")?.resizeImage(size: CGSize(width: 65, height: 65)), for: .normal)
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -89,7 +90,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         if searchingTag.names.first?.rawValue != nil {
             filter.tintColor = ColorPortfolian.thema
         } else {
-            filter.tintColor = .black
+            filter.tintColor = ColorPortfolian.baseBlack
         }
         if !self.latestCheckBox.isSelected {
             if let stack = searchingTag.names.first?.rawValue {
@@ -106,6 +107,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
         searchProject(searchOption:projectSearch)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -120,12 +122,16 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         subview()
         constraints()
         initRefresh()
-        //        self.tableView.separatorStyle = .none
+        self.tableView.separatorStyle = .none
         if loginType != .no {
             SocketIOManager.shared.establishConnection()
+            
             SocketIOManager.shared.connectCheck { Bool in
                 if Bool {
                     SocketIOManager.shared.sendAuth()
+                    SocketIOManager.shared.receiveMessage() { ChatType in
+                        self.view.makeToast(ChatType.messageContent, duration: 0.5, position: .center)
+                    }
                 }
             }
         }
@@ -154,23 +160,25 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             }
             viewsLabel.text = ""
             latestLabel.text = ""
-            projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-            searchProject(searchOption:projectSearch)
+
         case filter: // filter
             registrationType = .Searching
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
-            
         default:
-            print("error")
+            ()
         }
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender {
         case writeButton:
-            let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
-            self.navigationController?.pushViewController(WritingVC, animated: true)
+            if loginType == .no {
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+            } else {
+                let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
+                self.navigationController?.pushViewController(WritingVC, animated: true)
+            }
         case viewsCheckBox:
             viewsCheckBox.isSelected = true
             latestCheckBox.isSelected = true
@@ -268,7 +276,12 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             searchKeyword = searchText
             projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: searchKeyword)
         } else {
-            projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            if !self.latestCheckBox.isSelected {
+                projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
+            } else {
+                projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
+            }
+            
         }
         searchProject(searchOption: projectSearch)
     }
@@ -296,40 +309,24 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
 
 extension HomeViewController: BookmarkButtonDelegate {
     func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
-        let buttonPosition: CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
-        let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
-        let articleList = projectListInfo.articleList
-        let articleInfo = articleList[indexPath?[1] ?? 0]
-        let projectId = articleInfo.projectId
-        var bookMarked = articleInfo.bookMark
-        bookMarked.toggle()
-        let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
-        if latestLabel.text == "최신 순" {
-            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { [weak self] result in
-                guard let self = self else { return }
-                if !self.latestCheckBox.isSelected {
-                    if let stack = searchingTag.names.first?.rawValue {
-                        self.projectSearch = ProjectSearch(stack: stack, sort: "default", keyword: "default")
-                    } else {
-                        self.projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-                    }
-                } else {
-                    if let stack = searchingTag.names.first?.rawValue {
-                        self.projectSearch = ProjectSearch(stack: stack, sort: "view", keyword: "default")
-                    } else {
-                        self.projectSearch = ProjectSearch(stack: "default", sort: "view", keyword: "default")
-                    }
-                }
-                self.searchProject(searchOption: self.projectSearch)
-            }
+        if loginType == .no {
+            self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
         } else {
-            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { [weak self] result in
-                guard let self = self else { return }
-                if self.searchKeyword == "" {
-                    self.projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-                } else {
-                    self.projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: self.searchKeyword)
-                }
+            let buttonPosition: CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
+            let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
+            projectListInfo.articleList[indexPath?[1] ?? 0].bookMark.toggle()
+            let articleList = projectListInfo.articleList
+            let articleInfo = articleList[indexPath?[1] ?? 0]
+            let projectId = articleInfo.projectId
+            let bookMarked = articleInfo.bookMark
+            let bookmark = Bookmark(projectId: projectId, bookMarked: bookMarked)
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+
+            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { _ in
+                
             }
         }
     }
@@ -346,33 +343,33 @@ extension HomeViewController {
     }
     
     func constraints() {
-        latestLabel.snp.makeConstraints { make in
+        viewsLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-10)
         }
-        latestCheckBox.snp.makeConstraints { make in
-            make.height.width.equalTo(15)
-            make.centerY.equalTo(latestLabel)
-            make.trailing.equalTo(latestLabel.snp.leading).offset(-10)
-        }
-        
-        viewsLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(latestCheckBox)
-            make.trailing.equalTo(latestCheckBox.snp.leading).offset(-10)
-        }
-        
         viewsCheckBox.snp.makeConstraints { make in
             make.height.width.equalTo(15)
             make.centerY.equalTo(viewsLabel)
             make.trailing.equalTo(viewsLabel.snp.leading).offset(-10)
         }
         
+        latestLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(viewsCheckBox)
+            make.trailing.equalTo(viewsCheckBox.snp.leading).offset(-10)
+        }
+        
+        latestCheckBox.snp.makeConstraints { make in
+            make.height.width.equalTo(15)
+            make.centerY.equalTo(latestLabel)
+            make.trailing.equalTo(latestLabel.snp.leading).offset(-10)
+        }
+        
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(viewsCheckBox.snp.bottom).offset(10)
+            make.top.equalTo(latestCheckBox.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         writeButton.snp.makeConstraints { make in
-            make.trailing.bottom.equalTo(tableView.frameLayoutGuide)
+            make.trailing.bottom.equalTo(tableView).inset(10)
         }
     }
 }
@@ -385,7 +382,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print(indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeTableViewCell", for: indexPath) as! HomeTableViewCell
         cell.cellDelegate = self
         let articleList = projectListInfo.articleList
@@ -394,7 +390,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let lenStackList = articleInfo.stackList.count
         let stringTag = articleInfo.stackList
         let bookmark = articleInfo.bookMark
-        
+        cell.containerView.backgroundColor = articleInfo.status == 0 ? .clear : ColorPortfolian.noclickTag
         if cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject) != nil {
             cell.profileImageView.image = cache.object(forKey: (indexPath as NSIndexPath).row as AnyObject)
         } else {
@@ -415,43 +411,43 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             task.resume()
         }
         if bookmark == true {
-            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
+            cell.bookmarkButton.setImage(UIImage(named: "bookmarkFill"), for: .normal)
         } else {
             cell.bookmarkButton.setImage(UIImage(named: "bookmark"), for: .normal)
         }
         var labelStackCount: Int = 0
         var tagInfo1, tagInfo2, tagInfo3: TagInfo
         
-        cell.tagButton1.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton1.informTextInfo(text: "", fontSize: 14)
         cell.tagButton1.currentColor(color: .clear)
-        cell.tagButton2.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton2.informTextInfo(text: "", fontSize: 14)
         cell.tagButton2.currentColor(color: .clear)
-        cell.tagButton3.informTextInfo(text: "", fontSize: 16)
+        cell.tagButton3.informTextInfo(text: "", fontSize: 14)
         cell.tagButton3.currentColor(color: .clear)
         cell.numberOftagsLabel.text = ""
         switch lenStackList {
         case 1:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
             
         case 2:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
             
         case 3:
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
-            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 14)
             cell.tagButton3.currentColor(color: tagInfo3.color)
             
         default:
@@ -459,11 +455,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             tagInfo1 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[0]))
             tagInfo2 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[1]))
             tagInfo3 = Tag.shared.getTagInfo(tag: Tag.Name(rawValue: stringTag[2]))
-            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 16)
+            cell.tagButton1.informTextInfo(text: tagInfo1.name, fontSize: 14)
             cell.tagButton1.currentColor(color: tagInfo1.color)
-            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 16)
+            cell.tagButton2.informTextInfo(text: tagInfo2.name, fontSize: 14)
             cell.tagButton2.currentColor(color: tagInfo2.color)
-            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 16)
+            cell.tagButton3.informTextInfo(text: tagInfo3.name, fontSize: 14)
             cell.tagButton3.currentColor(color: tagInfo3.color)
             cell.numberOftagsLabel.text = "+ \(labelStackCount)"
         }
@@ -485,7 +481,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             case .success:
                 let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
                 self.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                                
+                
             case .failure(let error):
                 print("\(error)######")
             }
@@ -496,27 +492,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     // 셀의 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 175.0;//Choose your custom row height
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let articleList = projectListInfo.articleList
-            let articleInfo = articleList[indexPath[1]]
-            let projectId = articleInfo.projectId
-            MyAlamofireManager.shared.deleteProject(projectID: projectId) { [weak self] result in
-                if result == .success(1) {
-                    self?.cache = NSCache()
-                    DispatchQueue.main.async {
-                        projectListInfo.articleList.remove(at: indexPath.row)
-                        tableView.reloadData()
-                        tableView.setNeedsLayout()
-                    }
-                } else {
-                    self?.view.makeToast("본인의 글이 아닙니다.", duration: 1.0, position: .center)
-                }
-                
-            }
-        }
+        return 150.0;
     }
 }
+

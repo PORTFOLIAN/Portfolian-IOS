@@ -11,9 +11,9 @@ import SnapKit
 
 class YourProfileChatCell: UITableViewCell {
     var profileButton = UIButton().then { UIButton in
-        UIButton.layer.cornerRadius = 15
-        UIButton.layer.borderWidth = 1
-        UIButton.layer.borderColor = UIColor.black.cgColor
+        UIButton.layer.cornerRadius = 20
+        UIButton.layer.borderWidth = 0.4
+        UIButton.layer.borderColor = ColorPortfolian.gray1.cgColor
         UIButton.clipsToBounds = true
         UIButton.contentMode = .scaleAspectFill
         let vc = ChatRoomViewController()
@@ -21,15 +21,22 @@ class YourProfileChatCell: UITableViewCell {
     }
     
     var chatLabel = PaddingLabel().then { PaddingLabel in
+        PaddingLabel.textColor = ColorPortfolian.baseBlack
         PaddingLabel.backgroundColor = ColorPortfolian.more
         PaddingLabel.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMaxYCorner]
     }
     
+    var dateLabel = UILabel().then { UILabel in
+        UILabel.textColor = ColorPortfolian.gray2
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 12)
+    }
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(profileButton)
         self.addSubview(chatLabel)
-        
+        self.addSubview(dateLabel)
+
         profileButton.snp.makeConstraints { make in
             make.leading.equalTo(self).offset(10)
             make.top.equalTo(self)
@@ -41,6 +48,10 @@ class YourProfileChatCell: UITableViewCell {
             make.top.equalTo(profileButton).offset(10)
             make.bottom.equalTo(self).offset(-10)
             make.width.lessThanOrEqualTo(300)
+        }
+        dateLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(chatLabel).offset(-5)
+            make.leading.equalTo(chatLabel.snp.trailing).offset(5)
         }
         contentView.isUserInteractionEnabled = false
     }
@@ -54,10 +65,4 @@ class YourProfileChatCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-//
-//    @objc func buttonPressed(_ sender : UIButton){
-//        print("몰? 루")
-//        print(self.isUserInteractionEnabled)
-//        print(contentView.isUserInteractionEnabled)
-//    }
 }

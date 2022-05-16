@@ -12,15 +12,21 @@ import SwiftyJSON
 enum MyOauthRouter: URLRequestConvertible {
     // auth 관련 api
     case postKaKaoToken(token: String)
+    case postAppleToken(userId: String)
     case postRefreshToken
     case patchLogout
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "oauth")!
+        switch self {
+        case .postAppleToken:
+            return URL(string: API.BASE_URL)!
+        default:
+            return URL(string: API.BASE_URL + "oauth")!
+        }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .postKaKaoToken, .postRefreshToken:
+        case .postKaKaoToken, .postRefreshToken, .postAppleToken:
             return .post
         case .patchLogout:
             return .patch
@@ -31,6 +37,8 @@ enum MyOauthRouter: URLRequestConvertible {
         switch self {
         case .postKaKaoToken:
             return "kakao/access"
+        case .postAppleToken:
+            return "login/apple"
         case .postRefreshToken:
             return "refresh"
         case .patchLogout:
@@ -42,6 +50,8 @@ enum MyOauthRouter: URLRequestConvertible {
         switch self {
         case let .postKaKaoToken(token):
             return ["token": token]
+        case let .postAppleToken(userId):
+            return ["userId": userId]
         case .postRefreshToken:
             return ["userId": JwtToken.shared.userId ]
         case .patchLogout:
@@ -55,9 +65,7 @@ enum MyOauthRouter: URLRequestConvertible {
         var request = URLRequest(url: url)
         request.method = method
         switch self {
-        case .postKaKaoToken:
-            request = try JSONParameterEncoder().encode(parameter, into: request)
-        case .postRefreshToken:
+        case .postKaKaoToken, .postAppleToken, .postRefreshToken:
             request = try JSONParameterEncoder().encode(parameter, into: request)
         case .patchLogout:
             return request

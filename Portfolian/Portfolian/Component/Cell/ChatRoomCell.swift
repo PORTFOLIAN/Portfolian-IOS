@@ -24,9 +24,9 @@ class ChatRoomCell: UITableViewCell {
     }
     
     var profileImageView = UIImageView().then { UIImageView in
-        UIImageView.layer.cornerRadius = 20
-        UIImageView.layer.borderWidth = 1
-        UIImageView.layer.borderColor = UIColor.black.cgColor
+        UIImageView.layer.cornerRadius = 30
+        UIImageView.layer.borderWidth = 0.4
+        UIImageView.layer.borderColor = ColorPortfolian.gray1.cgColor
         UIImageView.clipsToBounds = true
     }
     
@@ -58,6 +58,7 @@ class ChatRoomCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
      
         setup()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -81,8 +82,8 @@ class ChatRoomCell: UITableViewCell {
         
         profileImageView.snp.makeConstraints { make in
             make.centerY.equalTo(containerView)
-            make.leading.equalTo(containerView)
-            make.width.height.equalTo(50)
+            make.leading.equalTo(containerView).offset(10)
+            make.width.height.equalTo(60)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -97,11 +98,11 @@ class ChatRoomCell: UITableViewCell {
         }
         
         dateLabel.snp.makeConstraints { make in
-            make.top.trailing.equalTo(containerView)
+            make.top.trailing.equalTo(containerView).inset(10)
         }
         
         projectLabel.snp.makeConstraints { make in
-            make.top.equalTo(dateLabel.snp.bottom)
+            make.top.equalTo(dateLabel.snp.bottom).offset(5)
             make.leading.equalTo(self.snp.centerX).offset(20)
             make.trailing.equalTo(dateLabel)
             make.bottom.lessThanOrEqualTo(self).offset(5)

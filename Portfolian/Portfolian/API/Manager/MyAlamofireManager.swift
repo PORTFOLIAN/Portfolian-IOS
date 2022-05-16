@@ -75,6 +75,21 @@ final class MyAlamofireManager {
             }
     }
     
+    func finishProject(projectID: String, complete: Bool, completion: @escaping (Result<Void, MyError>) -> Void) {
+        self.session
+            .request(MyProjectRouter.putFinishProject(projectID: projectID, complete: complete))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON(completionHandler: { response in
+                guard let responseValue = response.value else { return }
+                let responseJson = JSON(responseValue)
+                if responseJson["code"] == 1 {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(MyError.networkError))
+                }
+            })
+    }
+    
     func deleteProject(projectID: String, completion: @escaping (Result<Int, MyError>) -> Void) {
         self.session
             .request(MyProjectRouter.deleteProject(projectID: projectID))
@@ -158,6 +173,36 @@ final class MyAlamofireManager {
                 case 1:
                     UserDefaults.standard.set(LoginType.kakao.rawValue, forKey: "loginType")
                     loginType = LoginType(rawValue: LoginType.kakao.rawValue)
+                    completion(.success(()))
+                default:
+                    completion(.failure(.accessError))
+                }
+            }
+    }
+    
+    func postAppleToken(userId: String, completion: @escaping (Result<(), MyError>) -> Void) {
+        self.session
+            .request(MyOauthRouter.postAppleToken(userId: userId))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON { response in
+                if let cookie = response.response?.allHeaderFields["Set-Cookie"] as? String {
+                    let start = cookie.index(cookie.startIndex, offsetBy: 8)
+                    guard let end = cookie.firstIndex(of: ";") else { return }
+                    let refreshToken = String(cookie[start..<end])
+                    KeychainManager.shared.create(key: "refreshToken", token: refreshToken)
+                }
+            }
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let jwt = try? JSONDecoder().decode(Jwt.self, from: responseData) else { return }
+                KeychainManager.shared.create(key: "userId", token: jwt.userId)
+                KeychainManager.shared.create(key: "accessToken", token: jwt.accessToken)
+                Jwt.shared = jwt
+                let code = jwt.code
+                switch code {
+                case 1:
+                    UserDefaults.standard.set(LoginType.apple.rawValue, forKey: "loginType")
+                    loginType = LoginType(rawValue: LoginType.apple.rawValue)
                     completion(.success(()))
                 default:
                     completion(.failure(.accessError))
@@ -372,7 +417,7 @@ final class MyAlamofireManager {
     
     func exitChatRoom(chatRoomId: String, completion: @escaping (Result<Void, MyError>) -> Void) {
         self.session
-            .request(MyChatRouter.getChatRoomList)
+            .request(MyChatRouter.putChatRoom(chatRoomId: chatRoomId))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }

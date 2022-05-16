@@ -33,8 +33,8 @@ class PaddingLabel: UILabel {
         self.numberOfLines = 0
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
-        self.font = UIFont(name: "NotoSansKR", size: 14)
-        self.textColor = .black
+        self.font = UIFont(name: "NotoSansKR-Regular", size: 14)
+        self.textColor = .white
         self.lineBreakMode = .byWordWrapping
     }
 

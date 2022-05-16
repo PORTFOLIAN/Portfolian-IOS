@@ -14,10 +14,14 @@ extension UITabBarController {
         return viewController
     }
     
-    func initNavigationTabViewController(_ bundleName: String, identifier: String, icon: UIImage?, tag: Int) -> UINavigationController{
+    func initNavigationTabViewController(_ bundleName: String, identifier: String, icon: UIImage?, selectedIcon: UIImage?, tag: Int) -> UINavigationController {
         let viewController = UIStoryboard(name: bundleName, bundle: nil).instantiateViewController(withIdentifier: identifier)
-        let navigationController = UINavigationController.init(rootViewController: viewController)
+        let navigationController = BaseNavigationController(rootViewController: viewController)
         navigationController.tabBarItem = UITabBarItem(title: "", image: icon, tag: tag)
+         
+        navigationController.tabBarItem.selectedImage = selectedIcon?.withRenderingMode(.alwaysOriginal)
+        
         return navigationController
     }
 }
+

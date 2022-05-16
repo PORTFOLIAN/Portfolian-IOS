@@ -22,7 +22,7 @@ class WritingViewController: UIViewController {
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
-    lazy var saveBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(buttonPressed(_:)))
+    lazy var saveBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(buttonPressed(_:)))
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     
@@ -33,23 +33,21 @@ class WritingViewController: UIViewController {
         UITextField.font = UIFont(name: "NotoSansKR-Bold", size: 24)
     })
     
-    lazy var configuration: UIButton.Configuration = {
-        var configuration = UIButton.Configuration.plain()
-        let title = "본인의 사용 기술을 선택해주세요."
-        let icon = UIImage(systemName: "chevron.right")
-        configuration.title = title
-        configuration.image = icon
-        //        configuration.imagePadding = 30
-        configuration.imagePlacement = .trailing
-        configuration.baseForegroundColor = .black
-        configuration.buttonSize = .medium
-        configuration.baseBackgroundColor = .white
-        return configuration
+    lazy var stackButton : UIButton = {
+        var button = UIButton()
+        button.setTitle("본인의 사용 기술을 선택해주세요.", for: .normal)
+        button.contentHorizontalAlignment = .leading
+        button.setTitleColor(ColorPortfolian.baseBlack, for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        return button
     }()
     
-    lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
+    lazy var chevronButton : UIButton = {
+        var button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.right")?.withTintColor(ColorPortfolian.baseBlack, renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        return button
+    }()
     
     lazy var teamConfiguration: UIButton.Configuration = {
         var configuration = UIButton.Configuration.plain()
@@ -59,15 +57,27 @@ class WritingViewController: UIViewController {
         configuration.image = icon
         //        configuration.imagePadding = 30
         configuration.imagePlacement = .trailing
-        configuration.baseForegroundColor = .black
+        configuration.baseForegroundColor = ColorPortfolian.baseBlack
         configuration.buttonSize = .medium
         configuration.baseBackgroundColor = .white
         return configuration
     }()
     
-    lazy var teamStackButton = UIButton(configuration: teamConfiguration, primaryAction: nil).then { UIButton in
-        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
-    }
+    lazy var teamStackButton : UIButton = {
+        var button = UIButton()
+        button.setTitle("팀원들의 사용 기술을 선택해주세요.", for: .normal)
+        button.contentHorizontalAlignment = .leading
+        button.setTitleColor(ColorPortfolian.baseBlack, for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var teamChevronButton : UIButton = {
+        var button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.right")?.withTintColor(ColorPortfolian.baseBlack, renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        return button
+    }()
     
     lazy var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 30)).then({ UIView in
         let icon = UIImage(named: "addUser")
@@ -122,32 +132,32 @@ class WritingViewController: UIViewController {
     
     lazy var periodLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 기간"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var recruitLabel = UILabel().then { UILabel in
         UILabel.text = "명 (최대 16명)"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var explainLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 주제 설명"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var optionLabel = UILabel().then { UILabel in
         UILabel.text = "모집 조건"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var proceedLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 진행 방식"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var detailLabel = UILabel().then { UILabel in
         UILabel.text = "프로젝트 상세 설명"
-        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
     lazy var lineViewFirst = UIView().then({ UIView in
@@ -194,25 +204,25 @@ class WritingViewController: UIViewController {
                     
                     print("view did load \(writingTeamTag.names)")
                     self.titleTextField.text = projectInfo.title
-                    self.titleTextField.textColor = .black
+                    self.titleTextField.textColor = ColorPortfolian.baseBlack
                     
                     self.recruitTextField.text = String(projectInfo.capacity)
-                    self.recruitTextField.textColor = .black
+                    self.recruitTextField.textColor = ColorPortfolian.baseBlack
                     
                     self.explainTextView.text = projectInfo.contents.subjectDescription
-                    self.explainTextView.textColor = .black
+                    self.explainTextView.textColor = ColorPortfolian.baseBlack
                     
                     self.periodTextView.text = projectInfo.contents.projectTime
-                    self.periodTextView.textColor = .black
+                    self.periodTextView.textColor = ColorPortfolian.baseBlack
                     
                     self.optionTextView.text = projectInfo.contents.recruitmentCondition
-                    self.optionTextView.textColor = .black
+                    self.optionTextView.textColor = ColorPortfolian.baseBlack
                     
                     self.proceedTextView.text = projectInfo.contents.progress
-                    self.proceedTextView.textColor = .black
+                    self.proceedTextView.textColor = ColorPortfolian.baseBlack
                     
                     self.detailTextView.text = projectInfo.contents.description
-                    self.detailTextView.textColor = .black
+                    self.detailTextView.textColor = ColorPortfolian.baseBlack
                     
                     
                 case .failure(let error):
@@ -264,7 +274,9 @@ class WritingViewController: UIViewController {
         contentView.addSubview(lineViewSeventh)
         contentView.addSubview(lineViewEight)
         contentView.addSubview(stackButton)
+        contentView.addSubview(chevronButton)
         contentView.addSubview(teamStackButton)
+        contentView.addSubview(teamChevronButton)
         contentView.addSubview(recruitTextField)
         contentView.addSubview(recruitLabel)
         contentView.addSubview(periodLabel)
@@ -280,6 +292,7 @@ class WritingViewController: UIViewController {
         //        scrollView.backgroundColor = .blue
         //        contentView.backgroundColor = .yellow
         
+        titleTextField.delegate = self
         periodTextView.delegate = self
         explainTextView.delegate = self
         optionTextView.delegate = self
@@ -306,7 +319,7 @@ class WritingViewController: UIViewController {
         
         titleTextField.snp.makeConstraints { make in
             make.top.equalTo(contentView).offset(5)
-            make.leading.equalTo(contentView).offset(10)
+            make.leading.trailing.equalTo(contentView).inset(10)
         }
         
         lineViewFirst.snp.makeConstraints { make in
@@ -314,10 +327,17 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(1)
         }
-        //
+        
         stackButton.snp.makeConstraints { make in
             make.top.equalTo(lineViewFirst).offset(10)
             make.leading.equalTo(lineViewFirst)
+            make.trailing.equalTo(lineViewFirst).offset(-20)
+        }
+        
+        chevronButton.snp.makeConstraints { make in
+            make.centerY.equalTo(stackButton)
+            make.trailing.equalTo(lineViewFirst)
+            make.height.width.equalTo(20)
         }
         
         tagCollectionView.snp.makeConstraints { make in
@@ -329,6 +349,14 @@ class WritingViewController: UIViewController {
         teamStackButton.snp.makeConstraints { make in
             make.top.equalTo(tagCollectionView.snp.bottom).offset(10)
             make.leading.equalTo(lineViewFirst)
+            make.trailing.equalTo(lineViewFirst).offset(-20)
+        }
+        
+        teamChevronButton.snp.makeConstraints { make in
+            make.centerY.equalTo(teamStackButton)
+            make.trailing.equalTo(lineViewFirst)
+            make.height.width.equalTo(20)
+            
         }
         
         tagsCollectionView.snp.makeConstraints { make in
@@ -448,7 +476,7 @@ class WritingViewController: UIViewController {
     
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColor.black]
+        //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColorColorPortfolian.baseBlack]
         let saveAction = UIAlertAction(title: "저장하기", style: .default) { _ in
             self.saveWriting()
             self.navigationController?.popViewController(animated: true)
@@ -516,7 +544,7 @@ class WritingViewController: UIViewController {
             
             if $0.period != periodInit {
                 periodTextView.text = $0.period
-                periodTextView.textColor = .black
+                periodTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 periodTextView.text = periodInit
                 periodTextView.textColor = ColorPortfolian.gray2
@@ -524,7 +552,7 @@ class WritingViewController: UIViewController {
             
             if $0.explain != explainInit {
                 explainTextView.text = $0.explain
-                explainTextView.textColor = .black
+                explainTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 explainTextView.text = explainInit
                 explainTextView.textColor = ColorPortfolian.gray2
@@ -532,7 +560,7 @@ class WritingViewController: UIViewController {
             
             if $0.option != optionInit {
                 optionTextView.text = $0.option
-                optionTextView.textColor = .black
+                optionTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 optionTextView.text = optionInit
                 optionTextView.textColor = ColorPortfolian.gray2
@@ -540,7 +568,7 @@ class WritingViewController: UIViewController {
             
             if $0.proceed != proceedInit {
                 proceedTextView.text = $0.proceed
-                proceedTextView.textColor = .black
+                proceedTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 proceedTextView.text = proceedInit
                 proceedTextView.textColor = ColorPortfolian.gray2
@@ -548,7 +576,7 @@ class WritingViewController: UIViewController {
             
             if $0.detail != detailInit {
                 detailTextView.text = $0.detail
-                detailTextView.textColor = .black
+                detailTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 detailTextView.text = detailInit
                 detailTextView.textColor = ColorPortfolian.gray2
@@ -653,11 +681,11 @@ class WritingViewController: UIViewController {
                     }
                 }
             }
-        case stackButton:
+        case stackButton, chevronButton:
             registrationType = .WritingOwner
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
-        case teamStackButton:
+        case teamStackButton, teamChevronButton:
             registrationType = .WritingTeam
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
@@ -672,7 +700,7 @@ extension WritingViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == ColorPortfolian.gray2{
             textView.text = ""
-            textView.textColor = .black
+            textView.textColor = ColorPortfolian.baseBlack
         }
     }
     
@@ -767,6 +795,23 @@ extension WritingViewController: UICollectionViewDataSource {
             let tagColor = tagInfo.color
             cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
             return cell
+        }
+    }
+}
+
+extension WritingViewController: UITextFieldDelegate {
+    //MARK: - Limit 10 letters
+    private func limitLetters(_ textField: UITextField, text: String) {
+        let titleCharacterLimit = 32
+        let endIndex: String.Index = text.index(text.startIndex, offsetBy: titleCharacterLimit)
+        textField.text = String(text[..<endIndex])
+        
+    }
+    
+    internal func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let titleText = textField.text else { return }
+        if titleText.count >= 32 {
+            limitLetters(textField, text: titleText)
         }
     }
 }

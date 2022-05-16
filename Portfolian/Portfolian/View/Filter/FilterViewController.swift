@@ -23,7 +23,7 @@ class FilterViewController: UIViewController {
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
-        self.title = "태그 필터"
+        self.title = "스택 검색"
         addSubview()
         setupAutoLayout()
         // Do any additional setup after loading the view.

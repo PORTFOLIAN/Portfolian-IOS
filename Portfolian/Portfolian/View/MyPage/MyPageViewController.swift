@@ -27,18 +27,18 @@ class MyPageViewController: UIViewController {
     lazy var profileImageView = UIImageView().then { UIImageView in
         lazy var image = UIImage(named: "profile")
         UIImageView.image = image
-        UIImageView.layer.cornerRadius = 35
+        UIImageView.layer.cornerRadius = 50
         UIImageView.layer.borderWidth = 1
-        UIImageView.layer.borderColor = UIColor.black.cgColor
+        UIImageView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
         UIImageView.clipsToBounds = true
     }
     
     lazy var setting = UIBarButtonItem(image: UIImage(named: "setting"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
-        UIBarButtonItem.tintColor = .black
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
     
     lazy var userNameLabel = UILabel().then { UILabel in
-        UILabel.text = "댕댕아 사랑해"
+        UILabel.text = "포트폴리안"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 18)
     }
     
@@ -60,7 +60,7 @@ class MyPageViewController: UIViewController {
         } else {
             UIButton.setTitle("", for: .normal)
         }
-        UIButton.setTitleColor(.black, for: .normal)
+        UIButton.setTitleColor(ColorPortfolian.baseBlack, for: .normal)
         UIButton.layer.borderWidth = 1
         UIButton.layer.cornerRadius = 8
         UIButton.layer.borderColor = UIColor.gray.cgColor
@@ -139,6 +139,13 @@ class MyPageViewController: UIViewController {
         }
         
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if loginType == .no {
+            self.shakeButton(button: self.profileCorrectionButton)
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -198,18 +205,33 @@ class MyPageViewController: UIViewController {
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        if loginType == .no {
+            profileCorrectionButton.setTitle("로그인 하러가기", for: .normal)
+            profileCorrectionButton.setTitleColor(ColorPortfolian.thema, for: .normal)
+            profileCorrectionButton.layer.borderColor = ColorPortfolian.thema.cgColor
+        }
     }
-    
-    // Mark: SetupLogo
     
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender {
         case setting:
-            let SettingVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "SettingVC")
-            self.navigationController?.pushViewController(SettingVC, animated: true)
+            if loginType == .no {
+                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
+            } else {
+                let SettingVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "SettingVC")
+                self.navigationController?.pushViewController(SettingVC, animated: true)
+            }
+            
         case profileCorrectionButton:
-            let profileVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "ProfileVC")
-            self.navigationController?.pushViewController(profileVC, animated: true)
+            if loginType == .no {
+                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                  sceneDelegate.goToSignIn()
+                }
+            } else {
+                let profileVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "ProfileVC")
+                self.navigationController?.pushViewController(profileVC, animated: true)
+            }
+
         case emailButton:
             if emailString != "" {
                 UIPasteboard.general.string = emailString
@@ -220,7 +242,9 @@ class MyPageViewController: UIViewController {
         case gitHubButton:
             if let githubString = githubString {
                 if let url = URL(string: githubString) {
-                    let safariViewController = SFSafariViewController(url: url)
+                    //let safariViewController = SFSafariViewController(url: url)
+                    let safariViewController = WebViewController()
+                    safariViewController.url = url
                     present(safariViewController, animated: true, completion: nil)
                 } else {
                     self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
@@ -235,6 +259,23 @@ class MyPageViewController: UIViewController {
     }
     func setUpItem() {
         navigationItem.rightBarButtonItem = setting
+    }
+    func shakeButton(button: UIButton) -> Void{
+        UIView.animate(withDuration: 0.2, animations: {
+            button.frame.origin.x -= 20
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.2, animations: {
+                button.frame.origin.x += 20
+            }, completion: { _ in
+                UIView.animate(withDuration: 0.2, animations: {
+                    button.frame.origin.x -= 10
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.2, animations: {
+                        button.frame.origin.x += 10
+                    })
+                })
+            })
+        })
     }
 }
 
