@@ -30,7 +30,12 @@ class FilterViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
         navigationController?.navigationBar.prefersLargeTitles = false
+        if isMovingFromParent {
+            self.tabBarController?.tabBar.isHidden = false
+        }
     }
     //MARK: - setupAutoLayout
     func setupAutoLayout() {
