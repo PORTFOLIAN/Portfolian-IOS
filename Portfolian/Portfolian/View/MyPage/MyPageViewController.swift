@@ -242,10 +242,10 @@ class MyPageViewController: UIViewController {
         case gitHubButton:
             if let githubString = githubString {
                 if let url = URL(string: githubString) {
-                    //let safariViewController = SFSafariViewController(url: url)
                     let safariViewController = WebViewController()
                     safariViewController.url = url
                     present(safariViewController, animated: true, completion: nil)
+                    
                 } else {
                     self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
                 }

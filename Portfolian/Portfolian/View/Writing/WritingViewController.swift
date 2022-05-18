@@ -9,8 +9,7 @@ import UIKit
 import SnapKit
 import Then
 import CoreData
-import Alamofire
-import SwiftyJSON
+import SwiftyMarkdown
 import KakaoSDKCommon
 
 class WritingViewController: UIViewController {
@@ -18,11 +17,11 @@ class WritingViewController: UIViewController {
     let explainInit = "프로젝트에 대한 간단한 설명을 적어주세요."
     let optionInit = "프로젝트에 필요한 기술 역량에 대해 알려주세요."
     let proceedInit = "예시: 매주 화요일 강남역에서 오프라인으로 진행합니다."
-    let detailInit = "프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
+    let detailInit = "마크다운을 사용할 수 있어요!\n프로젝트에 대한 설명을 자유롭게 적어주세요 :)"
     lazy var scrollView = UIScrollView()
     lazy var contentView = UIView()
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
-    lazy var saveBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(buttonPressed(_:)))
+    lazy var saveBarButtonItem = UIBarButtonItem(title: "등록", style: .plain, target: self, action: #selector(buttonPressed(_:)))
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     
@@ -97,37 +96,52 @@ class WritingViewController: UIViewController {
     
     lazy var periodTextView = UITextView().then({ UITextView in
         UITextView.text = periodInit
-        UITextView.textColor = ColorPortfolian.gray2
+        UITextView.textColor = ColorPortfolian.noclickTag
         UITextView.textContainer.maximumNumberOfLines = 2
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.4
+        UITextView.layer.cornerRadius = 20
     })
     
     lazy var explainTextView = UITextView().then({ UITextView in
         UITextView.text = explainInit
-        UITextView.textColor = ColorPortfolian.gray2
+        UITextView.textColor = ColorPortfolian.noclickTag
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.4
+        UITextView.layer.cornerRadius = 20
     })
     
     lazy var optionTextView = UITextView().then({ UITextView in
         UITextView.text = optionInit
-        UITextView.textColor = ColorPortfolian.gray2
+        UITextView.textColor = ColorPortfolian.noclickTag
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.4
+        UITextView.layer.cornerRadius = 20
     })
     
     lazy var proceedTextView = UITextView().then({ UITextView in
         UITextView.text = proceedInit
-        UITextView.textColor = ColorPortfolian.gray2
+        UITextView.textColor = ColorPortfolian.noclickTag
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.4
+        UITextView.layer.cornerRadius = 20
     })
     
     lazy var detailTextView = UITextView().then({ UITextView in
         UITextView.text = detailInit
-        UITextView.textColor = ColorPortfolian.gray2
+        UITextView.textColor = ColorPortfolian.noclickTag
         UITextView.textContainer.maximumNumberOfLines = 0
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.3
+        UITextView.layer.cornerRadius = 20
     })
     
     lazy var periodLabel = UILabel().then { UILabel in
@@ -160,43 +174,41 @@ class WritingViewController: UIViewController {
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 18)
     }
     
+    lazy var markdownButton = UIButton().then { UIButton in
+        UIButton.setTitle("마크다운 사용법", for: .normal)
+        UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    }
+    
+    var detailMarkdownTextView = UITextView().then ({ UITextView in
+        UITextView.textColor = ColorPortfolian.baseBlack
+        UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 14)
+        UITextView.isEditable = false
+        UITextView.isUserInteractionEnabled = true
+        UITextView.sizeToFit()
+        UITextView.isScrollEnabled = false
+        UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
+        UITextView.layer.borderWidth = 0.3
+        UITextView.layer.cornerRadius = 20
+    })
+
+    
     lazy var lineViewFirst = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
+        UIView.backgroundColor = ColorPortfolian.noclickTag
     })
     
     lazy var lineViewSecond = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
+        UIView.backgroundColor = ColorPortfolian.noclickTag
     })
     
     lazy var lineViewThird = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-    
-    lazy var lineViewFourth = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-    
-    lazy var lineViewFifth = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-    
-    lazy var lineViewSixth = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-    
-    lazy var lineViewSeventh = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
-    })
-    
-    lazy var lineViewEight = UIView().then({ UIView in
-        UIView.backgroundColor = ColorPortfolian.gray2
+        UIView.backgroundColor = ColorPortfolian.noclickTag
     })
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .Writing
-        
         if editType == .edit {
             MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
                 switch result {
@@ -224,10 +236,11 @@ class WritingViewController: UIViewController {
                     self.detailTextView.text = projectInfo.contents.description
                     self.detailTextView.textColor = ColorPortfolian.baseBlack
                     
-                    
+                    let md = SwiftyMarkdown(string: "\n" + self.detailTextView.text)
+                    self.detailMarkdownTextView.attributedText = md.attributedString()
+                    self.configureLabel(md: md)
                 case .failure(let error):
-                    //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
-                    print("\(error)######")
+                    print("\(error)")
                 }
             }
         } else if isMovingToParent == true {
@@ -249,7 +262,9 @@ class WritingViewController: UIViewController {
             }
         }
         self.view.setNeedsLayout()
-        
+        let md = SwiftyMarkdown(string: "\n" + detailTextView.text)
+        detailMarkdownTextView.attributedText = md.attributedString()
+        configureLabel(md: md)
     }
     
     override func viewDidLoad() {
@@ -265,11 +280,6 @@ class WritingViewController: UIViewController {
         contentView.addSubview(lineViewFirst)
         contentView.addSubview(lineViewSecond)
         contentView.addSubview(lineViewThird)
-        contentView.addSubview(lineViewFourth)
-        contentView.addSubview(lineViewFifth)
-        contentView.addSubview(lineViewSixth)
-        contentView.addSubview(lineViewSeventh)
-        contentView.addSubview(lineViewEight)
         contentView.addSubview(stackButton)
         contentView.addSubview(chevronButton)
         contentView.addSubview(teamStackButton)
@@ -286,8 +296,8 @@ class WritingViewController: UIViewController {
         contentView.addSubview(optionTextView)
         contentView.addSubview(proceedTextView)
         contentView.addSubview(detailTextView)
-        //        scrollView.backgroundColor = .blue
-        //        contentView.backgroundColor = .yellow
+        contentView.addSubview(detailMarkdownTextView)
+        contentView.addSubview(markdownButton)
         
         titleTextField.delegate = self
         periodTextView.delegate = self
@@ -312,6 +322,7 @@ class WritingViewController: UIViewController {
             make.top.bottom.equalTo(scrollView)
             make.leading.trailing.equalTo(scrollView).inset(20)
             make.width.equalTo(scrollView).offset(-40)
+            make.bottom.equalTo(detailMarkdownTextView).offset(300)
         }
         
         titleTextField.snp.makeConstraints { make in
@@ -395,14 +406,8 @@ class WritingViewController: UIViewController {
             make.height.equalTo(100)
         }
         
-        lineViewFourth.snp.makeConstraints { make in
-            make.top.equalTo(periodTextView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(1)
-        }
-        
         explainLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineViewFourth).offset(10)
+            make.top.equalTo(periodTextView.snp.bottom).offset(10)
             make.leading.equalTo(titleTextField)
         }
         
@@ -412,14 +417,8 @@ class WritingViewController: UIViewController {
             make.height.equalTo(100)
         }
         
-        lineViewFifth.snp.makeConstraints { make in
-            make.top.equalTo(explainTextView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(1)
-        }
-        
         optionLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineViewFifth).offset(10)
+            make.top.equalTo(explainTextView.snp.bottom).offset(10)
             make.leading.equalTo(titleTextField)
         }
         
@@ -428,15 +427,9 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(100)
         }
-        
-        lineViewSixth.snp.makeConstraints { make in
-            make.top.equalTo(optionTextView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(1)
-        }
-        
+
         proceedLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineViewSixth).offset(10)
+            make.top.equalTo(optionTextView.snp.bottom).offset(10)
             make.leading.equalTo(titleTextField)
         }
         
@@ -445,16 +438,15 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(100)
         }
-        
-        lineViewSeventh.snp.makeConstraints { make in
+
+        detailLabel.snp.makeConstraints { make in
             make.top.equalTo(proceedTextView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(1)
+            make.leading.equalTo(titleTextField)
         }
         
-        detailLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineViewSeventh).offset(10)
-            make.leading.equalTo(titleTextField)
+        markdownButton.snp.makeConstraints { make in
+            make.top.equalTo(detailLabel)
+            make.trailing.equalTo(detailTextView)
         }
         
         detailTextView.snp.makeConstraints { make in
@@ -462,12 +454,10 @@ class WritingViewController: UIViewController {
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(300)
         }
-        
-        lineViewEight.snp.makeConstraints { make in
+        detailMarkdownTextView.snp.makeConstraints { make in
             make.top.equalTo(detailTextView.snp.bottom).offset(10)
             make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(1)
-            make.bottom.equalTo(contentView.snp.bottom).inset(300)
+            make.height.equalTo(300)
         }
     }
     
@@ -551,7 +541,7 @@ class WritingViewController: UIViewController {
                 periodTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 periodTextView.text = periodInit
-                periodTextView.textColor = ColorPortfolian.gray2
+                periodTextView.textColor = ColorPortfolian.noclickTag
             }
             
             if $0.explain != explainInit {
@@ -559,7 +549,7 @@ class WritingViewController: UIViewController {
                 explainTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 explainTextView.text = explainInit
-                explainTextView.textColor = ColorPortfolian.gray2
+                explainTextView.textColor = ColorPortfolian.noclickTag
             }
             
             if $0.option != optionInit {
@@ -567,7 +557,7 @@ class WritingViewController: UIViewController {
                 optionTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 optionTextView.text = optionInit
-                optionTextView.textColor = ColorPortfolian.gray2
+                optionTextView.textColor = ColorPortfolian.noclickTag
             }
             
             if $0.proceed != proceedInit {
@@ -575,7 +565,7 @@ class WritingViewController: UIViewController {
                 proceedTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 proceedTextView.text = proceedInit
-                proceedTextView.textColor = ColorPortfolian.gray2
+                proceedTextView.textColor = ColorPortfolian.noclickTag
             }
             
             if $0.detail != detailInit {
@@ -583,7 +573,7 @@ class WritingViewController: UIViewController {
                 detailTextView.textColor = ColorPortfolian.baseBlack
             } else {
                 detailTextView.text = detailInit
-                detailTextView.textColor = ColorPortfolian.gray2
+                detailTextView.textColor = ColorPortfolian.noclickTag
             }
         }
     }
@@ -692,16 +682,61 @@ class WritingViewController: UIViewController {
             registrationType = .WritingTeam
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
+        case markdownButton:
+            let markdownVC = UIStoryboard(name: "Markdown", bundle: nil).instantiateViewController(withIdentifier: "MarkdownVC")
+            present(markdownVC, animated: true)
         default:
             print("error?")
         }
         
     }
+    
+    private func configureLabel(md: SwiftyMarkdown) {
+      guard let messageText = detailMarkdownTextView.text else { return }
+      let mutableString = NSMutableAttributedString()
+
+      var urlAttributes: [NSMutableAttributedString.Key: Any] = [
+        .foregroundColor: UIColor.systemBlue,
+        .underlineStyle: NSUnderlineStyle.single.rawValue,
+        .font: UIFont.italicSystemFont(ofSize: 16)
+      ]
+        
+        // swiftyMarkdown
+        let normalText = md.attributedString()
+      mutableString.append(normalText)
+
+      do {
+        let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let matches = detector.matches(
+          in: messageText,
+          options: [],
+          range: NSRange(location: 0, length: messageText.count)
+        )
+
+        for m in matches {
+          if let url = m.url {
+            urlAttributes[.link] = url
+            mutableString.setAttributes(urlAttributes, range: m.range)
+          }
+        }
+          detailMarkdownTextView.attributedText = mutableString
+      } catch {
+        print(error)
+      }
+    }
 }
 
 extension WritingViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        if textView == detailTextView {
+            let md = SwiftyMarkdown(string: "\n" + detailTextView.text)
+            detailMarkdownTextView.attributedText = md.attributedString()
+            configureLabel(md: md)
+        }
+    }
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == ColorPortfolian.gray2{
+        if textView.textColor == ColorPortfolian.noclickTag{
             textView.text = ""
             textView.textColor = ColorPortfolian.baseBlack
         }
@@ -721,7 +756,7 @@ extension WritingViewController: UITextViewDelegate {
             default:
                 textView.text = detailInit
             }
-            textView.textColor = ColorPortfolian.gray2
+            textView.textColor = ColorPortfolian.noclickTag
         }
     }
 }

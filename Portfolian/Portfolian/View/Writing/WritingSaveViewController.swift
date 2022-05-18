@@ -11,12 +11,16 @@ import Then
 import Alamofire
 import SwiftyMarkdown
 import KakaoSDKTemplate
+
 class WritingSaveViewController: UIViewController {
     var scrollView = UIScrollView()
     var contentView = UIView()
     lazy var editBarButtonItem = UIBarButtonItem(image: UIImage(named: "edit"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
         UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
-
+    }
+    var bookmarkToggle = false
+    lazy var bookmarkBarButtonItem = UIBarButtonItem(image: UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
     
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -36,9 +40,11 @@ class WritingSaveViewController: UIViewController {
     // cellForItemAt은 콜렉션뷰의 크기가 0보다 커야 실행된다.
     var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
     var tagsCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout())
+    
     var titleLabel = UILabel().then({ UILabel in
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
+        UILabel.numberOfLines = 0
     })
     
     var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 30)).then({ UIView in
@@ -48,9 +54,15 @@ class WritingSaveViewController: UIViewController {
         UIView.addSubview(iconView)
         UIView.contentMode = .bottom
     })
+
     var viewsLabel = UILabel().then({ UILabel in
         let views = 0
         UILabel.text = "조회수"+String(views)
+        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 12)
+        UILabel.textColor = .gray
+    })
+    
+    var dateLabel = UILabel().then({ UILabel in
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 12)
         UILabel.textColor = .gray
     })
@@ -111,11 +123,9 @@ class WritingSaveViewController: UIViewController {
     })
     
     lazy var detailTextView = UITextView().then ({ UITextView in
-        UITextView.text = "어쩌구 저쩌구"
         UITextView.textColor = ColorPortfolian.baseBlack
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UITextView.isEditable = false
-//        UITextView.isSelectable = false
         UITextView.isUserInteractionEnabled = true
         UITextView.sizeToFit()
         UITextView.isScrollEnabled = false
@@ -168,8 +178,15 @@ class WritingSaveViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         registrationType = .Writing
-        
+        bookmarkToggle = projectInfo.bookMark
+        if bookmarkToggle {
+            self.bookmarkBarButtonItem.image = UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal)
+        } else {
+            self.bookmarkBarButtonItem.image = UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal)
+        }
         titleLabel.text = projectInfo.title
+        let convertStr = DateToString(dateStr: projectInfo.createdAt, afterFormat: "MM월 dd일 HH시 mm분")
+        dateLabel.text = convertStr
         viewsLabel.text = "조회수 " + String(projectInfo.view)
         recruitLabel.text = "모집인원 " + String(projectInfo.capacity)
         explainLabel.text = projectInfo.contents.subjectDescription
@@ -226,10 +243,13 @@ class WritingSaveViewController: UIViewController {
         tagsCollectionView.isUserInteractionEnabled = false
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         if JwtToken.shared.userId  == projectInfo.leader.userId {
-            navigationItem.rightBarButtonItem = editBarButtonItem
+            navigationItem.rightBarButtonItems = [ bookmarkBarButtonItem, editBarButtonItem]
+        } else {
+            navigationItem.rightBarButtonItem = bookmarkBarButtonItem
         }
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
+        view.addSubview(dateLabel)
         view.addSubview(scrollView)
         view.addSubview(footerView)
         scrollView.addSubview(contentView)
@@ -267,16 +287,22 @@ class WritingSaveViewController: UIViewController {
             make.leading.trailing.equalTo(scrollView).inset(20)
             make.width.equalTo(scrollView).offset(-40)
         }
+        
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(view.safeAreaLayoutGuide).offset(10)
-            make.trailing.equalTo(view.safeAreaLayoutGuide)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(60)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
         }
+
         viewsLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom)
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalTo(titleLabel)
         }
+        
+        dateLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+            make.trailing.equalTo(titleLabel)
+        }
+        
         lineViewFirst.snp.makeConstraints { make in
             make.top.equalTo(contentView)
             make.leading.trailing.equalTo(view).inset(10)
@@ -362,7 +388,7 @@ class WritingSaveViewController: UIViewController {
         detailTextView.snp.makeConstraints { make in
             make.top.equalTo(detailTitleLabel.snp.bottom)
             make.leading.trailing.equalTo(contentView)
-            make.bottom.equalTo(contentView).inset(300)
+            make.bottom.equalTo(contentView).inset(100)
         }
 
         footerView.snp.makeConstraints { make in
@@ -451,6 +477,20 @@ class WritingSaveViewController: UIViewController {
             self.alert()
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
+        case bookmarkBarButtonItem:
+            
+            bookmarkToggle.toggle()
+
+            if bookmarkToggle {
+                self.bookmarkBarButtonItem.image = UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal)
+            } else {
+                self.bookmarkBarButtonItem.image = UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal)
+            }
+            let bookmark = Bookmark(projectId: projectInfo.projectId, bookMarked: bookmarkToggle)
+            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
+                print(result)
+            }
+
         case dynamicButton:
             if loginType == .no {
                 self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)

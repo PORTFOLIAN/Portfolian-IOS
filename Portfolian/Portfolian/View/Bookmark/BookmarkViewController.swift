@@ -28,9 +28,9 @@ class BookmarkViewController: UIViewController {
         setUpLogo()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .none
         subview()
         constraints()
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {

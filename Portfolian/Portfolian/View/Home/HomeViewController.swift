@@ -72,7 +72,9 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         return button
     }()
     
-    let refreshControl = UIRefreshControl()
+    let refreshControl = UIRefreshControl().then { UIRefreshControl in
+        UIRefreshControl.tintColor = ColorPortfolian.thema
+    }
     var projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
     var searchKeyword = ""
     
@@ -82,7 +84,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         if String(describing: type(of: viewController)) == "WritingSaveViewController" ||
             String(describing: type(of: viewController)) == "WritingViewController"{
             self.tabBarController?.tabBar.isHidden = true
-
         }
     }
     

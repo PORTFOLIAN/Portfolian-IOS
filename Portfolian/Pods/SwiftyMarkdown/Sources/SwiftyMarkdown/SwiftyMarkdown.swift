@@ -597,22 +597,26 @@ extension SwiftyMarkdown {
                 do {
                     //Modify: 사진을 데이터 타입으로 받아서 url 이미지 사용
                     let data = try? Data(contentsOf: url)
-                    let image = UIImage(data: data!)
-                    image1Attachment.image = image
-
-                    if var height = image?.size.height,
-                       var width = image?.size.width {
-                    // 사진의 크기 줄여주기
-                        while height > 500 || width > 350 {
-                            height /= 1.02
-                            width /= 1.02
-                            // height는 400보다 커도됨
-                            // weight는 400보다 작아야함
-                            // 높이가 400보다 크고 너비가 400보다 클 때
+                    if data != nil {
+                        let image = UIImage(data: data!)
+                        image1Attachment.image = image
+                        if let window = UIApplication.shared.windows.first {
+                            let windowWidth = window.bounds.width - 40
+                            if var height = image?.size.height,
+                               var width = image?.size.width {
+                                var ratio: Double = 1.0
+                                if width > windowWidth {
+                                    ratio = windowWidth / width
+                                    width = windowWidth
+                                }
+                                image1Attachment.bounds = CGRect(x: 0, y: 0, width: width, height: height*ratio)
+                            }
                         }
-                        image1Attachment.bounds.size = CGSize(width: width, height: height)
                     }
-                    }
+                }
+                    
+                    
+                    
                 }
 //				image1Attachment.image = UIImage(named: token.metadataStrings[imgIdx])
 

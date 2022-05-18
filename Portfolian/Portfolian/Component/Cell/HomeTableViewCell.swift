@@ -18,7 +18,7 @@ class HomeTableViewCell: UITableViewCell {
         let view = UIView()
         view.layer.cornerRadius = 20
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray4.cgColor
+        view.layer.borderColor = ColorPortfolian.noclickTag.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -55,7 +55,7 @@ class HomeTableViewCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 20
         imageView.layer.borderWidth = 0.4
-        imageView.layer.borderColor = UIColor.systemGray4.cgColor
+        imageView.layer.borderColor = ColorPortfolian.gray2.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
