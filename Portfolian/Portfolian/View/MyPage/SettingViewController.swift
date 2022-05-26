@@ -59,7 +59,14 @@ extension SettingViewController: UITableViewDelegate {
             view.makeToast("현재 버전은 \(version)입니다.😶‍🌫️", duration: 1.0, position: .center)
             
         case 1:
-            logoutKakao()
+            switch loginType {
+            case .kakao:
+                logoutKakao()
+            case .apple:
+                logoutApple()
+            default:
+                break
+            }
         default:
             unlinkKakao()
         }
@@ -89,30 +96,70 @@ extension SettingViewController: UITableViewDelegate {
             }
         }
     }
+    
+    func logoutApple() {
+        MyAlamofireManager.shared.patchLogout { result in
+            print("logout() success.")
+        }
+        let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+        let request = PersistenceManager.shared.fetch(request: requestWriting)
+        if !request.isEmpty {
+            PersistenceManager.shared.deleteAll(request: requestWriting)
+        }
+        KeychainManager.shared.delete(key: "refreshToken")
+        KeychainManager.shared.delete(key: "accessToken")
+        KeychainManager.shared.delete(key: "userId")
+        writingTeamTag.names = []
+        writingOwnerTag.names = []
+        JwtToken.shared = JwtToken()
+        SocketIOManager.shared.closeConnection()
+        self.goToApp()
+    }
+    
     func unlinkKakao() {
-        UserApi.shared.unlink {(error) in
-            if let error = error {
-                print(error)
+        if loginType == .apple {
+            print("unlink() success.")
+            let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+            let request = PersistenceManager.shared.fetch(request: requestWriting)
+            if !request.isEmpty {
+                PersistenceManager.shared.deleteAll(request: requestWriting)
             }
-            else {
-                print("unlink() success.")
-                let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
-                let request = PersistenceManager.shared.fetch(request: requestWriting)
-                if !request.isEmpty {
-                    PersistenceManager.shared.deleteAll(request: requestWriting)
+            writingTeamTag.names = []
+            writingOwnerTag.names = []
+            MyAlamofireManager.shared.deleteUserId { result in
+                KeychainManager.shared.delete(key: "refreshToken")
+                KeychainManager.shared.delete(key: "accessToken")
+                KeychainManager.shared.delete(key: "userId")
+                JwtToken.shared = JwtToken()
+            }
+            SocketIOManager.shared.closeConnection()
+            self.goToApp()
+        } else if loginType == .kakao {
+            UserApi.shared.unlink {(error) in
+                if let error = error {
+                    print(error)
                 }
-                writingTeamTag.names = []
-                writingOwnerTag.names = []
-                MyAlamofireManager.shared.deleteUserId { result in
-                    KeychainManager.shared.delete(key: "refreshToken")
-                    KeychainManager.shared.delete(key: "accessToken")
-                    KeychainManager.shared.delete(key: "userId")
-                    JwtToken.shared = JwtToken()
+                else {
+                    print("unlink() success.")
+                    let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                    let request = PersistenceManager.shared.fetch(request: requestWriting)
+                    if !request.isEmpty {
+                        PersistenceManager.shared.deleteAll(request: requestWriting)
+                    }
+                    writingTeamTag.names = []
+                    writingOwnerTag.names = []
+                    MyAlamofireManager.shared.deleteUserId { result in
+                        KeychainManager.shared.delete(key: "refreshToken")
+                        KeychainManager.shared.delete(key: "accessToken")
+                        KeychainManager.shared.delete(key: "userId")
+                        JwtToken.shared = JwtToken()
+                    }
+                    SocketIOManager.shared.closeConnection()
+                    self.goToApp()
                 }
-                SocketIOManager.shared.closeConnection()
-                self.goToApp()
             }
         }
+        
     }
     func goToApp() {
         self.navigationController?.popToRootViewController(animated: true)

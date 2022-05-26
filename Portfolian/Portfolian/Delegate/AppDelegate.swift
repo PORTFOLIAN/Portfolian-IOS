@@ -88,9 +88,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 }
-
+var fcm: String = ""
 extension AppDelegate : MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        fcm = fcmToken!
         print("파이어베이스 토큰: \(fcmToken)")
     }
 }

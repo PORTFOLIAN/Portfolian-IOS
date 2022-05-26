@@ -63,3 +63,54 @@ struct ColorPortfolian {
     static let noclickTag = UIColor(rgb: 0xEAEAEA)
     static let baseBlack = UIColor(rgb: 0x343A40)
 }
+
+let markdownInit = """
+        *italics* or _italics_
+        **bold** or __bold__
+        ~~Linethrough~~Strikethroughs.
+        `code`
+
+        # Header 1
+
+        or
+
+        Header 1
+        ====
+
+        ## Header 2
+
+        or
+
+        Header 2
+        ---
+
+        ### Header 3
+        #### Header 4
+        ##### Header 5 #####
+        ###### Header 6 ######
+
+            Indented code blocks (spaces or tabs)
+
+        [Links](http://voyagetravelapps.com/)
+        ![Images](<Name of asset in bundle>)
+
+        [Referenced Links][1]
+        ![Referenced Images][2]
+
+        [1]: http://voyagetravelapps.com/
+        [2]: <Name of asset in bundle>
+
+        > Blockquotes
+
+        - Bulleted
+        - Lists
+            - Including indented lists
+                - Up to three levels
+        - Neat!
+
+        1. Ordered
+        1. Lists
+            1. Including indented lists
+                - Up to three levels
+        """
+

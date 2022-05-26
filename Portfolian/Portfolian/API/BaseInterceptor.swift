@@ -24,6 +24,7 @@ class BaseInterceptor: RequestInterceptor {
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("BaseInterceptor - retry() called")
+        
         guard let statusCode = request.response?.statusCode else {
             completion(.doNotRetryWithError(error))
             return
@@ -36,15 +37,35 @@ class BaseInterceptor: RequestInterceptor {
                 } else {
                     self.toast { Bool in
                         if (Bool) {
+                            let vc = SettingViewController()
+                            switch loginType {
+                            case .apple:
+                                vc.logoutApple()
+                            case .kakao:
+                                vc.logoutKakao()
+                            default:
+                                break
+                            }
                             self.goToSignin()
                         }
                     }
                 }
             }
         } else if statusCode == 403 || statusCode == 404 {
-            guard let url = request.response?.url else { return }
-            if url != URL(string: "https://api.portfolian.site:443/users/info") {
-                self.toast { Bool in
+            self.toast { Bool in
+            }
+            if loginType != .no {
+                MyAlamofireManager.shared.renewAccessToken { Bool in
+                    let vc = SettingViewController()
+                    switch loginType {
+                    case .kakao:
+                        vc.logoutKakao()
+                    case .apple:
+                        vc.logoutApple()
+                    default:
+                        break
+                    }
+                    self.goToSignin()
                 }
             }
         }
@@ -69,4 +90,6 @@ class BaseInterceptor: RequestInterceptor {
             completion(false)
         }
     }
+    
+    
 }

@@ -25,7 +25,7 @@ class ViewController: UITabBarController {
 
         let viewControllers: [UIViewController] = [
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarHomeFill"), tag: 1),
-            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
+            initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarBookmark"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "tabbarChat"), selectedIcon: UIImage(named: "tabbarChatFill"), tag: 3),
             initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "tabbarMyPage"), selectedIcon: UIImage(named: "tabbarMyPageFill"), tag: 4)
         ]
@@ -33,11 +33,18 @@ class ViewController: UITabBarController {
         switch loginType {
         case .kakao:
             kakaoAutoLogin(viewControllers: viewControllers)
+        case .apple:
+            appleAutoLogin (viewControllers: viewControllers)
         case .no:
             self.setViewControllers(viewControllers, animated: true)
         default:
             goToSiginIn()
         }
+    }
+    
+    private func appleAutoLogin(viewControllers: [UIViewController]) {
+            self.fetchToken()
+            self.setViewControllers(viewControllers, animated: true)
     }
     
     private func kakaoAutoLogin(viewControllers: [UIViewController]) {

@@ -16,12 +16,7 @@ enum MyOauthRouter: URLRequestConvertible {
     case postRefreshToken
     case patchLogout
     var baseURL: URL {
-        switch self {
-        case .postAppleToken:
-            return URL(string: API.BASE_URL)!
-        default:
-            return URL(string: API.BASE_URL + "oauth")!
-        }
+        return URL(string: API.BASE_URL + "oauth")!
     }
     
     var method: HTTPMethod {

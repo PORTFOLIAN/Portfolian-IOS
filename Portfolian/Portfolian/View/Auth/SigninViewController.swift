@@ -99,8 +99,6 @@ class SigninViewController: UIViewController {
         kakaoLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
         noLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
         appleLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
-//        swipeRecognizer()
-        
     }
     
     //MARK: - ButtonHandler
@@ -137,13 +135,11 @@ class SigninViewController: UIViewController {
         UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
             if let error = error {
                 print(error)
-                print("카카오톡과 통신에 실패했습니다.\n재시도 부탁드립니다😶‍🌫️ ")
-                self.view.makeToast("카카오톡과 통신에 실패했습니다.\n재시도 부탁드립니다😶‍🌫️ ", duration: 1.5, position: .center)
+                self.view.makeToast("연결 시도에 실패하였습니다.\n재시도 부탁드립니다😶‍🌫️", duration: 1.5, position: .center)
             }
             else {
                 print("loginWithKakaoAccount() success.")
                 guard let accessToken = oauthToken?.accessToken else { return }
-                print("#####\(accessToken)")
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
                     switch result {
                     case .success():
@@ -170,7 +166,8 @@ class SigninViewController: UIViewController {
         UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
             if let error = error {
                 print(error)
-                self.view.makeToast("카카오톡과 통신에 실패했습니다. 재시도 부탁드립니다 :)", duration: 1.0, position: .center)
+
+                self.view.makeToast("연결 시도에 실패하였습니다. 재시도 부탁드립니다 :)", duration: 1.0, position: .center)
 
             }
             else {
@@ -209,26 +206,8 @@ class SigninViewController: UIViewController {
         nicknameVC.modalPresentationStyle = .fullScreen
         self.present(nicknameVC, animated: true)
     }
-    //MARK: - SwipeGesture
-//    func swipeRecognizer() {
-//        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
-//        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
-//        self.view.addGestureRecognizer(swipeRight)
-//
-//    }
-//
-//    @objc func respondToSwipeGesture(_ gesture: UIGestureRecognizer){
-//        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-//            switch swipeGesture.direction{
-//            case UISwipeGestureRecognizer.Direction.right:
-//                // 스와이프 시, 뒤로가기
-//                self.dismiss(animated: true, completion: nil)
-//
-//            default: break
-//            }
-//        }
-//    }
 }
+
 extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     // 로그인 진행하는 화면 표출

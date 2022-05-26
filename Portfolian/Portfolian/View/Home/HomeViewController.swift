@@ -91,11 +91,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if loginType != .no {
-            MyAlamofireManager.shared.renewAccessToken { Bool in
-            }
-        }
-        
         setUpItem()
         setUpLogo()
         cache = NSCache()

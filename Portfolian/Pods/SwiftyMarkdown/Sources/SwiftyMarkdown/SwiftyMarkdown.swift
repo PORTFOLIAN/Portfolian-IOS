@@ -614,10 +614,7 @@ extension SwiftyMarkdown {
                         }
                     }
                 }
-                    
-                    
-                    
-                }
+            }
 //				image1Attachment.image = UIImage(named: token.metadataStrings[imgIdx])
 
 				let str = NSAttributedString(attachment: image1Attachment)

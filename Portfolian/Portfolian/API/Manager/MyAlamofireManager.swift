@@ -268,24 +268,13 @@ final class MyAlamofireManager {
             .responseJSON { response in
                 guard let responseValue = response.value else { return }
                 let responseJson = JSON(responseValue)
-
+                
                 guard let code = responseJson["code"].int else { return }
                 if code == 1 {
                     guard let accessToken = responseJson["accessToken"].string else { return }
                     KeychainManager.shared.create(key: "accessToken", token: accessToken)
                     JwtToken.shared.accessToken = accessToken
                     completion(true)
-                } else {
-                    let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
-                    let request = PersistenceManager.shared.fetch(request: requestWriting)
-                    if !request.isEmpty {
-                        PersistenceManager.shared.deleteAll(request: requestWriting)
-                    }
-                    KeychainManager.shared.delete(key: "accessToken")
-                    KeychainManager.shared.delete(key: "refreshToken")
-                    KeychainManager.shared.delete(key: "userId")
-                    JwtToken.shared = JwtToken()
-                    completion(false)
                 }
             }
     }
