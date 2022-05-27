@@ -19,8 +19,11 @@ class WritingSaveViewController: UIViewController {
         UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
     var bookmarkToggle = false
-    lazy var bookmarkBarButtonItem = UIBarButtonItem(image: UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
-        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
+    
+    var bookmarkButton = UIButton().then { UIButton in
+        var image = UIImage(named: "bookmark")
+        UIButton.setImage(image, for: .normal)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
     
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -171,24 +174,26 @@ class WritingSaveViewController: UIViewController {
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
         UIButton.layer.borderColor = ColorPortfolian.thema.cgColor
-        UIButton.layer.borderWidth = 1.0
+        UIButton.layer.borderWidth = 1
         UIButton.layer.cornerRadius = 20
     }
+
+    var complete = projectInfo.status == 1 ? false : true
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         registrationType = .Writing
         bookmarkToggle = projectInfo.bookMark
         if bookmarkToggle {
-            self.bookmarkBarButtonItem.image = UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal)
+            self.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal), for: .normal)
         } else {
-            self.bookmarkBarButtonItem.image = UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal)
+            self.bookmarkButton.setImage(UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), for: .normal)
         }
         titleLabel.text = projectInfo.title
         let convertStr = DateToString(dateStr: projectInfo.createdAt, afterFormat: "MM월 dd일 HH시 mm분")
         dateLabel.text = convertStr
         viewsLabel.text = "조회수 " + String(projectInfo.view)
-        recruitLabel.text = "모집인원 " + String(projectInfo.capacity)
+        recruitLabel.text = "모집 인원 " + String(projectInfo.capacity)
         explainLabel.text = projectInfo.contents.subjectDescription
         periodLabel.text = projectInfo.contents.projectTime
         optionLabel.text = projectInfo.contents.recruitmentCondition
@@ -203,8 +208,14 @@ class WritingSaveViewController: UIViewController {
         guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
         writingOwnerTag.names.append(tagName)
         if projectInfo.leader.userId == JwtToken.shared.userId  {
-            dynamicButton.setTitle("  모집마감  ", for: .normal)
-            dynamicButton.backgroundColor = ColorPortfolian.thema
+            self.dynamicButton.layer.borderColor = UIColor.clear.cgColor
+            if complete {
+                dynamicButton.backgroundColor = ColorPortfolian.thema
+                dynamicButton.setTitle("  모집 마감  ", for: .normal)
+            } else {
+                dynamicButton.backgroundColor = ColorPortfolian.gray2
+                dynamicButton.setTitle("  모집 진행  ", for: .normal)
+            }
             dynamicButton.setTitleColor(.white, for: .normal)
         }
         
@@ -243,17 +254,17 @@ class WritingSaveViewController: UIViewController {
         tagsCollectionView.isUserInteractionEnabled = false
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         if JwtToken.shared.userId  == projectInfo.leader.userId {
-            navigationItem.rightBarButtonItems = [ bookmarkBarButtonItem, editBarButtonItem]
+            navigationItem.rightBarButtonItem =   editBarButtonItem
         } else {
-            navigationItem.rightBarButtonItem = bookmarkBarButtonItem
+            navigationItem.rightBarButtonItem = nil
         }
+        view.addSubview(bookmarkButton)
         view.addSubview(titleLabel)
         view.addSubview(viewsLabel)
         view.addSubview(dateLabel)
         view.addSubview(scrollView)
         view.addSubview(footerView)
         scrollView.addSubview(contentView)
-        
         contentView.addSubview(tagCollectionView)
         contentView.addSubview(tagsCollectionView)
         contentView.addSubview(leaderStackTitleLabel)
@@ -289,10 +300,17 @@ class WritingSaveViewController: UIViewController {
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.trailing.equalTo(bookmarkButton).inset(10)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(50)
         }
 
+        bookmarkButton.snp.makeConstraints { make in
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            make.centerY.equalTo(titleLabel)
+        }
+        
         viewsLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalTo(titleLabel)
@@ -446,6 +464,7 @@ class WritingSaveViewController: UIViewController {
         default:
             break
         }
+        
         if isMovingFromParent {
             self.tabBarController?.tabBar.isHidden = false
         }
@@ -477,14 +496,13 @@ class WritingSaveViewController: UIViewController {
             self.alert()
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
-        case bookmarkBarButtonItem:
-            
+        case bookmarkButton:
             bookmarkToggle.toggle()
 
             if bookmarkToggle {
-                self.bookmarkBarButtonItem.image = UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal)
+                self.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal), for: .normal)
             } else {
-                self.bookmarkBarButtonItem.image = UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal)
+                self.bookmarkButton.setImage(UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), for: .normal)
             }
             let bookmark = Bookmark(projectId: projectInfo.projectId, bookMarked: bookmarkToggle)
             MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
@@ -501,14 +519,17 @@ class WritingSaveViewController: UIViewController {
                     let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
                     self.navigationController?.pushViewController(chatRoomVC, animated: true)
                 } else {
-                    let complete = projectInfo.status == 1 ? false : true
-                    MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { result in
+                    MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { [weak self] result in
+                        self?.complete.toggle()
+                        guard let self = self else { return }
                         switch result {
                         case .success:
-                            if complete {
-                                self.dynamicButton.backgroundColor = .clear
+                            if self.complete {
+                                self.dynamicButton.backgroundColor = ColorPortfolian.thema
+                                self.dynamicButton.setTitle("  모집 완료  ", for: .normal)
                             } else {
                                 self.dynamicButton.backgroundColor = ColorPortfolian.gray2
+                                self.dynamicButton.setTitle("  모집 진행  ", for: .normal)
                             }
                         case .failure:
                             break

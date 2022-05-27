@@ -7,6 +7,7 @@
 
 import UIKit
 import Alamofire
+import SwiftyJSON
 
 class BaseInterceptor: RequestInterceptor {
     
@@ -24,7 +25,7 @@ class BaseInterceptor: RequestInterceptor {
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("BaseInterceptor - retry() called")
-        
+
         guard let statusCode = request.response?.statusCode else {
             completion(.doNotRetryWithError(error))
             return
@@ -52,8 +53,7 @@ class BaseInterceptor: RequestInterceptor {
                 }
             }
         } else if statusCode == 403 || statusCode == 404 {
-            self.toast { Bool in
-            }
+            self.toast { Bool in }
             if loginType != .no {
                 MyAlamofireManager.shared.renewAccessToken { Bool in
                     let vc = SettingViewController()

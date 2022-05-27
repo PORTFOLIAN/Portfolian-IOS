@@ -16,7 +16,7 @@ enum MyProjectRouter: URLRequestConvertible {
     case arrangeProject(searchOption: ProjectSearch)
     case deleteProject(projectID: String)
     case putProject(term: ProjectArticle)
-    case putFinishProject(projectID: String, complete: Bool)
+    case patchFinishProject(projectID: String, complete: Bool)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "projects/")!
     }
@@ -27,8 +27,10 @@ enum MyProjectRouter: URLRequestConvertible {
             return .post
         case .enterProject, .arrangeProject:
             return .get
-        case .putProject, .putFinishProject:
+        case .putProject:
             return .put
+        case .patchFinishProject:
+            return .patch
         case .deleteProject:
             return .delete
         }
@@ -40,7 +42,7 @@ enum MyProjectRouter: URLRequestConvertible {
             return ""
         case .enterProject(let projectID), .deleteProject(let projectID):
             return projectID
-        case .putFinishProject(let projectID, _):
+        case .patchFinishProject(let projectID, _):
             return "\(projectID)/status"
         case .putProject:
             return recruitWriting.newProjectID
@@ -69,7 +71,7 @@ enum MyProjectRouter: URLRequestConvertible {
             }
         case .enterProject, .deleteProject:
             return nil
-        case let .putFinishProject(_, complete):
+        case let .patchFinishProject(_, complete):
             let intValue = complete == true ? 1 : 0
             return ["status" : intValue]
         case .arrangeProject(let searchOption):
@@ -89,7 +91,7 @@ enum MyProjectRouter: URLRequestConvertible {
             return request
         case .arrangeProject:
             request = try URLEncodedFormParameterEncoder().encode(parameters as? ProjectSearch, into: request)
-        case .putFinishProject:
+        case .patchFinishProject:
             request = try JSONParameterEncoder().encode(parameters as? [String:Int], into: request)
         }
         return request

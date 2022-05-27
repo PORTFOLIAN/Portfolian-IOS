@@ -77,7 +77,7 @@ final class MyAlamofireManager {
     
     func finishProject(projectID: String, complete: Bool, completion: @escaping (Result<Void, MyError>) -> Void) {
         self.session
-            .request(MyProjectRouter.putFinishProject(projectID: projectID, complete: complete))
+            .request(MyProjectRouter.patchFinishProject(projectID: projectID, complete: complete))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseJSON(completionHandler: { response in
                 guard let responseValue = response.value else { return }
@@ -218,8 +218,7 @@ final class MyAlamofireManager {
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-                guard let code = responseJson["code"].int,
-                      let message = responseJson["message"].string else { return }
+                guard let code = responseJson["code"].int else { return }
                 if code == 1 {
                     completion(.success(code))
                 } else if code == -99 {
@@ -232,7 +231,46 @@ final class MyAlamofireManager {
     }
     
     func patchMyProfile(myInfo: UserProfile, completion: @escaping (Result<Int, MyError>) -> Void) {
-        let route = MyUserRouter.patchMyProfile(myInfo: myInfo)
+        self.session
+            .request(MyUserRouter.patchMyProfile(myInfo: myInfo))
+            .validate(statusCode: 200..<401)
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                guard let code = responseJson["code"].int else { return }
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+            .responseData { (response) in
+                print(response)
+                completion(.success(1))
+            }
+    }
+    
+    func patchMyDefaultPhoto(completion: @escaping (Result<String, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.patchMyDefaultPhoto)
+            .validate(statusCode: 200..<401)
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                guard let code = responseJson["code"].int else { return }
+                guard let profileImage = responseJson["profileURL"].string else { return }
+                if code == 1 {
+                    completion(.success(profileImage))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+    }
+    
+    func patchMyPhoto(profileImage: UIImage, completion: @escaping (Result<Int, MyError>) -> Void) {
+        let route = MyUserRouter.patchMyPhoto(image: profileImage)
         self.session
             .upload(multipartFormData: route.multipartFormData, with: route)
             .uploadProgress { (progress) in
@@ -275,6 +313,8 @@ final class MyAlamofireManager {
                     KeychainManager.shared.create(key: "accessToken", token: accessToken)
                     JwtToken.shared.accessToken = accessToken
                     completion(true)
+                } else {
+                    completion(false)
                 }
             }
     }

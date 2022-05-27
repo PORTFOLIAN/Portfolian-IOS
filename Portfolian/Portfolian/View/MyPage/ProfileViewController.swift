@@ -140,6 +140,8 @@ class ProfileViewController: UIViewController {
         
     }
 
+    var beforeImage = UIImage()
+        
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -156,9 +158,13 @@ class ProfileViewController: UIViewController {
                 URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
                     (data, response, error) -> Void in
                     DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
                         if let data = data {
                             let image = UIImage(data: data)
-                            self?.profileButton.setImage(image, for: .normal)
+                            self.profileButton.setImage(image, for: .normal)
+                            if self.profileButton.currentImage != nil {
+                                self.beforeImage = self.profileButton.currentImage!
+                            }
                         }
                     }
                 }).resume()
@@ -297,11 +303,30 @@ class ProfileViewController: UIViewController {
         let library = UIAlertAction(title: "사진 앨범", style: .default) { _ in
             self.openLibrary()
         }
-        
+        let defaultImage = UIAlertAction(title: "기본 이미지", style: .default) { _ in
+            MyAlamofireManager.shared.patchMyDefaultPhoto { [weak self] result in
+                switch result {
+                case .success(let profileImage):
+                    URLSession.shared.dataTask( with: NSURL(string: profileImage)! as URL, completionHandler: {
+                        (data, response, error) -> Void in
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
+                            if let data = data {
+                                let image = UIImage(data: data)
+                                self.profileButton.setImage(image, for: .normal)
+                                self.beforeImage = image!
+                            }
+                        }
+                    }).resume()
+                default:
+                    break
+                }
+            }
+        }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         alert.addAction(library)
+        alert.addAction(defaultImage)
         alert.addAction(cancelAction)
-        
         self.present(alert, animated: true)
     }
     
@@ -319,15 +344,20 @@ class ProfileViewController: UIViewController {
     }
     
     func saveProfile() {
-        guard let profileImage = profileButton.imageView?.image else {return}
+        if beforeImage != profileButton.currentImage! {
+            MyAlamofireManager.shared.patchMyPhoto(profileImage: profileButton.currentImage!) { _ in
+            }
+        }
         var stringTags: [String] = []
         for tag in myTag.names {
             stringTags.append(tag.rawValue)
         }
-        let myInfo = UserProfile(nickName: nicknameTextField.text!, description: introduceTextView.text!, stack: stringTags, photo: profileImage, github: githubTextField.text!, mail: emailTextField.text!)
-        MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { _ in
+        let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
+        MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
+            guard let self = self else { return }
             self.navigationController?.popViewController(animated: true)
         }
+        
     }
     
     func openLibrary() {
@@ -432,10 +462,8 @@ extension ProfileViewController: UITextViewDelegate {
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { [weak self] in
             guard let self = self else { return }
-            print(self.scrollView.contentInset)
             self.scrollView.contentInset = .zero
             self.scrollView.setContentOffset(.zero, animated: true)
-            print(self.scrollView.contentInset)
         })
         return true
     }

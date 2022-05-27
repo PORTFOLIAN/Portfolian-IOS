@@ -14,6 +14,8 @@ enum MyUserRouter: URLRequestConvertible {
     case patchNickName(nickName: String)
     case getProfile(userId: String)
     case patchMyProfile(myInfo: UserProfile)
+    case patchMyDefaultPhoto
+    case patchMyPhoto(image: UIImage)
     case deleteUserId
     case postBookMark(bookmark: Bookmark)
     case arrangeProject
@@ -23,7 +25,7 @@ enum MyUserRouter: URLRequestConvertible {
     
     var method: HTTPMethod {
         switch self {
-        case .patchNickName, .patchMyProfile:
+        case .patchNickName, .patchMyProfile, .patchMyDefaultPhoto, .patchMyPhoto:
             return .patch
         case .getProfile:
             return .get
@@ -39,15 +41,19 @@ enum MyUserRouter: URLRequestConvertible {
     var endPoint: String {
         switch self {
         case .patchNickName:
-            return "\(JwtToken.shared.userId )/nickName"
+            return "\(JwtToken.shared.userId)/nickName"
         case .patchMyProfile:
-            return "\(JwtToken.shared.userId )/info"
+            return "\(JwtToken.shared.userId)/info"
         case let .getProfile(userId):
             return "\(userId)/info"
         case .deleteUserId:
             return "\(JwtToken.shared.userId)"
         case .postBookMark, .arrangeProject:
-            return "\(JwtToken.shared.userId )/bookMark"
+            return "\(JwtToken.shared.userId)/bookMark"
+        case .patchMyDefaultPhoto:
+            return "\(JwtToken.shared.userId)/profile/default"
+        case .patchMyPhoto:
+            return "\(JwtToken.shared.userId)/profile"
         }
     }
     
@@ -58,12 +64,7 @@ enum MyUserRouter: URLRequestConvertible {
         case let .postBookMark(bookmark):
             return bookmark
         case let .patchMyProfile(myInfo):
-            return [
-                "nickName": myInfo.nickName,
-                "description": myInfo.description,
-                "github": myInfo.github,
-                "mail": myInfo.mail,
-            ]
+            return myInfo
         default:
             return nil
         }
@@ -79,7 +80,9 @@ enum MyUserRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
         case .postBookMark:
             request = try JSONParameterEncoder().encode(parameter as? Bookmark, into: request)
-        case .getProfile, .deleteUserId, .arrangeProject, .patchMyProfile:
+        case .patchMyProfile:
+            request = try JSONParameterEncoder().encode(parameter as? UserProfile, into: request)
+        case .getProfile, .deleteUserId, .arrangeProject, .patchMyDefaultPhoto, .patchMyPhoto:
             return request
         }
         return request
@@ -88,16 +91,8 @@ enum MyUserRouter: URLRequestConvertible {
     var multipartFormData: MultipartFormData {
         let multipartFormData = MultipartFormData()
         switch self {
-        case let .patchMyProfile(myInfo):
-            for (key, value) in parameter as! Parameters {
-                if value as! String != "" {
-                    multipartFormData.append( "\(value)".data(using: String.Encoding.utf8)!  , withName: key)
-                }
-            }
-            for value in myInfo.stack {
-                multipartFormData.append( "\(value)".data(using: String.Encoding.utf8)!, withName: "stack")
-            }
-            multipartFormData.append(myInfo.photo.jpegData(compressionQuality: 0)!, withName: "photo", fileName: "profile.jpeg", mimeType: "image/jpeg")
+        case let .patchMyPhoto(image):
+            multipartFormData.append(image.jpegData(compressionQuality: 0)!, withName: "photo", fileName: "profile.jpeg", mimeType: "image/jpeg")
         default:
             break
         }

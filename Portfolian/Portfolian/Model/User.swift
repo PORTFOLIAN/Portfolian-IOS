@@ -33,11 +33,10 @@ struct Bookmark: Codable {
     var bookMarked: Bool
 }
 
-struct UserProfile {
+struct UserProfile: Codable {
     var nickName : String
     var description : String
     var stack : [String]
-    var photo : UIImage
     var github : String
     var mail : String
 }
