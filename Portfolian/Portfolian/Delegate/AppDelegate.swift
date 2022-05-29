@@ -10,6 +10,8 @@ import CoreData
 import SocketIO
 import Firebase
 import UserNotifications
+import AppTrackingTransparency
+import AdSupport
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,18 +19,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        if #available(iOS 10.0, *) {
-            // For iOS 10 display notification (sent via APNS)
-            UNUserNotificationCenter.current().delegate = self
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization( options: authOptions, completionHandler: {_, _ in })
+        self.askNotificationPermission(application, options: launchOptions) { Bool in
+            if Bool {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    guard let self = self else { return }
+                    self.requestPermission()
+                }
+            }
         }
-        else {
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-        application.registerForRemoteNotifications()
-        
         Messaging.messaging().delegate = self
         Messaging.messaging().token { token, error in
             if let error = error {
@@ -38,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("FCM registration token: \(token)")
             }
         }
+        
         return true
     }
     
@@ -87,11 +86,52 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+    private func requestPermission() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:
+                // Tracking authorization dialog was shown
+                // and we are authorized
+                print("Authorized")
+                
+                // Now that we are authorized we can get the IDFA
+                print(ASIdentifierManager.shared().advertisingIdentifier)
+            case .denied:
+                // Tracking authorization dialog was
+                // shown and permission is denied
+                print("Denied")
+            case .notDetermined:
+                // Tracking authorization dialog has not been shown
+                print("Not Determined")
+            case .restricted:
+                print("Restricted")
+            @unknown default:
+                print("Unknown")
+            }
+        }
+    }
+    
+    private func askNotificationPermission(_ application: UIApplication, options: [UIApplication.LaunchOptionsKey: Any]?, completion: @escaping (Bool) -> Void) {
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().delegate = self
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in return completion(true)})
+        } else {
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+            return completion(false)
+        }
+        application.registerForRemoteNotifications()
+        return completion(false)
+    }
 }
-var fcm: String = ""
+
 extension AppDelegate : MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         fcm = fcmToken!
+        MyAlamofireManager.shared.patchFcm(fcm: fcm) { _ in
+            
+        }
         print("파이어베이스 토큰: \(fcmToken)")
     }
 }

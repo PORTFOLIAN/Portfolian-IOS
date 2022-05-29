@@ -251,6 +251,27 @@ final class MyAlamofireManager {
             }
     }
     
+    func patchFcm(fcm: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+        self.session
+            .request((MyUserRouter.patchFcm(fcm: fcm)))
+            .validate(statusCode: 200..<401)
+            .responseJSON { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                guard let code = responseJson["code"].int else { return }
+                if code == 1 {
+                    completion(.success(code))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+            .responseData { (response) in
+                print(response)
+                completion(.success(1))
+            }
+    }
+    
     func patchMyDefaultPhoto(completion: @escaping (Result<String, MyError>) -> Void) {
         self.session
             .request(MyUserRouter.patchMyDefaultPhoto)

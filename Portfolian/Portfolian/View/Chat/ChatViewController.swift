@@ -72,7 +72,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         myDateFormatter.dateFormat = "MM월 dd일" // 2020년 08월 13일 오후 04시 30분
         let convertStr = myDateFormatter.string(from: date!)
         cell.dateLabel.text = convertStr
-        
+        cell.numLabel.text = String(chatRoomInfo.newChatCnt)
         cell.lastChatLabel.text = chatRoomInfo.newChatContent
         cell.projectLabel.text = chatRoomInfo.projectTitle
         cell.titleLabel.text = chatRoomInfo.user.nickName

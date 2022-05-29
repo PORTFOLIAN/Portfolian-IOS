@@ -44,11 +44,8 @@ class ChatRoomCell: UITableViewCell {
     }
     
     var numLabel = UILabel().then { UILabel in
-        UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 12)
-        UILabel.textColor = .white
-        UILabel.backgroundColor = ColorPortfolian.thema
-        UILabel.layer.cornerRadius = 5
-        UILabel.layer.borderColor = UIColor.clear.cgColor
+        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 12)
+        UILabel.textColor = ColorPortfolian.thema
         UILabel.clipsToBounds = true
         UILabel.textAlignment = .center
         UILabel.sizeToFit()

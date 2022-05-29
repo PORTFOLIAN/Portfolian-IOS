@@ -148,6 +148,7 @@ class SigninViewController: UIViewController {
                         JwtToken.shared.refreshToken = refreshToken
                         JwtToken.shared.userId = Jwt.shared.userId
                         if Jwt.shared.isNew == true {
+                            
                             self.setNickName()
                         } else {
                             self.goHome()

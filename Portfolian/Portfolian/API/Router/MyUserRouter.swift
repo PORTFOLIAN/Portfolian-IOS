@@ -19,13 +19,14 @@ enum MyUserRouter: URLRequestConvertible {
     case deleteUserId
     case postBookMark(bookmark: Bookmark)
     case arrangeProject
+    case patchFcm(fcm: String)
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users")!
     }
     
     var method: HTTPMethod {
         switch self {
-        case .patchNickName, .patchMyProfile, .patchMyDefaultPhoto, .patchMyPhoto:
+        case .patchNickName, .patchMyProfile, .patchMyDefaultPhoto, .patchMyPhoto, .patchFcm:
             return .patch
         case .getProfile:
             return .get
@@ -42,6 +43,8 @@ enum MyUserRouter: URLRequestConvertible {
         switch self {
         case .patchNickName:
             return "\(JwtToken.shared.userId)/nickName"
+        case .patchFcm:
+            return "\(JwtToken.shared.userId)/fcm"
         case .patchMyProfile:
             return "\(JwtToken.shared.userId)/info"
         case let .getProfile(userId):
@@ -65,6 +68,8 @@ enum MyUserRouter: URLRequestConvertible {
             return bookmark
         case let .patchMyProfile(myInfo):
             return myInfo
+        case let .patchFcm(fcm):
+            return ["fcmToken": fcm]
         default:
             return nil
         }
@@ -82,6 +87,8 @@ enum MyUserRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter as? Bookmark, into: request)
         case .patchMyProfile:
             request = try JSONParameterEncoder().encode(parameter as? UserProfile, into: request)
+        case .patchFcm:
+            request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
         case .getProfile, .deleteUserId, .arrangeProject, .patchMyDefaultPhoto, .patchMyPhoto:
             return request
         }

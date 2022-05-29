@@ -12,6 +12,7 @@ import Toast_Swift
 import KakaoSDKAuth
 import KakaoSDKUser
 import CoreData
+import MessageUI
 
 class SettingViewController: UIViewController {
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -22,17 +23,17 @@ class SettingViewController: UIViewController {
     
     let settingMenu = [
         "버전",
+        "문의하기",
         "로그아웃",
         "회원 탈퇴"
     ]
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.delegate = self
         tableView.dataSource = self
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         
-//        self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.title = "설정"
 
         self.navigationItem.largeTitleDisplayMode = .always
@@ -44,6 +45,13 @@ class SettingViewController: UIViewController {
         }
     }
     
+    private func checkEmailAvailability() -> Bool {
+        if !MFMailComposeViewController.canSendMail() {
+            print("Mail services are not available")
+            return false
+        }
+        return true
+    }
 }
 
 extension SettingViewController: UITableViewDelegate {
@@ -54,11 +62,23 @@ extension SettingViewController: UITableViewDelegate {
         
         switch (indexPath.row) {
         case 0:
-            print("화면이동 2")
             let version = "1.0.0"
             view.makeToast("현재 버전은 \(version)입니다.😶‍🌫️", duration: 1.0, position: .center)
-            
         case 1:
+            if checkEmailAvailability()
+            {
+                let composeVC = MFMailComposeViewController()
+                composeVC.mailComposeDelegate = self
+                composeVC.setToRecipients(["sanghyle@icloud.com"])
+                composeVC.setSubject("문의하기")
+                composeVC.setMessageBody("\(UIDevice.current.localizedModel)\n\(UIDevice.current.systemVersion)\n\(UIDevice.current.orientation)\n- 문의내용:", isHTML: false)
+                                  
+                self.present(composeVC, animated: true, completion: nil)
+            } else {
+                showSendMailErrorAlert()
+            }
+            
+        case 2:
             switch loginType {
             case .kakao:
                 logoutKakao()
@@ -172,6 +192,15 @@ extension SettingViewController: UITableViewDelegate {
     @objc func buttonPressed(_ sender: UIBarButtonItem) {
         navigationController?.popViewController(animated: true)
     }
+    
+    func showSendMailErrorAlert() {
+        let sendMailErrorAlert = UIAlertController(title: "메일 전송 실패", message: "아이폰 이메일 설정을 확인하고 다시 시도해주세요.", preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "확인", style: .default) {
+            (action) in
+        }
+        sendMailErrorAlert.addAction(confirmAction)
+        self.present(sendMailErrorAlert, animated: true, completion: nil)
+    }
 }
 
 extension SettingViewController: UITableViewDataSource {
@@ -198,4 +227,10 @@ extension SettingViewController: UITableViewDataSource {
         return 50.0;//Choose your custom row height
     }
     
+}
+
+extension SettingViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+            controller.dismiss(animated: true, completion: nil)
+        }
 }

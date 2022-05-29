@@ -103,7 +103,6 @@ extension FilterViewController: UICollectionViewDataSource {
         cell.configure(tagName: tagName, tagColor: tagColor, index: tag.index)
         return cell
     }
-
 }
 
 

@@ -242,14 +242,17 @@ class MyPageViewController: UIViewController {
         case gitHubButton:
             if let githubString = githubString {
                 if let url = URL(string: githubString) {
-                    let safariViewController = WebViewController()
-                    safariViewController.url = url
-                    present(safariViewController, animated: true, completion: nil)
-                    
+                    if githubString == "https://github.com/" {
+                        self.view.makeToast("깃허브 주소를 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
+                    } else {
+                        let safariViewController = WebViewController()
+                        safariViewController.url = url
+                        present(safariViewController, animated: true, completion: nil)
+                    }
                 } else {
-                    self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
-                }
+                        self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
             }
+        }
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
         default:

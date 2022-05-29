@@ -480,7 +480,14 @@ class WritingSaveViewController: UIViewController {
         }
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
-            self.navigationController?.popViewController(animated: true)
+            MyAlamofireManager.shared.deleteProject(projectID: projectInfo.projectId) { result in
+                switch result {
+                case .success(1):
+                    self.navigationController?.popViewController(animated: true)
+                default:
+                    break
+                }
+            }
         }
         
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)

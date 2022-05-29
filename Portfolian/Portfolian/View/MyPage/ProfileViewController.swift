@@ -344,20 +344,33 @@ class ProfileViewController: UIViewController {
     }
     
     func saveProfile() {
-        if beforeImage != profileButton.currentImage! {
+        if beforeImage != profileButton.currentImage! && isValidEmail(testStr: emailTextField.text!) {
             MyAlamofireManager.shared.patchMyPhoto(profileImage: profileButton.currentImage!) { _ in
+                var stringTags: [String] = []
+                for tag in myTag.names {
+                    stringTags.append(tag.rawValue)
+                }
+
+                let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
+                MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.navigationController?.popViewController(animated: true)
+                }
             }
+        } else if isValidEmail(testStr: emailTextField.text!) {
+            var stringTags: [String] = []
+            for tag in myTag.names {
+                stringTags.append(tag.rawValue)
+            }
+    
+            let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
+            MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
+                guard let self = self else { return }
+                self.navigationController?.popViewController(animated: true)
+            }
+        } else {
+            self.view.makeToast("올바르지 않은 이메일 형식입니다.", duration: 1.5, position: .center)
         }
-        var stringTags: [String] = []
-        for tag in myTag.names {
-            stringTags.append(tag.rawValue)
-        }
-        let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
-        MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
-            guard let self = self else { return }
-            self.navigationController?.popViewController(animated: true)
-        }
-        
     }
     
     func openLibrary() {
@@ -406,6 +419,15 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         }
         let size = button.frame.size
         return CGSize(width: size.width, height: size.height + 10)
+    }
+    
+    func isValidEmail(testStr:String) -> Bool {
+        if testStr == "" {
+            return true
+        }
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: testStr)
     }
 }
 

@@ -27,9 +27,7 @@ class SocketIOManager: NSObject {
     }
 
     func receiveMessage(completion: @escaping (ChatType) -> Void) {
-        self.socket.on("chat:receive") { (dataArray, socketAck) in            
-            print("***************************************")
-            print(dataArray)
+        self.socket.on("chat:receive") { (dataArray, socketAck) in
             let data = dataArray[0] as! NSDictionary
             let chat = ChatType(chatRoomId: data["chatRoomId"] as? String ?? "", sender: data["sender"] as? String ?? "", receiver: data["receiver"] as? String ?? "", messageContent: data["messageContent"] as! String, messageType: data["messageType"] as? String ?? "", date: data["date"] as? String ?? "")
             completion(chat)

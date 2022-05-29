@@ -11,18 +11,16 @@ import KakaoSDKUser
 import KakaoSDKCommon
 import CoreData
 
-
 class ViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         let viewControllers: [UIViewController] = [
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarHomeFill"), tag: 1),
             initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarBookmark"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
@@ -43,8 +41,8 @@ class ViewController: UITabBarController {
     }
     
     private func appleAutoLogin(viewControllers: [UIViewController]) {
-            self.fetchToken()
-            self.setViewControllers(viewControllers, animated: true)
+        self.fetchToken()
+        self.setViewControllers(viewControllers, animated: true)
     }
     
     private func kakaoAutoLogin(viewControllers: [UIViewController]) {
@@ -68,17 +66,17 @@ class ViewController: UITabBarController {
         JwtToken.shared.refreshToken = refreshToken
         JwtToken.shared.userId = userId
     }
-        
+    
     private func goToSiginIn() {
-      if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-        sceneDelegate.goToSignIn()
-      }
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.goToSignIn()
+        }
     }
     
     private func goHome() {
-      if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-        sceneDelegate.goHome()
-      }
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.goHome()
+        }
     }
     
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
