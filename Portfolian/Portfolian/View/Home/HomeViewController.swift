@@ -131,18 +131,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         constraints()
         initRefresh()
         self.tableView.separatorStyle = .none
-        if loginType != .no {
-            SocketIOManager.shared.establishConnection()
-            
-            SocketIOManager.shared.connectCheck { Bool in
-                if Bool {
-                    SocketIOManager.shared.sendAuth()
-                    SocketIOManager.shared.receiveMessage() { ChatType in
-                        self.view.makeToast(ChatType.messageContent, duration: 0.5, position: .center)
-                    }
-                }
-            }
-        }
     }
     
     // Mark: SetupLogo
@@ -208,13 +196,12 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             searchProject(searchOption:projectSearch)
         case refreshControl:
             print("새로고침 시작")
-            
+            searchProject(searchOption:projectSearch)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
                 self?.tableView.reloadData()
                 self?.refreshControl.endRefreshing()
                 self?.cache = NSCache()
             }
-            
         default:
             break
         }

@@ -233,26 +233,35 @@ class MyPageViewController: UIViewController {
             }
 
         case emailButton:
-            if emailString != "" {
-                UIPasteboard.general.string = emailString
-                self.view.makeToast("이메일이 클립보드로 저장되었습니다.", duration: 1.0, position: .center)
-            } else {
-                self.view.makeToast("유저가 이메일을 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
-            }
-        case gitHubButton:
-            if let githubString = githubString {
-                if let url = URL(string: githubString) {
-                    if githubString == "https://github.com/" {
-                        self.view.makeToast("깃허브 주소를 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
-                    } else {
-                        let safariViewController = WebViewController()
-                        safariViewController.url = url
-                        present(safariViewController, animated: true, completion: nil)
-                    }
+            if loginType != .no {
+                if emailString != "" {
+                    UIPasteboard.general.string = emailString
+                    self.view.makeToast("이메일이 클립보드로 저장되었습니다.", duration: 1.0, position: .center)
                 } else {
-                        self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
+                    self.view.makeToast("유저가 이메일을 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
+                }
+            } else {
+                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
             }
-        }
+
+        case gitHubButton:
+            if loginType != .no {
+                if let githubString = githubString {
+                    if let url = URL(string: githubString) {
+                        if githubString == "https://github.com/" {
+                            self.view.makeToast("깃허브 주소를 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
+                        } else {
+                            let safariViewController = WebViewController()
+                            safariViewController.url = url
+                            present(safariViewController, animated: true, completion: nil)
+                        }
+                    } else {
+                        self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
+                    }
+                }
+            } else {
+                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
+            }
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
         default:

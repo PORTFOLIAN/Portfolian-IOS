@@ -43,14 +43,30 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
-        // Do any additional setup after loading the view.
+        SocketIOManager.shared.receiveMessage() { [weak self] chatType in
+            guard let self = self else { return }
+            if chatType.sender != JwtToken.shared.userId {
+                MyAlamofireManager.shared.fetchChatRoomList { [weak self] result in
+                    guard let self = self else { return }
+                    switch result{
+                    case let .success(chatRoomList):
+                        self.chatRoomList = chatRoomList
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    default:
+                        print("오류")
+                    }
+                }
+            }
+        }
     }
 }
 

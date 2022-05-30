@@ -9,11 +9,11 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKCommon
 import Firebase
-import UserNotifications
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    let center = UNUserNotificationCenter.current()
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
@@ -36,7 +36,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarVC = ViewController()
         window?.rootViewController = tabBarVC
         window?.makeKeyAndVisible()
-
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -61,9 +60,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to undo the changes made on entering the background.
         if loginType != .no {
             SocketIOManager.shared.establishConnection()
+            SocketIOManager.shared.connectCheck { Bool in
+                if Bool {
+                    SocketIOManager.shared.sendAuth()
+                }
+            }
         }
     }
-
+    
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
@@ -83,4 +87,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       window?.makeKeyAndVisible()
     }
 }
-

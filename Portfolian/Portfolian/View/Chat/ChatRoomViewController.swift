@@ -296,7 +296,6 @@ class ChatRoomViewController: UIViewController {
                         switch result {
                         case let .success(chatMessageList):
                             
-                            
                             self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
                             self.index = self.myChat.count
                             self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)

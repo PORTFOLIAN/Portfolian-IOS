@@ -35,6 +35,7 @@ class ViewController: UITabBarController {
             appleAutoLogin (viewControllers: viewControllers)
         case .no:
             self.setViewControllers(viewControllers, animated: true)
+            
         default:
             goToSiginIn()
         }
@@ -42,6 +43,10 @@ class ViewController: UITabBarController {
     
     private func appleAutoLogin(viewControllers: [UIViewController]) {
         self.fetchToken()
+        if loginType != .no {
+            MyAlamofireManager.shared.patchFcm(fcm: fcm) { _ in
+            }
+        }
         self.setViewControllers(viewControllers, animated: true)
     }
     
@@ -50,6 +55,10 @@ class ViewController: UITabBarController {
             UserApi.shared.accessTokenInfo { (_, _) in
                 //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                 self.fetchToken()
+                if loginType != .no {
+                    MyAlamofireManager.shared.patchFcm(fcm: fcm) { _ in
+                    }
+                }
                 self.setViewControllers(viewControllers, animated: true)
             }
         } else {

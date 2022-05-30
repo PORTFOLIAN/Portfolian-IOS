@@ -46,7 +46,7 @@ struct ChatLists: Codable {
 struct ChatRoomList: Codable {
     let code: Int
     let message: String
-    var chatRoomList: [ChatRoom]
+    let chatRoomList: [ChatRoom]
     
     init() {
         code = 0
@@ -54,6 +54,7 @@ struct ChatRoomList: Codable {
         chatRoomList = [ChatRoom]()
     }
 }
+
 struct ChatRoom: Codable {
     let chatRoomId: String
     let projectTitle: String
@@ -68,8 +69,7 @@ struct ChatRoom: Codable {
         newChatContent = ""
         newChatDate = ""
         user = UserInfo()
-    }
-    
+    }    
 }
 struct UserInfo: Codable {
     let userId: String

@@ -25,7 +25,7 @@ class BaseInterceptor: RequestInterceptor {
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("BaseInterceptor - retry() called")
-
+        
         guard let statusCode = request.response?.statusCode else {
             completion(.doNotRetryWithError(error))
             return
