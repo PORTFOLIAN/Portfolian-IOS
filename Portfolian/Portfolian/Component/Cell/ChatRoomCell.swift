@@ -39,12 +39,21 @@ class ChatRoomCell: UITableViewCell {
     var projectLabel = UILabel().then { UILabel in
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 14)
-        UILabel.numberOfLines = 2
+        UILabel.numberOfLines = 0
         UILabel.textAlignment = .right
     }
     
     var numLabel = UILabel().then { UILabel in
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 12)
+        UILabel.textColor = ColorPortfolian.thema
+        UILabel.clipsToBounds = true
+        UILabel.textAlignment = .center
+        UILabel.sizeToFit()
+    }
+    
+    var plusLabel = UILabel().then { UILabel in
+        UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 12)
+        UILabel.text = "+"
         UILabel.textColor = ColorPortfolian.thema
         UILabel.clipsToBounds = true
         UILabel.textAlignment = .center
@@ -70,7 +79,7 @@ class ChatRoomCell: UITableViewCell {
         containerView.addSubview(profileImageView)
         containerView.addSubview(projectLabel)
         containerView.addSubview(numLabel)
-
+        containerView.addSubview(plusLabel)
         containerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(16)
             make.top.equalTo(self)
@@ -85,13 +94,14 @@ class ChatRoomCell: UITableViewCell {
         
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
-            make.trailing.equalTo(self.snp.centerX).offset(10)
+            make.trailing.equalTo(self.snp.centerX).offset(40)
             make.bottom.equalTo(profileImageView.snp.centerY)
         }
         
         lastChatLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
             make.top.equalTo(profileImageView.snp.centerY)
+            make.trailing.equalTo(self.snp.centerX).offset(40)
         }
         
         dateLabel.snp.makeConstraints { make in
@@ -99,15 +109,20 @@ class ChatRoomCell: UITableViewCell {
         }
         
         projectLabel.snp.makeConstraints { make in
-            make.top.equalTo(dateLabel.snp.bottom).offset(5)
-            make.leading.equalTo(self.snp.centerX).offset(20)
+            make.top.equalTo(dateLabel.snp.bottom).priority(1000)
+            make.leading.equalTo(self.snp.centerX).offset(50)
             make.trailing.equalTo(dateLabel)
-            make.bottom.lessThanOrEqualTo(self).offset(5)
+            make.bottom.lessThanOrEqualTo(self).offset(-15).priority(999)
         }
         
         numLabel.snp.makeConstraints { make in
             make.centerY.equalTo(dateLabel)
             make.trailing.equalTo(dateLabel.snp.leading).offset(-10)
+        }
+        
+        plusLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(numLabel.snp.leading)
+            make.centerY.equalTo(dateLabel)
         }
     }
     

@@ -15,6 +15,11 @@ class MyPageViewController: UIViewController {
     let titleLabel = UILabel().then { UILabel in
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
     }
+    
+    lazy var reportBarButtonItem = UIBarButtonItem(image: UIImage(named: "report"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
+        UIBarButtonItem.image?.accessibilityPath?.lineWidth = 0.4
+    }
     lazy var tagCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 1, height: 1), collectionViewLayout: LeftAlignedCollectionViewFlowLayout()).then { UICollectionView in
         UICollectionView.isUserInteractionEnabled = false
     }
@@ -73,22 +78,22 @@ class MyPageViewController: UIViewController {
     
     var emailString: String?
     var githubString: String?
+    var userId: String = ""
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        let userId: String
         if profileType == .yourProfile {
             userId = chatRoom.user.userId
             navigationItem.title = "유저 프로필"
             navigationItem.leftBarButtonItem = cancelBarButtonItem
-            navigationItem.rightBarButtonItem = nil
+            navigationItem.rightBarButtonItem = reportBarButtonItem
         } else if profileType == .yourProjectProfile {
             userId = projectInfo.leader.userId
             navigationItem.title = "유저 프로필"
             navigationItem.leftBarButtonItem = cancelBarButtonItem
-            navigationItem.rightBarButtonItem = nil
+            navigationItem.rightBarButtonItem = reportBarButtonItem
         } else {
             userId = JwtToken.shared.userId
             titleLabel.text = "마이 프로필"
@@ -264,6 +269,13 @@ class MyPageViewController: UIViewController {
             }
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
+        case reportBarButtonItem:
+            self.reportAlert { [weak self] report in
+                guard let self = self else { return }
+                MyAlamofireManager.shared.reportUser(userId: self.userId, reason: report) { result in
+                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 0.75, position: .center)
+                }
+            }
         default:
             break
         }
@@ -288,6 +300,36 @@ class MyPageViewController: UIViewController {
                 })
             })
         })
+    }
+    func reportAlert(completion: @escaping (String)->Void) {
+        let alert = UIAlertController(title: "신고 사유 선택", message: nil, preferredStyle: .actionSheet)
+        var reportString = ""
+        let report1 = UIAlertAction(title: "욕설을 했어요", style: .default) { _ in
+            reportString = "욕설을 했어요"
+            completion(reportString)
+        }
+        let report2 = UIAlertAction(title: "성희롱을 했어요", style: .default) { _ in
+            reportString = "성희롱을 했어요"
+            completion(reportString)
+        }
+        let report3 = UIAlertAction(title: "다른 목적의 대화를 시도해요", style: .default) { _ in
+            reportString = "다른 목적의 대화를 시도해요"
+            completion(reportString)
+        }
+        let report4 = UIAlertAction(title: "부적절한 아이디에요", style: .default) { _ in
+            reportString = "부적절한 아이디에요"
+         
+            completion(reportString)
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+
+        alert.addAction(report1)
+        alert.addAction(report2)
+        alert.addAction(report3)
+        alert.addAction(report4)
+        
+        alert.addAction(cancelAction)
+        self.present(alert, animated: false)
     }
 }
 

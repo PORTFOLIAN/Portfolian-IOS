@@ -18,6 +18,12 @@ class WritingSaveViewController: UIViewController {
     lazy var editBarButtonItem = UIBarButtonItem(image: UIImage(named: "edit"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
         UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
+    
+    lazy var reportBarButtonItem = UIBarButtonItem(image: UIImage(named: "report"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
+        UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
+        UIBarButtonItem.image?.accessibilityPath?.lineWidth = 0.4
+    }
+    
     var bookmarkToggle = false
     
     var bookmarkButton = UIButton().then { UIButton in
@@ -48,6 +54,7 @@ class WritingSaveViewController: UIViewController {
         UILabel.text = "React를 활용한 간단한 로그인 기능 구현하기"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 20)
         UILabel.numberOfLines = 0
+        UILabel.sizeToFit()
     })
     
     var leftUIView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 30)).then({ UIView in
@@ -254,9 +261,9 @@ class WritingSaveViewController: UIViewController {
         tagsCollectionView.isUserInteractionEnabled = false
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         if JwtToken.shared.userId  == projectInfo.leader.userId {
-            navigationItem.rightBarButtonItem =   editBarButtonItem
+            navigationItem.rightBarButtonItem = editBarButtonItem
         } else {
-            navigationItem.rightBarButtonItem = nil
+            navigationItem.rightBarButtonItem = reportBarButtonItem
         }
         view.addSubview(bookmarkButton)
         view.addSubview(titleLabel)
@@ -301,14 +308,13 @@ class WritingSaveViewController: UIViewController {
         
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.trailing.equalTo(bookmarkButton).inset(10)
+            make.trailing.equalTo(bookmarkButton.snp.leading).offset(-10)
             make.top.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(50)
         }
 
         bookmarkButton.snp.makeConstraints { make in
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
-            make.centerY.equalTo(titleLabel)
+            make.top.equalTo(titleLabel)
         }
         
         viewsLabel.snp.makeConstraints { make in
@@ -489,11 +495,56 @@ class WritingSaveViewController: UIViewController {
                 }
             }
         }
-        
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        
         alert.addAction(cancelAction)
         alert.addAction(editAction)
         alert.addAction(refuseAction)
+        self.present(alert, animated: false)
+    }
+    
+    func reportAlert(completion: @escaping (String)->Void) {
+        let alert = UIAlertController(title: "신고 사유 선택", message: nil, preferredStyle: .actionSheet)
+        var reportString = ""
+        let report1 = UIAlertAction(title: "부적절한 글이에요", style: .default) { _ in
+            reportString = "부적절한 글이에요"
+            completion(reportString)
+        }
+        let report2 = UIAlertAction(title: "낚시성 글이에요", style: .default) { _ in
+            reportString = "낚시성 글이에요"
+            completion(reportString)
+        }
+        let report3 = UIAlertAction(title: "홍보성 글이에요", style: .default) { _ in
+            reportString = "홍보성 글이에요"
+            completion(reportString)
+        }
+        let report4 = UIAlertAction(title: "도배성 글이에요", style: .default) { _ in
+            reportString = "도배성 글이에요"
+            completion(reportString)
+        }
+        let report5 = UIAlertAction(title: "광고성 글이에요", style: .default) { _ in
+            reportString = "광고성 글이에요"
+            completion(reportString)
+        }
+        let report6 = UIAlertAction(title: "정치적 글이에요", style: .default) { _ in
+            reportString = "정치적 글이에요"
+            completion(reportString)
+        }
+        let report7 = UIAlertAction(title: "음란성 글이에요", style: .default) { _ in
+            reportString = "음란성 글이에요"
+            completion(reportString)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+
+        alert.addAction(report1)
+        alert.addAction(report2)
+        alert.addAction(report3)
+        alert.addAction(report4)
+        alert.addAction(report5)
+        alert.addAction(report6)
+        alert.addAction(report7)
+        alert.addAction(cancelAction)
         self.present(alert, animated: false)
     }
     
@@ -503,6 +554,12 @@ class WritingSaveViewController: UIViewController {
             self.alert()
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
+        case reportBarButtonItem:
+            self.reportAlert { report in
+                MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) { result in
+                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 0.75, position: .center)
+                }
+            }
         case bookmarkButton:
             bookmarkToggle.toggle()
 
@@ -549,7 +606,7 @@ class WritingSaveViewController: UIViewController {
             profileType = .yourProjectProfile
             let chatRoomVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "MyPageVC")
             self.navigationController?.pushViewController(chatRoomVC, animated: true)
-            
+
         default:
             print("error?")
         }

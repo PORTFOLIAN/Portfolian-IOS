@@ -322,6 +322,7 @@ class ProfileViewController: UIViewController {
                     break
                 }
             }
+            self.view.makeToast("프로필 사진이 기본 이미지로 변경되었습니다.", duration: 0.75, position: .center)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         alert.addAction(library)

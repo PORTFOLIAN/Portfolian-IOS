@@ -90,7 +90,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         setUpItem()
         setUpLogo()
         cache = NSCache()

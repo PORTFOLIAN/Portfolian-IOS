@@ -17,6 +17,7 @@ enum MyProjectRouter: URLRequestConvertible {
     case deleteProject(projectID: String)
     case putProject(term: ProjectArticle)
     case patchFinishProject(projectID: String, complete: Bool)
+    
     var baseURL: URL {
         return URL(string: API.BASE_URL + "projects/")!
     }
@@ -76,6 +77,7 @@ enum MyProjectRouter: URLRequestConvertible {
             return ["status" : intValue]
         case .arrangeProject(let searchOption):
             return searchOption
+        
         }
     }
     

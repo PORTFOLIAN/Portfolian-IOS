@@ -72,6 +72,7 @@
 		513DC58B2834F51500C676F5 /* DateToString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513DC58A2834F51500C676F5 /* DateToString.swift */; };
 		513DC58D2835038B00C676F5 /* MarkdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513DC58C2835038B00C676F5 /* MarkdownViewController.swift */; };
 		513DC58F2835039600C676F5 /* Markdown.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513DC58E2835039600C676F5 /* Markdown.storyboard */; };
+		5141EA1E28458B7A005C2F29 /* MyReportsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141EA1D28458B7A005C2F29 /* MyReportsRouter.swift */; };
 		51493D5B27E7757A004461D2 /* UIImageView+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51493D5A27E7757A004461D2 /* UIImageView+URL.swift */; };
 		514FC8F4281BFD6900D2B761 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514FC8F3281BFD6900D2B761 /* WebViewController.swift */; };
 		5167EC132831C03D00B0BE76 /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5167EC122831C03D00B0BE76 /* BaseNavigationController.swift */; };
@@ -166,6 +167,7 @@
 		513DC58A2834F51500C676F5 /* DateToString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateToString.swift; sourceTree = "<group>"; };
 		513DC58C2835038B00C676F5 /* MarkdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownViewController.swift; sourceTree = "<group>"; };
 		513DC58E2835039600C676F5 /* Markdown.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Markdown.storyboard; sourceTree = "<group>"; };
+		5141EA1D28458B7A005C2F29 /* MyReportsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReportsRouter.swift; sourceTree = "<group>"; };
 		51493D5A27E7757A004461D2 /* UIImageView+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+URL.swift"; sourceTree = "<group>"; };
 		514FC8F3281BFD6900D2B761 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		5167EC122831C03D00B0BE76 /* BaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
@@ -439,6 +441,7 @@
 				2AB7824527706932004E0408 /* MyOauthRouter.swift */,
 				2AB782492770DB13004E0408 /* MyUserRouter.swift */,
 				5185704827F8319700612885 /* MyChatRouter.swift */,
+				5141EA1D28458B7A005C2F29 /* MyReportsRouter.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -666,6 +669,7 @@
 				2ABBF3B4273C7A95005A09D0 /* TagDataStore.swift in Sources */,
 				2A28E0CB2755532700061B11 /* WritingSaveViewController.swift in Sources */,
 				2A16479B27713DA900A84554 /* Writing+CoreDataClass.swift in Sources */,
+				5141EA1E28458B7A005C2F29 /* MyReportsRouter.swift in Sources */,
 				2A17B88827220B7100A0D598 /* Constants.swift in Sources */,
 				2AFB5418271E2FEE00B6FFC6 /* BookmarkViewController.swift in Sources */,
 				2ABBF3B8273DB700005A09D0 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,

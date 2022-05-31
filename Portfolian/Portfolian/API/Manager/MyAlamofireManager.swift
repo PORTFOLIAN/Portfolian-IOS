@@ -480,4 +480,36 @@ final class MyAlamofireManager {
                 }
             }
     }
+    
+    func reportUser(userId: String, reason: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+        self.session
+            .request(MyReportsRouter.postReportUser(userId: userId, reason: reason))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+    }
+    
+    func reportProject(projectID: String, reason: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+        self.session
+            .request(MyReportsRouter.postReportProject(projectID: projectID, reason: reason))
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { response in
+                guard let responseData = response.data else { return }
+                guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                let code = codeMessage.code
+                if code == 1 {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(.networkError))
+                }
+            }
+    }
 }

@@ -14,11 +14,13 @@ struct Jwt: Codable {
     let isNew: Bool
     var accessToken: String
     var userId: String
+    let isBan: Bool
     init() {
         self.code = 0
         self.isNew = true
         self.accessToken = ""
         self.userId = ""
+        self.isBan = false
     }
 }
 
