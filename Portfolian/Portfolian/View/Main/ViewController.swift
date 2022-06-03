@@ -20,7 +20,7 @@ class ViewController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         let viewControllers: [UIViewController] = [
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarHomeFill"), tag: 1),
             initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarBookmark"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
@@ -42,24 +42,38 @@ class ViewController: UITabBarController {
     }
     
     private func appleAutoLogin(viewControllers: [UIViewController]) {
-        self.fetchToken()
-        if loginType != .no {
-            MyAlamofireManager.shared.patchFcm(fcm: fcm) { _ in
+        self.fetchToken() {
+            guard let fcm = fcm else {
+                reportFcm = { fcm in
+                    MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                        self.setViewControllers(viewControllers, animated: true)
+                    }
+                }
+                return
+            }
+            MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                self.setViewControllers(viewControllers, animated: true)
             }
         }
-        self.setViewControllers(viewControllers, animated: true)
     }
     
     private func kakaoAutoLogin(viewControllers: [UIViewController]) {
         if (AuthApi.hasToken()) {
             UserApi.shared.accessTokenInfo { (_, _) in
                 //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                self.fetchToken()
-                if loginType != .no {
-                    MyAlamofireManager.shared.patchFcm(fcm: fcm) { _ in
+                self.fetchToken() {
+                    guard let fcm = fcm else {
+                        reportFcm = { fcm in
+                            MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                                self.setViewControllers(viewControllers, animated: true)
+                            }
+                        }
+                        return
+                    }
+                    MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                        self.setViewControllers(viewControllers, animated: true)
                     }
                 }
-                self.setViewControllers(viewControllers, animated: true)
             }
         } else {
             // 로그인 창으로
@@ -67,13 +81,14 @@ class ViewController: UITabBarController {
         }
     }
     
-    func fetchToken() {
+    func fetchToken(completion: @escaping () -> Void) {
         guard let accessToken = KeychainManager.shared.read(key: "accessToken") else { return }
         guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
         guard let userId = KeychainManager.shared.read(key: "userId") else { return }
         JwtToken.shared.accessToken = accessToken
         JwtToken.shared.refreshToken = refreshToken
         JwtToken.shared.userId = userId
+        completion()
     }
     
     private func goToSiginIn() {
@@ -96,5 +111,4 @@ class ViewController: UITabBarController {
             profileType = .yourProjectProfile
         }
     }
-    
 }

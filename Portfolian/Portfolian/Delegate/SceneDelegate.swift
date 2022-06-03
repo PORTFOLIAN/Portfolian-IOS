@@ -8,13 +8,12 @@
 import UIKit
 import KakaoSDKAuth
 import KakaoSDKCommon
-import Firebase
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     let center = UNUserNotificationCenter.current()
-    
+
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
           if (AuthApi.isKakaoTalkLoginUrl(url)) {
@@ -74,8 +73,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
         if loginType != .no {
             SocketIOManager.shared.closeConnection()
+            print("socket disconnect")
         }
     }
+    
+    
     
     func goToSignIn() {
       window?.rootViewController = SigninViewController()

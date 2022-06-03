@@ -9,25 +9,14 @@ import UIKit
 import SocketIO
 import Firebase
 import UserNotifications
-import AdSupport
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        self.askNotificationPermission(application)
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
-        
-        self.askNotificationPermission(application)
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("Error fetching FCM registration token: \(error)")
-            }
-            else if let token = token {
-                print("FCM registration token: \(token)")
-                fcm = token
-            }
-        }
         return true
     }
     
@@ -50,12 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-extension AppDelegate : MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        fcm = fcmToken!
-    }
-}
-
 extension AppDelegate : UNUserNotificationCenterDelegate {
     // 알림이 도착했을 때
     func userNotificationCenter(_ center: UNUserNotificationCenter,willPresent notification: UNNotification,withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -73,3 +56,14 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         completionHandler()
     }
 }
+extension AppDelegate : MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        if loginType != .no {
+            if fcmToken != nil {
+                fcm = fcmToken!
+                reportFcm?(fcm!)
+            }
+        }
+    }
+}
+

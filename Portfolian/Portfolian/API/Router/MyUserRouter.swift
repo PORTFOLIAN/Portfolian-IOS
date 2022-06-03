@@ -63,7 +63,7 @@ enum MyUserRouter: URLRequestConvertible {
     var parameter: Any? {
         switch self {
         case let .patchNickName(nickName):
-            return ["nickName": nickName, "fcmToken": fcm]
+            return ["nickName": nickName, "fcmToken": ""]
         case let .postBookMark(bookmark):
             return bookmark
         case let .patchMyProfile(myInfo):
