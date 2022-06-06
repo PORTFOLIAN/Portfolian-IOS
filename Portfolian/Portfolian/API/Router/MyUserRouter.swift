@@ -20,6 +20,7 @@ enum MyUserRouter: URLRequestConvertible {
     case postBookMark(bookmark: Bookmark)
     case arrangeProject
     case patchFcm(fcm: String)
+    case getIsBan
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users")!
     }
@@ -34,7 +35,7 @@ enum MyUserRouter: URLRequestConvertible {
             return .delete
         case .postBookMark:
             return .post
-        case .arrangeProject:
+        case .arrangeProject, .getIsBan:
             return .get
         }
     }
@@ -57,6 +58,8 @@ enum MyUserRouter: URLRequestConvertible {
             return "\(JwtToken.shared.userId)/profile/default"
         case .patchMyPhoto:
             return "\(JwtToken.shared.userId)/profile"
+        case .getIsBan:
+            return "\(JwtToken.shared.userId)/isBan"
         }
     }
     
@@ -89,7 +92,7 @@ enum MyUserRouter: URLRequestConvertible {
             request = try JSONParameterEncoder().encode(parameter as? UserProfile, into: request)
         case .patchFcm:
             request = try JSONParameterEncoder().encode(parameter as? [String:String], into: request)
-        case .getProfile, .deleteUserId, .arrangeProject, .patchMyDefaultPhoto, .patchMyPhoto:
+        case .getProfile, .deleteUserId, .arrangeProject, .patchMyDefaultPhoto, .patchMyPhoto, .getIsBan:
             return request
         }
         return request

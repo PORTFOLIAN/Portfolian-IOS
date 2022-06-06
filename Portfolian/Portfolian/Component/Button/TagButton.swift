@@ -58,7 +58,7 @@ class TagButton: UIButton {
 
                 self.alpha = 0.5
                 let time = DispatchTime.now() + .milliseconds(300)
-                window?.rootViewController?.view.makeToast("😅 태그는 최대 7개까지 지정할 수 있습니다.", duration: 1.0, position: .center)
+                window?.rootViewController?.view.makeToast("😅 태그는 최대 1개까지 검색할 수 있습니다.", duration: 1.0, position: .center)
                 DispatchQueue.main.asyncAfter(deadline: time) {
                     self.alpha = 1
                 }

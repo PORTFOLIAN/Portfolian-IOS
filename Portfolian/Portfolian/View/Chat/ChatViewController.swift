@@ -68,6 +68,10 @@ class ChatViewController: UIViewController {
             }
         }
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+    }
 }
 
 extension ChatViewController: UITableViewDelegate, UITableViewDataSource {

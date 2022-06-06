@@ -77,8 +77,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
-    
-    
     func goToSignIn() {
       window?.rootViewController = SigninViewController()
       window?.makeKeyAndVisible()

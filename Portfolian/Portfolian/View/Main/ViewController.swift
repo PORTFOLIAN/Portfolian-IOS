@@ -43,16 +43,28 @@ class ViewController: UITabBarController {
     
     private func appleAutoLogin(viewControllers: [UIViewController]) {
         self.fetchToken() {
-            guard let fcm = fcm else {
-                reportFcm = { fcm in
-                    MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                        self.setViewControllers(viewControllers, animated: true)
+            
+            MyAlamofireManager.shared.fetchIsBan { result in
+                switch result {
+                case .success(let Bool):
+                    if Bool {
+                        guard let fcm = fcm else {
+                            reportFcm = { fcm in
+                                MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                                    self.setViewControllers(viewControllers, animated: true)
+                                }
+                            }
+                            return
+                        }
+                        MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                            self.setViewControllers(viewControllers, animated: true)
+                        }
+                    } else {
+                        self.view.makeToast("신고가 3번이상 누적되어 이용정지되었습니다.", duration: 1.5, position: .center)
                     }
+                case .failure:
+                    break
                 }
-                return
-            }
-            MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                self.setViewControllers(viewControllers, animated: true)
             }
         }
     }
@@ -62,16 +74,28 @@ class ViewController: UITabBarController {
             UserApi.shared.accessTokenInfo { (_, _) in
                 //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                 self.fetchToken() {
-                    guard let fcm = fcm else {
-                        reportFcm = { fcm in
-                            MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                                self.setViewControllers(viewControllers, animated: true)
+                    MyAlamofireManager.shared.fetchIsBan { result in
+                        switch result {
+                        case .success(let Bool):
+                            if Bool {
+                                guard let fcm = fcm else {
+                                    reportFcm = { fcm in
+                                        MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                                            self.setViewControllers(viewControllers, animated: true)
+                                        }
+                                    }
+                                    return
+                                }
+                                MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
+                                    
+                                    self.setViewControllers(viewControllers, animated: true)
+                                }
+                            } else {
+                                self.view.makeToast("신고가 3번이상 누적되어 이용 정지되었습니다.", duration: 1.5, position: .center)
                             }
+                        case .failure:
+                            break
                         }
-                        return
-                    }
-                    MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                        self.setViewControllers(viewControllers, animated: true)
                     }
                 }
             }

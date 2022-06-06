@@ -118,7 +118,6 @@ class SigninViewController: UIViewController {
             self.goHome()
         case appleLoginButton:
             let request = ASAuthorizationAppleIDProvider().createRequest()
-//            request.requestedScopes = [.fullName, .email]
             
             let authorizationController = ASAuthorizationController(authorizationRequests: [request])
             authorizationController.delegate = self as ASAuthorizationControllerDelegate
@@ -147,11 +146,23 @@ class SigninViewController: UIViewController {
                         JwtToken.shared.accessToken = Jwt.shared.accessToken
                         JwtToken.shared.refreshToken = refreshToken
                         JwtToken.shared.userId = Jwt.shared.userId
+                        
                         if Jwt.shared.isNew == true {
-                            
-                            self.setNickName()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.setNickName()
+                                }
+                            }
                         } else {
-                            self.goHome()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.goHome()
+                                }
+                            }
                         }
                         
                     case .failure:
@@ -182,9 +193,21 @@ class SigninViewController: UIViewController {
                         JwtToken.shared.refreshToken = refreshToken
                         JwtToken.shared.userId = Jwt.shared.userId
                         if Jwt.shared.isNew == true {
-                            self.setNickName()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.setNickName()
+                                }
+                            }
                         } else {
-                            self.goHome()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.goHome()
+                                }
+                            }
                         }
                         
                     case .failure:
@@ -231,9 +254,21 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
                         JwtToken.shared.refreshToken = refreshToken
                         JwtToken.shared.userId = Jwt.shared.userId
                         if Jwt.shared.isNew == true {
-                            self.setNickName()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.setNickName()
+                                }
+                            }
                         } else {
-                            self.goHome()
+                            SocketIOManager.shared.establishConnection()
+                            SocketIOManager.shared.connectCheck { Bool in
+                                if Bool {
+                                    SocketIOManager.shared.sendAuth()
+                                    self.goHome()
+                                }
+                            }
                         }
                         
                     case .failure:

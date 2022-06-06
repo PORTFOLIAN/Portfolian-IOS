@@ -419,7 +419,6 @@ final class MyAlamofireManager {
                 
                 let responseJson = JSON(responseValue)
                 guard let code = responseJson["code"].int,
-                      let message = responseJson["message"].string,
                       let chatRoomId = responseJson["chatRoomId"].string
                 else { return }
                 if code == 1 {
@@ -509,6 +508,29 @@ final class MyAlamofireManager {
                     completion(.success(()))
                 } else {
                     completion(.failure(.networkError))
+                }
+            }
+    }
+    func fetchIsBan(completion: @escaping (Result<Bool, MyError>) -> Void) {
+        self.session
+            .request(MyUserRouter.getIsBan)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseJSON  { response in
+                guard let responseValue = response.value else { return }
+                
+                let responseJson = JSON(responseValue)
+                // 데이터 파싱
+                guard let code = responseJson["code"].int,
+                      let isBan = responseJson["isBan"].bool else { return }
+                
+                if code == 1 {
+                    if !isBan {
+                        completion(.success(true))
+                    } else {
+                        completion(.success(false))
+                    }
+                } else {
+                    completion(.failure(.testError))
                 }
             }
     }

@@ -15,7 +15,6 @@ class ChatRoomViewController: UIViewController {
     
     var chatRoomId = String()
     var receiverId = String()
-
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:)))
 
     lazy var tableView = UITableView().then { make in
@@ -52,7 +51,7 @@ class ChatRoomViewController: UIViewController {
     }
     
     var sendButton = UIButton().then { UIButton in
-        UIButton.setImage(UIImage(named: "send"), for: .normal)
+        UIButton.setImage(UIImage(named: "send")?.withTintColor(ColorPortfolian.gray2, renderingMode: .alwaysOriginal), for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
     
@@ -66,12 +65,13 @@ class ChatRoomViewController: UIViewController {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 let time = dateFormatter.string(from: now)
-                let chat = ChatType(chatRoomId: chatRoomId, sender: JwtToken.shared.userId, receiver: receiverId, messageContent: textView.text, messageType: "Chat", date: time)
+                let chat = ChatType(chatRoomId: chatRoomId, sender: JwtToken.shared.userId, receiver: self.receiverId, messageContent: textView.text, messageType: "Chat", date: time)
                 self.isYourFirstChat = true
                 SocketIOManager.shared.sendMessage(chat)
                 myChat.append(chat)
                 updateChat(count: myChat.count) {
                 }
+                textView.text = ""
             }
         } else if sender == leaveBarButtonItem {
             MyAlamofireManager.shared.exitChatRoom(chatRoomId: chatRoomId, completion: { response in
@@ -203,6 +203,8 @@ class ChatRoomViewController: UIViewController {
         super.viewDidDisappear(animated)
         chatRoomId = ""
         myChat = []
+        chatTitle = ""
+        removeKeyboardNotifications()
     }
     
     override func viewDidLoad() {
@@ -266,7 +268,7 @@ class ChatRoomViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         let photo = chatRootType == .project ? projectInfo.leader.photo : chatRoom.user.photo
         URLSession.shared.dataTask(with: NSURL(string: photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
@@ -283,10 +285,11 @@ class ChatRoomViewController: UIViewController {
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         let date = dateFormatter.string(from: now)
         if chatRootType == .project {
+            chatTitle = projectInfo.leader.nickName
             self.receiverId = projectInfo.leader.userId
             headerLabel.text = projectInfo.title
             navigationItem.title = projectInfo.leader.nickName
-            MyAlamofireManager.shared.fetchRoomId(userId: receiverId, projectId: projectInfo.projectId) { [weak self] result in
+            MyAlamofireManager.shared.fetchRoomId(userId: self.receiverId, projectId: projectInfo.projectId) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case let .success(roomId):
@@ -312,11 +315,9 @@ class ChatRoomViewController: UIViewController {
                 case .failure:
                     break
                 }
-            
             }
-           
-           
         } else {
+            chatTitle = chatRoom.user.nickName
             self.chatRoomId = chatRoom.chatRoomId
             self.receiverId = chatRoom.user.userId
             headerLabel.text = chatRoom.projectTitle
@@ -339,20 +340,7 @@ class ChatRoomViewController: UIViewController {
                 }
             }
         }
-        
-        
         addKeyboardNotifications()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        myChat = []
-        removeKeyboardNotifications()
-
-//        let chat = ChatType(roomId: chatRoomId, sender: JwtToken.shared.userId, messageContent: "", date: Date.now)
-//        SocketIOManager.shared.leaveMessage(chat)
-//        myChat.append(chat)
     }
     
     func scrollToMiddle() {
@@ -460,9 +448,7 @@ extension ChatRoomViewController: UITableViewDataSource {
             yourProfileChatCell.dateLabel.text = convertStr
 
         }
-        
-        
-        
+
         print(cellId, indexPath)
         return cell
     }
@@ -474,6 +460,11 @@ extension ChatRoomViewController: UITextViewDelegate {
         let estimatedSize = textView.sizeThatFits(size)
         if estimatedSize.height <= 100 {
             self.textViewHeightConstraint?.update(offset: estimatedSize.height)
+        }
+        if textView.text.isEmpty {
+            sendButton.setImage(UIImage(named: "send")?.withTintColor(ColorPortfolian.gray2, renderingMode: .alwaysOriginal), for: .normal)
+        } else {
+            sendButton.setImage(UIImage(named: "send"), for: .normal)
         }
     }
 }

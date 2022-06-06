@@ -45,6 +45,7 @@ class SocketIOManager: NSObject {
    
     func sendAuth() {
         socket.emit("auth", ["userId": JwtToken.shared.userId])
+        print("소켓 연결")
     }
     
     func sendMessage(_ chatType: ChatType) {

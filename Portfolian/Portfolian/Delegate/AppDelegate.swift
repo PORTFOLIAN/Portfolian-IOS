@@ -42,12 +42,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate : UNUserNotificationCenterDelegate {
     // 알림이 도착했을 때
     func userNotificationCenter(_ center: UNUserNotificationCenter,willPresent notification: UNNotification,withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if notification.request.identifier == "firstPush" {
-            let userInfo = notification.request.content.userInfo
-            print(userInfo)
+        
+        if !(notification.request.content.title == chatTitle) {
+            completionHandler([.list, .banner, .sound])
         }
-        print("메시지 수신")
-        completionHandler([.list, .badge, .sound])
     }
 
     // 백그라운드인 경우 & 사용자가 푸시를 클릭한 경우
