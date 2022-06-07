@@ -197,10 +197,10 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         case refreshControl:
             print("새로고침 시작")
             searchProject(searchOption:projectSearch)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                self?.tableView.reloadData()
-                self?.refreshControl.endRefreshing()
-                self?.cache = NSCache()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+                self.cache = NSCache()
             }
         default:
             break
@@ -393,8 +393,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             let task = URLSession.shared.dataTask( with: NSURL(string:articleInfo.leader.photo)! as URL, completionHandler: {
                 (data, response, error) -> Void in
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
+                DispatchQueue.main.async {
                     guard let cellIndex = tableView.indexPath(for: cell),
                           cellIndex == indexPath else { return }
                     cell.profileImageView.contentMode = .scaleToFill

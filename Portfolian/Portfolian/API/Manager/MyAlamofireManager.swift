@@ -423,91 +423,98 @@ final class MyAlamofireManager {
                 else { return }
                 if code == 1 {
                     completion(.success(chatRoomId))
-                } else if code == -99 {
-                    // accessToken 갱신
-                    
                 } else {
                     completion(.failure(.testError))
                 }
             }
     }
     
-    func fetchChatRoomList(completion: @escaping (Result<ChatRoomList, MyError>) -> Void) {
+    func fetchChatRoomList(completion: @escaping (ChatRoomList) -> Void) {
         self.session
             .request(MyChatRouter.getChatRoomList)
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let chatRoomList = try? JSONDecoder().decode(ChatRoomList.self, from: responseData) else { return }
                 let code = chatRoomList.code
+                let message = chatRoomList.message
                 if code == 1 {
-                    completion(.success(chatRoomList))
+                    completion(chatRoomList)
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
     
-    func fetchChatMessageList(chatRoomId: String, completion: @escaping (Result<ChatMessageList, MyError>) -> Void) {
+    func fetchChatMessageList(chatRoomId: String, completion: @escaping (ChatMessageList) -> Void) {
         self.session
             .request(MyChatRouter.getChatMessageList(chatRoomId: chatRoomId))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let chatMessageList = try? JSONDecoder().decode(ChatMessageList.self, from: responseData) else { return }
                 let code = chatMessageList.code
+                let message = chatMessageList.message
                 if code == 1 {
-                    completion(.success(chatMessageList))
+                    completion(chatMessageList)
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
     
-    func exitChatRoom(chatRoomId: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+    func exitChatRoom(chatRoomId: String, completion: @escaping () -> Void) {
         self.session
             .request(MyChatRouter.putChatRoom(chatRoomId: chatRoomId))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 let code = codeMessage.code
+                let message = codeMessage.message
                 if code == 1 {
-                    completion(.success(()))
+                    completion()
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
     
-    func reportUser(userId: String, reason: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+    func reportUser(userId: String, reason: String, completion: @escaping () -> Void) {
         self.session
             .request(MyReportsRouter.postReportUser(userId: userId, reason: reason))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 let code = codeMessage.code
+                let message = codeMessage.message
                 if code == 1 {
-                    completion(.success(()))
+                    completion()
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
     
-    func reportProject(projectID: String, reason: String, completion: @escaping (Result<Void, MyError>) -> Void) {
+    func reportProject(projectID: String, reason: String, completion: @escaping () -> Void) {
         self.session
             .request(MyReportsRouter.postReportProject(projectID: projectID, reason: reason))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 let code = codeMessage.code
+                let message = codeMessage.message
                 if code == 1 {
-                    completion(.success(()))
+                    completion()
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
@@ -515,23 +522,34 @@ final class MyAlamofireManager {
         self.session
             .request(MyUserRouter.getIsBan)
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON  { response in
+            .responseJSON  { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
                 // 데이터 파싱
                 guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string,
                       let isBan = responseJson["isBan"].bool else { return }
                 
                 if code == 1 {
                     if !isBan {
                         completion(.success(true))
                     } else {
-                        completion(.success(false))
+                        self.toast("신고가 3번이상 누적되어 이용 정지되었습니다.\n관리자에게 문의하세요.")
                     }
                 } else {
+                    self.toast(message)
                     completion(.failure(.testError))
                 }
             }
+    }
+    
+    private func toast(_ message: String) {
+        DispatchQueue.main.async {
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.window?.rootViewController?.view.makeToast("😅 \(message)", duration: 1, position: .center)
+            }
+        }
     }
 }

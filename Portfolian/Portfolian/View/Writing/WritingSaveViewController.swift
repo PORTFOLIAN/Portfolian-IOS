@@ -231,10 +231,10 @@ class WritingSaveViewController: UIViewController {
         configureLabel(md: md)
         URLSession.shared.dataTask( with: NSURL(string: projectInfo.leader.photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 if let data = data {
                     let image = UIImage(data: data)
-                    self?.profileButton.setImage(image, for: .normal)
+                    self.profileButton.setImage(image, for: .normal)
                 }
             }
         }).resume()
@@ -556,8 +556,8 @@ class WritingSaveViewController: UIViewController {
             self.navigationController?.popViewController(animated: true)
         case reportBarButtonItem:
             self.reportAlert { report in
-                MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) { result in
-                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 0.75, position: .center)
+                MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) {
+                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
                 }
             }
         case bookmarkButton:
@@ -584,8 +584,8 @@ class WritingSaveViewController: UIViewController {
                     self.navigationController?.pushViewController(chatRoomVC, animated: true)
                 } else {
                     MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { [weak self] result in
-                        self?.complete.toggle()
                         guard let self = self else { return }
+                        self.complete.toggle()
                         switch result {
                         case .success:
                             if self.complete {
@@ -621,7 +621,7 @@ class WritingSaveViewController: UIViewController {
         .underlineStyle: NSUnderlineStyle.single.rawValue,
         .font: UIFont.italicSystemFont(ofSize: 16)
       ]
-        
+
         // swiftyMarkdown
         let normalText = md.attributedString()
       mutableString.append(normalText)

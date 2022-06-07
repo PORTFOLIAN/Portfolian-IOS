@@ -107,11 +107,10 @@ class MyPageViewController: UIViewController {
                 self.githubString = "https://github.com/" + user.github
                 URLSession.shared.dataTask( with: NSURL(string:user.photo)! as URL, completionHandler: {
                     (data, response, error) -> Void in
-                    DispatchQueue.main.async { [weak self] in
-                        
+                    DispatchQueue.main.async {
                         if let data = data {
                             let image = UIImage(data: data)
-                            self?.profileImageView.image = image
+                            self.profileImageView.image = image
                         }
                     }
                 }).resume()
@@ -272,8 +271,8 @@ class MyPageViewController: UIViewController {
         case reportBarButtonItem:
             self.reportAlert { [weak self] report in
                 guard let self = self else { return }
-                MyAlamofireManager.shared.reportUser(userId: self.userId, reason: report) { result in
-                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 0.75, position: .center)
+                MyAlamofireManager.shared.reportUser(userId: self.userId, reason: report) {
+                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
                 }
             }
         default:

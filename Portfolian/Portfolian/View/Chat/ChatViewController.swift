@@ -27,16 +27,12 @@ class ChatViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
-        MyAlamofireManager.shared.fetchChatRoomList { result in
-            switch result{
-            case let .success(chatRoomList):
-                self.chatRoomList = chatRoomList
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.view.setNeedsLayout()
-                }
-            default:
-                print("오류")
+        MyAlamofireManager.shared.fetchChatRoomList { [weak self] chatRoomList in
+            guard let self = self else { return }
+            self.chatRoomList = chatRoomList
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.view.setNeedsLayout()
             }
         }
     }
@@ -53,16 +49,12 @@ class ChatViewController: UIViewController {
         SocketIOManager.shared.receiveMessage() { [weak self] chatType in
             guard let self = self else { return }
             if chatType.sender != JwtToken.shared.userId {
-                MyAlamofireManager.shared.fetchChatRoomList { [weak self] result in
+                MyAlamofireManager.shared.fetchChatRoomList { [weak self] chatRoomList in
                     guard let self = self else { return }
-                    switch result{
-                    case let .success(chatRoomList):
-                        self.chatRoomList = chatRoomList
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
-                    default:
-                        print("오류")
+                    
+                    self.chatRoomList = chatRoomList
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
                     }
                 }
             }
@@ -127,19 +119,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제", handler: { action, view, completionHaldler in
-            MyAlamofireManager.shared.exitChatRoom(chatRoomId: self.chatRoomList.chatRoomList[indexPath[1]].chatRoomId, completion: { response in
-                MyAlamofireManager.shared.fetchChatRoomList { [weak self] result in
+            MyAlamofireManager.shared.exitChatRoom(chatRoomId: self.chatRoomList.chatRoomList[indexPath[1]].chatRoomId, completion: {
+                MyAlamofireManager.shared.fetchChatRoomList { [weak self] chatRoomList in
                     guard let self = self else { return }
-                    switch result{
-                    case let .success(chatRoomList):
                         self.chatRoomList = chatRoomList
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
                         }
                         tableView.deleteRows(at: [indexPath], with: .fade)
-                    default:
-                        print("오류")
-                    }
                 }
             })
             completionHaldler(true)

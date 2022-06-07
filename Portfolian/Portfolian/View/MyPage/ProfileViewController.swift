@@ -157,8 +157,7 @@ class ProfileViewController: UIViewController {
                 self.introduceTextView.text = user.description
                 URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
                     (data, response, error) -> Void in
-                    DispatchQueue.main.async { [weak self] in
-                        guard let self = self else { return }
+                    DispatchQueue.main.async {
                         if let data = data {
                             let image = UIImage(data: data)
                             self.profileButton.setImage(image, for: .normal)
@@ -305,12 +304,12 @@ class ProfileViewController: UIViewController {
         }
         let defaultImage = UIAlertAction(title: "기본 이미지", style: .default) { _ in
             MyAlamofireManager.shared.patchMyDefaultPhoto { [weak self] result in
+                guard let self = self else { return }
                 switch result {
                 case .success(let profileImage):
                     URLSession.shared.dataTask( with: NSURL(string: profileImage)! as URL, completionHandler: {
                         (data, response, error) -> Void in
-                        DispatchQueue.main.async { [weak self] in
-                            guard let self = self else { return }
+                        DispatchQueue.main.async {
                             if let data = data {
                                 let image = UIImage(data: data)
                                 self.profileButton.setImage(image, for: .normal)

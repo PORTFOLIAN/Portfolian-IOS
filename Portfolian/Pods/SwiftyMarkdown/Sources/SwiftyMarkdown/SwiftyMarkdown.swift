@@ -292,9 +292,17 @@ If that is not set, then the system default will be used.
 	public init?(url : URL ) {
 		
 		do {
-			self.string = try NSString(contentsOf: url, encoding: String.Encoding.utf8.rawValue) as String
-			
-		} catch {
+            if url.description.hasPrefix("http://") {
+                if let convertURL = URL(string: "http://\(url)") {
+                    self.string = try NSString(contentsOf: convertURL, encoding: String.Encoding.utf8.rawValue) as String
+                } else {
+                    self.string = try NSString(contentsOf: url, encoding: String.Encoding.utf8.rawValue) as String
+                }
+            } else {
+                self.string = try NSString(contentsOf: url, encoding: String.Encoding.utf8.rawValue) as String
+            }
+            
+        } catch {
 			self.string = ""
 			return nil
 		}

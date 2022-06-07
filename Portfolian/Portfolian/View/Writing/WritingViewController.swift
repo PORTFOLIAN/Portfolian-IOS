@@ -317,7 +317,7 @@ class WritingViewController: UIViewController {
             make.top.bottom.equalTo(scrollView)
             make.leading.trailing.equalTo(scrollView).inset(20)
             make.width.equalTo(scrollView).offset(-40)
-            make.bottom.equalTo(detailMarkdownTextView).offset(300)
+            make.bottom.equalTo(detailTextView).offset(350)
         }
         
         titleTextField.snp.makeConstraints { make in
@@ -444,13 +444,14 @@ class WritingViewController: UIViewController {
             make.trailing.equalTo(detailTextView)
         }
         
-        detailTextView.snp.makeConstraints { make in
-            make.top.equalTo(detailLabel.snp.bottom).offset(5)
-            make.leading.trailing.equalTo(contentView)
-            make.height.equalTo(300)
-        }
         detailMarkdownTextView.snp.makeConstraints { make in
-            make.top.equalTo(detailTextView.snp.bottom).offset(10)
+            make.top.equalTo(detailLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalTo(contentView)
+            make.height.lessThanOrEqualTo(300)
+        }
+        
+        detailTextView.snp.makeConstraints { make in
+            make.top.equalTo(detailMarkdownTextView.snp.bottom).offset(5)
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(300)
         }

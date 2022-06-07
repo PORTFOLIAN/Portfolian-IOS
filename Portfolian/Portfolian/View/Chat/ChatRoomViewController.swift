@@ -74,14 +74,9 @@ class ChatRoomViewController: UIViewController {
                 textView.text = ""
             }
         } else if sender == leaveBarButtonItem {
-            MyAlamofireManager.shared.exitChatRoom(chatRoomId: chatRoomId, completion: { response in
-                switch response {
-                case .success():
-                    self.navigationController?.popViewController(animated: true)
-                case let .failure(myError):
-                    print(myError)
-                }
-            })
+            MyAlamofireManager.shared.exitChatRoom(chatRoomId: chatRoomId) {
+                self.navigationController?.popViewController(animated: true)
+            }
         } else if sender == cancelBarButtonItem {
             self.navigationController?.popViewController(animated: true)
         }
@@ -294,23 +289,16 @@ class ChatRoomViewController: UIViewController {
                 switch result {
                 case let .success(roomId):
                     self.chatRoomId = roomId
-                    MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: self.chatRoomId) { [weak self] result in
+                    MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: self.chatRoomId) { [weak self] chatMessageList in
                         guard let self = self else { return }
-                        switch result {
-                        case let .success(chatMessageList):
-                            
-                            self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
-                            self.index = self.myChat.count
-                            self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
-                            if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
-                                    self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date), at: self.index)
-                            }
-                            SocketIOManager.shared.readMessage(self.chatRoomId)
-                            self.scrollToMiddle()
-                            
-                        default:
-                            break
+                        self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
+                        self.index = self.myChat.count
+                        self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
+                        if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
+                            self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date), at: self.index)
                         }
+                        SocketIOManager.shared.readMessage(self.chatRoomId)
+                        self.scrollToMiddle()
                     }
                 case .failure:
                     break
@@ -322,10 +310,8 @@ class ChatRoomViewController: UIViewController {
             self.receiverId = chatRoom.user.userId
             headerLabel.text = chatRoom.projectTitle
             navigationItem.title = chatRoom.user.nickName
-            MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: chatRoomId) { [weak self] result in
+            MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: chatRoomId) { [weak self] chatMessageList in
                 guard let self = self else { return }
-                switch result {
-                case let .success(chatMessageList):
                     
                     self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
                     self.index = self.myChat.count
@@ -335,17 +321,13 @@ class ChatRoomViewController: UIViewController {
                     }
                     SocketIOManager.shared.readMessage(self.chatRoomId)
                     self.scrollToMiddle()
-                default:
-                    break
-                }
             }
         }
         addKeyboardNotifications()
     }
     
     func scrollToMiddle() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+        DispatchQueue.main.async {
             self.tableView.reloadData()
             if self.myChat.count > 2 && self.index != 0 {
                 let indexPath = IndexPath(row: self.index - 1, section: 0)
@@ -460,6 +442,9 @@ extension ChatRoomViewController: UITextViewDelegate {
         let estimatedSize = textView.sizeThatFits(size)
         if estimatedSize.height <= 100 {
             self.textViewHeightConstraint?.update(offset: estimatedSize.height)
+        }
+        if myChat.count != 1 && myChat.last?.messageType == "Notice" {
+            textView.text = ""
         }
         if textView.text.isEmpty {
             sendButton.setImage(UIImage(named: "send")?.withTintColor(ColorPortfolian.gray2, renderingMode: .alwaysOriginal), for: .normal)

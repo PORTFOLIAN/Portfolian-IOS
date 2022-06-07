@@ -55,7 +55,8 @@ class BaseInterceptor: RequestInterceptor {
         } else if statusCode == 403 || statusCode == 404 {
             self.toast { Bool in }
             if loginType != .no {
-                MyAlamofireManager.shared.renewAccessToken { Bool in
+                MyAlamofireManager.shared.renewAccessToken { [weak self] bool in
+                    guard let self = self else { return }
                     let vc = SettingViewController()
                     switch loginType {
                     case .kakao:
