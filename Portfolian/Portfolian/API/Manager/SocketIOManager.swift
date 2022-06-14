@@ -18,11 +18,16 @@ class SocketIOManager: NSObject {
     override init() {
         super.init()
         socket = self.manager.defaultSocket
+        
     }
     
     func connectCheck(completion: @escaping (Bool) -> Void) {
         self.socket.on("connection") { _, _ in
+            
             completion(true)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                completion(false)
+//            }
         }
     }
 

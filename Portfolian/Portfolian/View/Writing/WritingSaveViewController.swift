@@ -26,7 +26,7 @@ class WritingSaveViewController: UIViewController {
     
     var bookmarkToggle = false
     
-    var bookmarkButton = UIButton().then { UIButton in
+    lazy var bookmarkButton = UIButton().then { UIButton in
         var image = UIImage(named: "bookmark")
         UIButton.setImage(image, for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -486,13 +486,8 @@ class WritingSaveViewController: UIViewController {
         }
         
         let refuseAction = UIAlertAction(title: "삭제하기", style: .destructive) { _ in
-            MyAlamofireManager.shared.deleteProject(projectID: projectInfo.projectId) { result in
-                switch result {
-                case .success(1):
-                    self.navigationController?.popViewController(animated: true)
-                default:
-                    break
-                }
+            MyAlamofireManager.shared.deleteProject(projectID: projectInfo.projectId) {
+                self.navigationController?.popViewController(animated: true)
             }
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
@@ -556,23 +551,30 @@ class WritingSaveViewController: UIViewController {
             self.navigationController?.popViewController(animated: true)
         case reportBarButtonItem:
             self.reportAlert { report in
-                MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) {
-                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
+                if loginType == .no {
+                    self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+                } else {
+                    MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) {
+                        self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
+                    }
                 }
             }
         case bookmarkButton:
-            bookmarkToggle.toggle()
-
-            if bookmarkToggle {
-                self.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            if loginType == .no {
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
             } else {
-                self.bookmarkButton.setImage(UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), for: .normal)
-            }
-            let bookmark = Bookmark(projectId: projectInfo.projectId, bookMarked: bookmarkToggle)
-            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { result in
-                print(result)
-            }
+                bookmarkToggle.toggle()
 
+                if bookmarkToggle {
+                    self.bookmarkButton.setImage(UIImage(named: "bookmarkFill")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                } else {
+                    self.bookmarkButton.setImage(UIImage(named: "bookmark")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+                let bookmark = Bookmark(projectId: projectInfo.projectId, bookMarked: bookmarkToggle)
+                MyAlamofireManager.shared.postBookmark(bookmark: bookmark)
+
+            }
+            
         case dynamicButton:
             if loginType == .no {
                 self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
@@ -583,20 +585,15 @@ class WritingSaveViewController: UIViewController {
                     let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
                     self.navigationController?.pushViewController(chatRoomVC, animated: true)
                 } else {
-                    MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { [weak self] result in
+                    MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { [weak self] in
                         guard let self = self else { return }
                         self.complete.toggle()
-                        switch result {
-                        case .success:
-                            if self.complete {
-                                self.dynamicButton.backgroundColor = ColorPortfolian.thema
-                                self.dynamicButton.setTitle("  모집 완료  ", for: .normal)
-                            } else {
-                                self.dynamicButton.backgroundColor = ColorPortfolian.gray2
-                                self.dynamicButton.setTitle("  모집 진행  ", for: .normal)
-                            }
-                        case .failure:
-                            break
+                        if self.complete {
+                            self.dynamicButton.backgroundColor = ColorPortfolian.thema
+                            self.dynamicButton.setTitle("  모집 완료  ", for: .normal)
+                        } else {
+                            self.dynamicButton.backgroundColor = ColorPortfolian.gray2
+                            self.dynamicButton.setTitle("  모집 진행  ", for: .normal)
                         }
                     }
                 }
@@ -621,7 +618,7 @@ class WritingSaveViewController: UIViewController {
         .underlineStyle: NSUnderlineStyle.single.rawValue,
         .font: UIFont.italicSystemFont(ofSize: 16)
       ]
-
+        
         // swiftyMarkdown
         let normalText = md.attributedString()
       mutableString.append(normalText)
@@ -682,12 +679,6 @@ extension WritingSaveViewController: UICollectionViewDelegateFlowLayout {
         
        }
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
-        //        TagCOllectionViewCell에서 contentView.isUserInteractionEnabled = true 해주면 함수 동작함. 대신 색이 안 나옴.
-    }
-    
 }
 
 extension WritingSaveViewController: UICollectionViewDataSource {

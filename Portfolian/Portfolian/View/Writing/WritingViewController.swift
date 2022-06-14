@@ -210,36 +210,30 @@ class WritingViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .Writing
         if editType == .edit {
-            MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
-                switch result {
-                case .success(let projectInfo):
-                    
-                    print("view did load \(writingTeamTag.names)")
-                    self.titleTextField.text = projectInfo.title
-                    self.titleTextField.textColor = ColorPortfolian.baseBlack
-                    
-                    self.recruitTextField.text = String(projectInfo.capacity)
-                    self.recruitTextField.textColor = ColorPortfolian.baseBlack
-                    
-                    self.explainTextView.text = projectInfo.contents.subjectDescription
-                    self.explainTextView.textColor = ColorPortfolian.baseBlack
-                    
-                    self.periodTextView.text = projectInfo.contents.projectTime
-                    self.periodTextView.textColor = ColorPortfolian.baseBlack
-                    
-                    self.optionTextView.text = projectInfo.contents.recruitmentCondition
-                    self.optionTextView.textColor = ColorPortfolian.baseBlack
-                    
-                    self.proceedTextView.text = projectInfo.contents.progress
-                    self.proceedTextView.textColor = ColorPortfolian.baseBlack
-                    
-                    self.detailTextView.text = projectInfo.contents.description
-                    self.detailTextView.textColor = ColorPortfolian.baseBlack
-                    
-                    self.configureLabel(fromTextView: self.detailTextView, toTextView: self.detailMarkdownTextView)
-                case .failure(let error):
-                    print("\(error)")
-                }
+            MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { [weak self] in
+                guard let self = self else { return }
+                self.titleTextField.text = projectInfo.title
+                self.titleTextField.textColor = ColorPortfolian.baseBlack
+                
+                self.recruitTextField.text = String(projectInfo.capacity)
+                self.recruitTextField.textColor = ColorPortfolian.baseBlack
+                
+                self.explainTextView.text = projectInfo.contents.subjectDescription
+                self.explainTextView.textColor = ColorPortfolian.baseBlack
+                
+                self.periodTextView.text = projectInfo.contents.projectTime
+                self.periodTextView.textColor = ColorPortfolian.baseBlack
+                
+                self.optionTextView.text = projectInfo.contents.recruitmentCondition
+                self.optionTextView.textColor = ColorPortfolian.baseBlack
+                
+                self.proceedTextView.text = projectInfo.contents.progress
+                self.proceedTextView.textColor = ColorPortfolian.baseBlack
+                
+                self.detailTextView.text = projectInfo.contents.description
+                self.detailTextView.textColor = ColorPortfolian.baseBlack
+                
+                self.configureLabel(fromTextView: self.detailTextView, toTextView: self.detailMarkdownTextView)
             }
         } else if isMovingToParent == true {
             fetchWriting()
@@ -599,61 +593,41 @@ class WritingViewController: UIViewController {
             
             let projectArticle = ProjectArticle(title: titleTextField.text, stackList: stringTags, subjectDescription: explainTextView.text, projectTime: periodTextView.text, condition: optionTextView.text, progress: proceedTextView.text, description: detailTextView.text, capacity: numRecruit)
             if editType == .yet {
-                MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] result in
+                MyAlamofireManager.shared.getProjectID(projectTerm: projectArticle) { [weak self] in
                     guard let self = self else { return }
-                    switch result {
-                    case .success:
-                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
-                            switch result {
-                            case .success:
-                                self.deleteWriting()
-                                for tag in projectInfo.stackList{
-                                    guard let tagName = Tag.Name(rawValue: tag) else { return }
-                                    writingTeamTag.names.append(tagName)
-                                }
-                                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
-                                writingOwnerTag.names.append(tagName)
-                                
-                                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                                self.navigationController?.popToRootViewController(animated: true)
-                                self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                            case .failure(let error):
-                                // self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
-                                print("\(error)")
+                    
+                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { [weak self] in
+                            guard let self = self else { return }
+                            self.deleteWriting()
+                            for tag in projectInfo.stackList{
+                                guard let tagName = Tag.Name(rawValue: tag) else { return }
+                                writingTeamTag.names.append(tagName)
                             }
+                            guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+                            writingOwnerTag.names.append(tagName)
+                            
+                            let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                            self.navigationController?.popToRootViewController(animated: true)
+                            self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
                         }
-                        
-                    case .failure(let error):
-                        self.view.makeToast(error.rawValue, duration: 1.0, position: .center)
-                    }
                 }
             } else {
-                MyAlamofireManager.shared.putProject(projectArticle: projectArticle) { result in
-                    switch result {
-                    case .success:
-                        MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
-                            switch result {
-                            case .success:
-                                writingOwnerTag.names = []
-                                writingTeamTag.names = []
-                                
-                                for tag in projectInfo.stackList{
-                                    guard let tagName = Tag.Name(rawValue: tag) else { return }
-                                    writingTeamTag.names.append(tagName)
-                                }
-                                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
-                                writingOwnerTag.names.append(tagName)
-                                
-                                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                                self.navigationController?.popToRootViewController(animated: true)
-                                self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                            case .failure(let error):
-                                // self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
-                                print("\(error)")
-                            }
+                MyAlamofireManager.shared.putProject(projectArticle: projectArticle) {
+                    MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { [weak self] in
+                        guard let self = self else { return }
+                        writingOwnerTag.names = []
+                        writingTeamTag.names = []
+                        
+                        for tag in projectInfo.stackList{
+                            guard let tagName = Tag.Name(rawValue: tag) else { return }
+                            writingTeamTag.names.append(tagName)
                         }
-                    case .failure:
-                        print("실패")
+                        guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
+                        writingOwnerTag.names.append(tagName)
+                        
+                        let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+                        self.navigationController?.popToRootViewController(animated: true)
+                        self.navigationController?.viewControllers.first?.navigationController?.pushViewController(WritingSaveVC, animated: true)
                     }
                 }
             }
@@ -661,14 +635,10 @@ class WritingViewController: UIViewController {
             if editType == .yet {
                 self.alert("임시 저장하시겠습니까?")
             } else {
-                MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { result in
-                    switch result {
-                    case .success:
-                        print("WritingViewController \(writingTeamTag.names)")
-                        self.navigationController?.popViewController(animated: true)
-                    default:
-                        break
-                    }
+                MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { [weak self] in
+                    guard let self = self else { return }
+                    print("WritingViewController \(writingTeamTag.names)")
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
         case stackButton, chevronButton:
@@ -689,7 +659,7 @@ class WritingViewController: UIViewController {
     }
     
     fileprivate func configureLabel(fromTextView: UITextView, toTextView: UITextView) {
-        let md = SwiftyMarkdown(string: "\n" + fromTextView.text)
+        let md = SwiftyMarkdown(string: fromTextView.text)
         toTextView.attributedText = md.attributedString()
         guard let messageText = toTextView.text else { return }
         let mutableString = NSMutableAttributedString()
@@ -795,14 +765,7 @@ extension WritingViewController: UICollectionViewDelegateFlowLayout {
             let size = label.frame.size
             return CGSize(width: size.width, height: size.height + 10)
         }
-        
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
-        //        TagCOllectionViewCell에서 contentView.isUserInteractionEnabled = true 해주면 함수 동작함. 대신 색이 안 나옴.
-    }
-    
 }
 
 extension WritingViewController: UICollectionViewDataSource {

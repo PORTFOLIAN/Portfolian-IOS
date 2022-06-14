@@ -73,13 +73,8 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Buttonhandler
     @objc func ButtonHandler(_ sender: UIButton) {
         if checkNickname(nicknameTextField) == true {
-            MyAlamofireManager.shared.patchNickName(nickName: nicknameTextField.text!) { result in
-                switch result{
-                case .success:
-                    self.goToHome()
-                case .failure(let error):
-                    print(error)
-                }
+            MyAlamofireManager.shared.patchNickName(nickName: nicknameTextField.text!) {
+                self.goToHome()
             }
         }
         

@@ -36,37 +36,36 @@ class BaseInterceptor: RequestInterceptor {
                 if bool {
                     completion(.retryWithDelay(0.5))
                 } else {
-                    self.toast { Bool in
-                        if (Bool) {
-                            let vc = SettingViewController()
-                            switch loginType {
-                            case .apple:
-                                vc.logoutApple()
-                            case .kakao:
-                                vc.logoutKakao()
-                            default:
-                                break
-                            }
-                            self.goToSignin()
+                    self.toast {
+                        let vc = SettingViewController()
+                        switch loginType {
+                        case .apple:
+                            vc.logoutApple()
+                        case .kakao:
+                            vc.logoutKakao()
+                        default:
+                            break
                         }
+                        self.goToSignin()
                     }
                 }
             }
         } else if statusCode == 403 || statusCode == 404 {
-            self.toast { Bool in }
-            if loginType != .no {
-                MyAlamofireManager.shared.renewAccessToken { [weak self] bool in
-                    guard let self = self else { return }
-                    let vc = SettingViewController()
-                    switch loginType {
-                    case .kakao:
-                        vc.logoutKakao()
-                    case .apple:
-                        vc.logoutApple()
-                    default:
-                        break
+            self.toast {
+                if loginType != .no {
+                    MyAlamofireManager.shared.renewAccessToken { [weak self] bool in
+                        guard let self = self else { return }
+                        let vc = SettingViewController()
+                        switch loginType {
+                        case .kakao:
+                            vc.logoutKakao()
+                        case .apple:
+                            vc.logoutApple()
+                        default:
+                            break
+                        }
+                        self.goToSignin()
                     }
-                    self.goToSignin()
                 }
             }
         }
@@ -82,13 +81,12 @@ class BaseInterceptor: RequestInterceptor {
         }
     }
     
-    private func toast(_ completion: @escaping (Bool)->(Void)) {
+    private func toast(_ completion: @escaping (()->(Void))) {
         DispatchQueue.main.async {
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                 sceneDelegate.window?.rootViewController?.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
-                completion(true)
+                completion()
             }
-            completion(false)
         }
     }
 }

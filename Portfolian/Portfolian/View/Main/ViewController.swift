@@ -27,7 +27,7 @@ class ViewController: UITabBarController {
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "tabbarChat"), selectedIcon: UIImage(named: "tabbarChatFill"), tag: 3),
             initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "tabbarMyPage"), selectedIcon: UIImage(named: "tabbarMyPageFill"), tag: 4)
         ]
-        loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
+        
         switch loginType {
         case .kakao:
             kakaoAutoLogin(viewControllers: viewControllers)
@@ -35,7 +35,6 @@ class ViewController: UITabBarController {
             appleAutoLogin (viewControllers: viewControllers)
         case .no:
             self.setViewControllers(viewControllers, animated: true)
-            
         default:
             goToSiginIn()
         }
@@ -43,22 +42,12 @@ class ViewController: UITabBarController {
     
     private func appleAutoLogin(viewControllers: [UIViewController]) {
         self.fetchToken() {
-            
-            MyAlamofireManager.shared.fetchIsBan { result in
-                if case let .success(Bool) = result {
-                    if Bool {
-                        guard let fcm = fcm else {
-                            reportFcm = { fcm in
-                                MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                                    self.setViewControllers(viewControllers, animated: true)
-                                }
-                            }
-                            return
-                        }
-                        MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                            self.setViewControllers(viewControllers, animated: true)
-                        }
-                    }
+            MyAlamofireManager.shared.fetchIsBan {
+                guard let fcmToken = KeychainManager.shared.read(key: "fcmToken") else {
+                    self.goToSiginIn()
+                return }
+                MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
+                    self.setViewControllers(viewControllers, animated: true)
                 }
             }
         }
@@ -66,24 +55,22 @@ class ViewController: UITabBarController {
     
     private func kakaoAutoLogin(viewControllers: [UIViewController]) {
         if (AuthApi.hasToken()) {
-            UserApi.shared.accessTokenInfo { (_, _) in
-                //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                self.fetchToken() {
-                    MyAlamofireManager.shared.fetchIsBan { result in
-                        if case let .success(Bool) = result {
-                            if Bool {
-                                guard let fcm = fcm else {
-                                    reportFcm = { fcm in
-                                        MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                                            self.setViewControllers(viewControllers, animated: true)
-                                        }
-                                    }
-                                    return
-                                }
-                                MyAlamofireManager.shared.patchFcm(fcm: fcm) {_ in
-                                    
-                                    self.setViewControllers(viewControllers, animated: true)
-                                }
+            UserApi.shared.accessTokenInfo { [weak self] (_, error) in
+                guard let self = self else { return }
+                if let error = error {
+                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
+                        //로그인 필요
+                        self.goToSiginIn()
+                    }
+                } else {
+                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                    self.fetchToken() {
+                        MyAlamofireManager.shared.fetchIsBan {
+                            guard let fcmToken = KeychainManager.shared.read(key: "fcmToken") else {
+                                self.goToSiginIn()
+                            return }
+                            MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
+                                self.setViewControllers(viewControllers, animated: true)
                             }
                         }
                     }

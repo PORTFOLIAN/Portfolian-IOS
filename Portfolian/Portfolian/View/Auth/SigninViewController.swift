@@ -59,7 +59,7 @@ class SigninViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -132,96 +132,63 @@ class SigninViewController: UIViewController {
     // 카카오톡 앱으로 로그인하기
     func loginAppKakao() {
         UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-            if let error = error {
-                print(error)
-                self.view.makeToast("연결 시도에 실패하였습니다.\n재시도 부탁드립니다😶‍🌫️", duration: 1.5, position: .center)
-            }
-            else {
-                print("loginWithKakaoAccount() success.")
+            if error == nil {
                 guard let accessToken = oauthToken?.accessToken else { return }
-                MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
-                    switch result {
-                    case .success():
-                        guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
-                        JwtToken.shared.accessToken = Jwt.shared.accessToken
-                        JwtToken.shared.refreshToken = refreshToken
-                        JwtToken.shared.userId = Jwt.shared.userId
-                        
-                        if Jwt.shared.isNew == true {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.setNickName()
-                                }
-                            }
-                        } else {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.goHome()
-                                }
+                MyAlamofireManager.shared.postKaKaoToken(token: accessToken) {
+                    guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
+                    JwtToken.shared.accessToken = Jwt.shared.accessToken
+                    JwtToken.shared.refreshToken = refreshToken
+                    JwtToken.shared.userId = Jwt.shared.userId
+                    SocketIOManager.shared.establishConnection()
+                    SocketIOManager.shared.connectCheck { [weak self] Bool in
+                        guard let self = self else { return }
+                        if Bool {
+                            SocketIOManager.shared.sendAuth()
+                            if Jwt.shared.isNew == true {
+                                self.setNickName()
+                            } else {
+                                self.goHome()
                             }
                         }
-                        
-                    case .failure:
-                        print("error")
                     }
-                })
+                }
             }
         }
     }
     
     // 카카오톡 웹으로 로그인하기
     func loginWebKakao() {
-        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-            if let error = error {
-                print(error)
-
-                self.view.makeToast("연결 시도에 실패하였습니다. 재시도 부탁드립니다 :)", duration: 1.0, position: .center)
-
-            }
-            else {
+        UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
+            guard let self = self else { return }
+            if error == nil {
                 print("loginWithKakaoAccount() success.")
                 guard let accessToken = oauthToken?.accessToken else { return }
-                MyAlamofireManager.shared.postKaKaoToken(token: accessToken, completion: { result in
-                    switch result {
-                    case .success():
-                        guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
-                        JwtToken.shared.accessToken = Jwt.shared.accessToken
-                        JwtToken.shared.refreshToken = refreshToken
-                        JwtToken.shared.userId = Jwt.shared.userId
-                        if Jwt.shared.isNew == true {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.setNickName()
-                                }
-                            }
-                        } else {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.goHome()
-                                }
+                MyAlamofireManager.shared.postKaKaoToken(token: accessToken) {
+                    guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
+                    JwtToken.shared.accessToken = Jwt.shared.accessToken
+                    JwtToken.shared.refreshToken = refreshToken
+                    JwtToken.shared.userId = Jwt.shared.userId
+                    SocketIOManager.shared.establishConnection()
+                    SocketIOManager.shared.connectCheck { [weak self] Bool in
+                        guard let self = self else { return }
+                        if Bool {
+                            SocketIOManager.shared.sendAuth()
+                            if Jwt.shared.isNew == true {
+                                self.setNickName()
+                            } else {
+                                self.goHome()
                             }
                         }
-                        
-                    case .failure:
-                        print("error")
                     }
-                })
+                }
             }
         }
     }
     
     private func goHome() {
-      if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-        sceneDelegate.goHome()
-      }
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.goHome()
+        }
     }
     
     // 닉네임설정화면으로 전환
@@ -240,51 +207,33 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
     }
     
     // Apple ID 연동 성공 시
-        func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-            switch authorization.credential {
-                // Apple ID
-            case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                
-                let userIdentifier = appleIDCredential.user
-                MyAlamofireManager.shared.postAppleToken(userId: userIdentifier) { result in
-                    switch result {
-                    case .success():
-                        guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
-                        JwtToken.shared.accessToken = Jwt.shared.accessToken
-                        JwtToken.shared.refreshToken = refreshToken
-                        JwtToken.shared.userId = Jwt.shared.userId
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        switch authorization.credential {
+            // Apple ID
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            
+            let userIdentifier = appleIDCredential.user
+            MyAlamofireManager.shared.postAppleToken(userId: userIdentifier) {
+                guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
+                JwtToken.shared.accessToken = Jwt.shared.accessToken
+                JwtToken.shared.refreshToken = refreshToken
+                JwtToken.shared.userId = Jwt.shared.userId
+                SocketIOManager.shared.establishConnection()
+                SocketIOManager.shared.connectCheck { Bool in
+                    if Bool {
+                        SocketIOManager.shared.sendAuth()
                         if Jwt.shared.isNew == true {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.setNickName()
-                                }
-                            }
+                            self.setNickName()
                         } else {
-                            SocketIOManager.shared.establishConnection()
-                            SocketIOManager.shared.connectCheck { Bool in
-                                if Bool {
-                                    SocketIOManager.shared.sendAuth()
-                                    self.goHome()
-                                }
-                            }
+                            self.goHome()
                         }
-                        
-                    case .failure:
-                        print("error")
                     }
                 }
-            default:
-                break
             }
+        default:
+            break
         }
-        
-        // Apple ID 연동 실패 시
-        func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-            // Handle error.
-            print(error)
-        }
+    }
 }
 
 extension UIButton {

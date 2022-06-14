@@ -147,10 +147,8 @@ class ProfileViewController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] response in
+        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] user in
             guard let self = self else { return }
-            switch response {
-            case .success(let user):
                 self.nicknameTextField.text = user.nickName
                 self.githubTextField.text = user.github
                 self.emailTextField.text = user.mail
@@ -176,9 +174,6 @@ class ProfileViewController: UIViewController {
                     }
                 }
                 self.view.setNeedsLayout()
-            case .failure(let error):
-                print(error)
-            }
         }
     }
     
@@ -303,11 +298,10 @@ class ProfileViewController: UIViewController {
             self.openLibrary()
         }
         let defaultImage = UIAlertAction(title: "기본 이미지", style: .default) { _ in
-            MyAlamofireManager.shared.patchMyDefaultPhoto { [weak self] result in
+            MyAlamofireManager.shared.patchMyDefaultPhoto { [weak self] profileURL in
                 guard let self = self else { return }
-                switch result {
-                case .success(let profileImage):
-                    URLSession.shared.dataTask( with: NSURL(string: profileImage)! as URL, completionHandler: {
+                
+                    URLSession.shared.dataTask( with: NSURL(string: profileURL)! as URL, completionHandler: {
                         (data, response, error) -> Void in
                         DispatchQueue.main.async {
                             if let data = data {
@@ -317,9 +311,6 @@ class ProfileViewController: UIViewController {
                             }
                         }
                     }).resume()
-                default:
-                    break
-                }
             }
             self.view.makeToast("프로필 사진이 기본 이미지로 변경되었습니다.", duration: 0.75, position: .center)
         }
@@ -345,14 +336,14 @@ class ProfileViewController: UIViewController {
     
     func saveProfile() {
         if beforeImage != profileButton.currentImage! && isValidEmail(testStr: emailTextField.text!) {
-            MyAlamofireManager.shared.patchMyPhoto(profileImage: profileButton.currentImage!) { _ in
+            MyAlamofireManager.shared.patchMyPhoto(profileImage: profileButton.currentImage!) { [weak self] in
                 var stringTags: [String] = []
                 for tag in myTag.names {
                     stringTags.append(tag.rawValue)
                 }
-
-                let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
-                MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
+                
+                let myInfo = UserProfile(nickName: (self?.nicknameTextField.text)!, description: (self?.introduceTextView.text)!, stack: stringTags, github: (self?.githubTextField.text)!, mail: (self?.emailTextField.text)!)
+                MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] in
                     guard let self = self else { return }
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -362,9 +353,9 @@ class ProfileViewController: UIViewController {
             for tag in myTag.names {
                 stringTags.append(tag.rawValue)
             }
-    
+            
             let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
-            MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] _ in
+            MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] in
                 guard let self = self else { return }
                 self.navigationController?.popViewController(animated: true)
             }

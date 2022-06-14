@@ -12,7 +12,7 @@ import CoreData
 
 final class MyAlamofireManager {
     // 싱글턴 사용
-    static let shared = MyAlamofireManager()
+    static var shared = MyAlamofireManager()
     
     // 인터셉터
     let interceptors = Interceptor(interceptors:
@@ -32,18 +32,15 @@ final class MyAlamofireManager {
         )
     }
     
-    func getProjectID(projectTerm projectArticle: ProjectArticle, completion: @escaping (Result<RecruitWriting, MyError>) -> Void) {
+    func getProjectID(projectTerm projectArticle: ProjectArticle, completion: @escaping () -> Void) {
         self.session
             .request(MyProjectRouter.createProject(term: projectArticle))
             .validate(statusCode: 200..<401) // Au th 검증
-            .responseJSON  { response in
-//                guard let self = self else { return }
-                print(response)
+            .responseJSON  { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-
-                // 데이터 파싱
                 guard let code = responseJson["code"].int,
                       let message = responseJson["message"].string else { return }
                 
@@ -52,105 +49,91 @@ final class MyAlamofireManager {
                     recruitWriting.code = code
                     recruitWriting.newProjectID = projectID
                     recruitWriting.message = message
-                    completion(.success(recruitWriting))
-                    
+                    completion()
                 } else {
-                    completion(.failure(.testError))
+                    self.toast(message)
                 }
             }
     }
     
-    func getProject(projectID: String, completion: @escaping (Result<ProjectInfo, MyError>) -> Void) {
+    func getProject(projectID: String, completion: @escaping () -> Void) {
         self.session
             .request(MyProjectRouter.enterProject(projectID: projectID))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-                do {
-                    projectInfo = try JSONDecoder().decode(ProjectInfo.self, from: responseData)
-                } catch {
-                    print(error)
+                projectInfo = try! JSONDecoder().decode(ProjectInfo.self, from: responseData)
+                let code = projectInfo.code
+                if code == 1 {
+                    completion()
                 }
-                completion(.success(projectInfo))
             }
     }
     
-    func finishProject(projectID: String, complete: Bool, completion: @escaping (Result<Void, MyError>) -> Void) {
+    func finishProject(projectID: String, complete: Bool, completion: @escaping () -> Void) {
         self.session
             .request(MyProjectRouter.patchFinishProject(projectID: projectID, complete: complete))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON(completionHandler: { response in
+            .responseJSON { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 let responseJson = JSON(responseValue)
-                if responseJson["code"] == 1 {
-                    completion(.success(()))
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
+                if code == 1 {
+                    completion()
                 } else {
-                    completion(.failure(MyError.networkError))
+                    self.toast(message)
                 }
-            })
+            }
     }
     
-    func deleteProject(projectID: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func deleteProject(projectID: String, completion: @escaping () -> Void) {
         self.session
             .request(MyProjectRouter.deleteProject(projectID: projectID))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-                
-                let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData)
-                
-                if let code = codeMessage?.code {
-                    completion(.success(code))
+                guard let  codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                let code = codeMessage.code
+                let message = codeMessage.message
+                if code == 1 {
+                    completion()
                 } else {
-                    completion(.failure(MyError.testError))
+                    self.toast(message)
                 }
             }
     }
     
-    func getProjectList(searchOption: ProjectSearch, completion: @escaping (Result<ProjectListInfo, MyError>) -> Void) {
+    func getProjectList(searchOption: ProjectSearch, completion: @escaping (ProjectListInfo) -> Void) {
         self.session
             .request(MyProjectRouter.arrangeProject(searchOption: searchOption))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-
-                do {
-                    projectListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
-                    let code = projectListInfo.code
-                    if code == 1 {
-                        
-                        completion(.success(projectListInfo))
-                        
-                    } else {
-                        completion(.failure(.getProjectListError))
-                    }
-                } catch {
-                    print(error)
+                projectListInfo = try! JSONDecoder().decode(ProjectListInfo.self, from: responseData)
+                let code = projectListInfo.code
+                if code == 1 {
+                    completion(projectListInfo)
                 }
             }
     }
     
-    func getBookmarkList(completion: @escaping (Result<ProjectListInfo, MyError>) -> Void) {
+    func getBookmarkList(completion: @escaping (ProjectListInfo) -> Void) {
         self.session
             .request(MyUserRouter.arrangeProject)
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
-                do {
-                    let bookmarkListInfo = try JSONDecoder().decode(ProjectListInfo.self, from: responseData)
-                    let code = projectListInfo.code
-                    if code == 1 {
-                        completion(.success(bookmarkListInfo))
-                    } else {
-                        completion(.failure(.getProjectListError))
-                    }
-                } catch {
-                    print(error)
+                guard let bookmarkListInfo = try? JSONDecoder().decode(ProjectListInfo.self, from: responseData) else { return }
+                let code = projectListInfo.code
+                if code == 1 {
+                    completion(bookmarkListInfo)
                 }
             }
     }
     
-    func postKaKaoToken(token: String, completion: @escaping (Result<(), MyError>) -> Void) {
+    func postKaKaoToken(token: String, completion: @escaping () -> Void) {
         self.session
             .request(MyOauthRouter.postKaKaoToken(token: token))
             .validate(statusCode: 200..<401) // Auth 검증
@@ -169,18 +152,15 @@ final class MyAlamofireManager {
                 KeychainManager.shared.create(key: "accessToken", token: jwt.accessToken)
                 Jwt.shared = jwt
                 let code = jwt.code
-                switch code {
-                case 1:
+                if code == 1 {
                     UserDefaults.standard.set(LoginType.kakao.rawValue, forKey: "loginType")
                     loginType = LoginType(rawValue: LoginType.kakao.rawValue)
-                    completion(.success(()))
-                default:
-                    completion(.failure(.accessError))
+                    completion()
                 }
             }
     }
     
-    func postAppleToken(userId: String, completion: @escaping (Result<(), MyError>) -> Void) {
+    func postAppleToken(userId: String, completion: @escaping () -> Void) {
         self.session
             .request(MyOauthRouter.postAppleToken(userId: userId))
             .validate(statusCode: 200..<401) // Auth 검증
@@ -199,80 +179,73 @@ final class MyAlamofireManager {
                 KeychainManager.shared.create(key: "accessToken", token: jwt.accessToken)
                 Jwt.shared = jwt
                 let code = jwt.code
-                switch code {
-                case 1:
+                if code == 1 {
                     UserDefaults.standard.set(LoginType.apple.rawValue, forKey: "loginType")
                     loginType = LoginType(rawValue: LoginType.apple.rawValue)
-                    completion(.success(()))
-                default:
-                    completion(.failure(.accessError))
+                    completion()
                 }
             }
     }
     
-    func patchNickName(nickName: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func patchNickName(nickName: String, completion: @escaping () -> Void) {
         self.session
             .request(MyUserRouter.patchNickName(nickName: nickName))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseJSON { response in
                 guard let responseValue = response.value else { return }
-                
                 let responseJson = JSON(responseValue)
-                guard let code = responseJson["code"].int else { return }
-                if code == 1 {
-                    completion(.success(code))
-                } else if code == -99 {
-                    // accessToken 갱신
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
 
+                if code == 1 {
+                    completion()
                 } else {
-                    completion(.failure(.testError))
+                    self.toast(message)
                 }
             }
     }
     
-    func patchMyProfile(myInfo: UserProfile, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func patchMyProfile(myInfo: UserProfile, completion: @escaping () -> Void) {
         self.session
             .request(MyUserRouter.patchMyProfile(myInfo: myInfo))
             .validate(statusCode: 200..<401)
-            .responseJSON { response in
+            .responseJSON { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-                guard let code = responseJson["code"].int else { return }
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
+
                 if code == 1 {
-                    completion(.success(code))
+                    completion()
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
-            }
-            .responseData { (response) in
-                print(response)
-                completion(.success(1))
             }
     }
     
-    func patchFcm(fcm: String, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func patchFcm(fcm: String, completion: @escaping () -> Void) {
         self.session
             .request((MyUserRouter.patchFcm(fcm: fcm)))
             .validate(statusCode: 200..<401)
-            .responseJSON { response in
+            .responseJSON { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-                guard let code = responseJson["code"].int else { return }
+                guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string else { return }
+
                 if code == 1 {
-                    completion(.success(code))
+                    completion()
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
-            }
-            .responseData { (response) in
-                print(response)
-                completion(.success(1))
             }
     }
     
-    func patchMyDefaultPhoto(completion: @escaping (Result<String, MyError>) -> Void) {
+    func patchMyDefaultPhoto(completion: @escaping (String) -> Void) {
         self.session
             .request(MyUserRouter.patchMyDefaultPhoto)
             .validate(statusCode: 200..<401)
@@ -280,17 +253,19 @@ final class MyAlamofireManager {
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
-                guard let code = responseJson["code"].int else { return }
-                guard let profileImage = responseJson["profileURL"].string else { return }
+                guard let code = responseJson["code"].int,
+                      let profileImage = responseJson["profileURL"].string,
+                      let message = responseJson["message"].string else { return }
+                
                 if code == 1 {
-                    completion(.success(profileImage))
+                    completion(profileImage)
                 } else {
-                    completion(.failure(.networkError))
+                    self.toast(message)
                 }
             }
     }
     
-    func patchMyPhoto(profileImage: UIImage, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func patchMyPhoto(profileImage: UIImage, completion: @escaping () -> Void) {
         let route = MyUserRouter.patchMyPhoto(image: profileImage)
         self.session
             .upload(multipartFormData: route.multipartFormData, with: route)
@@ -299,24 +274,19 @@ final class MyAlamofireManager {
             }
             .validate(statusCode: 200..<401)
             .responseData { (response) in
-                print(response)
-                completion(.success(1))
+                completion()
             }
     }
     
-    func getProfile(userId: String, completion: @escaping (Result<User, MyError>) -> Void) {
+    func getProfile(userId: String, completion: @escaping (User) -> Void) {
         self.session
             .request(MyUserRouter.getProfile(userId: userId))
             .validate(statusCode: 200..<401) // Auth 검증
             .responseData { response in
                 guard let responseData = response.data else { return }
                 guard let user = try? JSONDecoder().decode(User.self, from: responseData) else { return }
-//                let code = user.code
-//                if code == 1 {
-                    completion(.success(user))
-//                } else {
-//                    completion(.failure(.getProjectListError))
-//                }
+                
+                completion(user)
             }
     }
     
@@ -329,6 +299,7 @@ final class MyAlamofireManager {
                 let responseJson = JSON(responseValue)
                 
                 guard let code = responseJson["code"].int else { return }
+
                 if code == 1 {
                     guard let accessToken = responseJson["accessToken"].string else { return }
                     KeychainManager.shared.create(key: "accessToken", token: accessToken)
@@ -340,91 +311,99 @@ final class MyAlamofireManager {
             }
     }
     
-    func patchLogout(completion: @escaping (Result<Int, MyError>) -> Void) {
+    func patchLogout(completion: @escaping () -> Void) {
         self.session
             .request(MyOauthRouter.patchLogout)
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
-                
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 
                 let code = codeMessage.code
+                let message = codeMessage.message
+
                 if code == 1 {
-                    completion(.success(code))
+                    completion()
                 } else {
-                    completion(.failure(.retryError))
+                    self.toast(message)
                 }
             }
     }
     
-    func putProject(projectArticle: ProjectArticle, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func putProject(projectArticle: ProjectArticle, completion: @escaping () -> Void) {
         self.session
             .request(MyProjectRouter.putProject(term: projectArticle))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
-                
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 
                 let code = codeMessage.code
+                let message = codeMessage.message
+
                 if code == 1 {
-                    completion(.success(code))
+                    completion()
                 } else {
-                    completion(.failure(.retryError))
-                }
-            }
-    }
-    func deleteUserId(completion: @escaping (Result<Int, MyError>) -> Void) {
-        self.session
-            .request(MyUserRouter.deleteUserId)
-            .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
-                
-                guard let responseData = response.data else { return }
-                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
-                
-                let code = codeMessage.code
-                if code == 1 {
-                    completion(.success(code))
-                } else {
-                    completion(.failure(.retryError))
+                    self.toast(message)
                 }
             }
     }
     
-    func postBookmark(bookmark: Bookmark, completion: @escaping (Result<Int, MyError>) -> Void) {
+    func deleteUserId(completion: @escaping () -> Void) {
+        self.session
+            .request(MyUserRouter.deleteUserId)
+            .validate(statusCode: 200..<401) // Auth 검증
+            .responseData { [weak self] response in
+                guard let self = self else { return }
+                guard let responseData = response.data else { return }
+                guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
+                let code = codeMessage.code
+                let message = codeMessage.message
+                if code == 1 {
+                    return completion()
+                } else {
+                    self.toast(message)
+                }
+            }
+    }
+    
+    func postBookmark(bookmark: Bookmark) {
         self.session
             .request(MyUserRouter.postBookMark(bookmark: bookmark))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseData { response in
-                
+            .responseData { [weak self] response in
+                guard let self = self else { return }
                 guard let responseData = response.data else { return }
                 guard let codeMessage = try? JSONDecoder().decode(Response.self, from: responseData) else { return }
                 
                 let code = codeMessage.code
-                if code == 1 {
-                    completion(.success(code))
-                } else {
-                    completion(.failure(.retryError))
+                let message = codeMessage.message
+                
+                if code != 1 {
+                    self.toast(message)
                 }
             }
     }
-    func fetchRoomId(userId: String, projectId: String, completion: @escaping (Result<String, MyError>) -> Void) {
+    
+    func fetchRoomId(userId: String, projectId: String, completion: @escaping (String) -> Void) {
         self.session
             .request(MyChatRouter.postChatRoom(userId: userId, projectId: projectId))
             .validate(statusCode: 200..<401) // Auth 검증
-            .responseJSON { response in
+            .responseJSON { [weak self] response in
+                guard let self = self else { return }
                 guard let responseValue = response.value else { return }
                 
                 let responseJson = JSON(responseValue)
                 guard let code = responseJson["code"].int,
+                      let message = responseJson["message"].string,
                       let chatRoomId = responseJson["chatRoomId"].string
                 else { return }
                 if code == 1 {
-                    completion(.success(chatRoomId))
+                    completion(chatRoomId)
                 } else {
-                    completion(.failure(.testError))
+                    self.toast(message)
                 }
             }
     }
@@ -518,7 +497,7 @@ final class MyAlamofireManager {
                 }
             }
     }
-    func fetchIsBan(completion: @escaping (Result<Bool, MyError>) -> Void) {
+    func fetchIsBan(completion: @escaping () -> Void) {
         self.session
             .request(MyUserRouter.getIsBan)
             .validate(statusCode: 200..<401) // Auth 검증
@@ -534,13 +513,12 @@ final class MyAlamofireManager {
                 
                 if code == 1 {
                     if !isBan {
-                        completion(.success(true))
+                        completion()
                     } else {
                         self.toast("신고가 3번이상 누적되어 이용 정지되었습니다.\n관리자에게 문의하세요.")
                     }
                 } else {
                     self.toast(message)
-                    completion(.failure(.testError))
                 }
             }
     }

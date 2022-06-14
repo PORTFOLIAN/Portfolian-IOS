@@ -98,55 +98,50 @@ class MyPageViewController: UIViewController {
             userId = JwtToken.shared.userId
             titleLabel.text = "마이 프로필"
         }
-        MyAlamofireManager.shared.getProfile(userId: userId) { response in
-            switch response {
-            case .success(let user):
-                self.userNameLabel.text = user.nickName
-                self.introduceLabel.text = user.description
-                self.emailString = user.mail
-                self.githubString = "https://github.com/" + user.github
-                URLSession.shared.dataTask( with: NSURL(string:user.photo)! as URL, completionHandler: {
-                    (data, response, error) -> Void in
-                    DispatchQueue.main.async {
-                        if let data = data {
-                            let image = UIImage(data: data)
-                            self.profileImageView.image = image
-                        }
-                    }
-                }).resume()
-                myTag = TagDataStore()
-                
+        MyAlamofireManager.shared.getProfile(userId: userId) { [weak self] user in
+            guard let self = self else { return }
+            self.userNameLabel.text = user.nickName
+            self.introduceLabel.text = user.description
+            self.emailString = user.mail
+            self.githubString = "https://github.com/" + user.github
+            URLSession.shared.dataTask( with: NSURL(string:user.photo)! as URL, completionHandler: {
+                (data, response, error) -> Void in
                 DispatchQueue.main.async {
-                    if user.stackList != [] {
-                        for stack in user.stackList {
-                            if Tag.Name(rawValue: stack) != nil {
-                                myTag.names.append(Tag.Name(rawValue: stack)!)
-                            }
+                    if let data = data {
+                        let image = UIImage(data: data)
+                        self.profileImageView.image = image
+                    }
+                }
+            }).resume()
+            myTag = TagDataStore()
+            
+            DispatchQueue.main.async {
+                if user.stackList != [] {
+                    for stack in user.stackList {
+                        if Tag.Name(rawValue: stack) != nil {
+                            myTag.names.append(Tag.Name(rawValue: stack)!)
                         }
                     }
-                    self.tagCollectionView.reloadData()
-                    let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-                    self.tagCollectionView.snp.updateConstraints {
-                        $0.height.equalTo(height)
-                    }
-                    self.view.setNeedsLayout()
                 }
-
-            case .failure(let error):
-                print(error)
+                self.tagCollectionView.reloadData()
+                let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+                self.tagCollectionView.snp.updateConstraints {
+                    $0.height.equalTo(height)
+                }
+                self.view.setNeedsLayout()
             }
         }
-        if profileType != .myProfile {
+        if !(profileType == .myProfile && loginType == .no) {
             profileCorrectionButton.snp.updateConstraints { make in
                 make.height.equalTo(0)
             }
+            profileCorrectionButton.setTitle("", for: .normal)
         }
-        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if loginType == .no {
+        if (profileType == .myProfile && loginType == .no) {
             self.shakeButton(button: self.profileCorrectionButton)
         }
     }
@@ -222,6 +217,7 @@ class MyPageViewController: UIViewController {
             if loginType == .no {
                 view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
             } else {
+                realNew = false
                 let SettingVC = UIStoryboard(name: "MyPage", bundle: nil).instantiateViewController(withIdentifier: "SettingVC")
                 self.navigationController?.pushViewController(SettingVC, animated: true)
             }
@@ -237,19 +233,14 @@ class MyPageViewController: UIViewController {
             }
 
         case emailButton:
-            if loginType != .no {
-                if emailString != "" {
-                    UIPasteboard.general.string = emailString
-                    self.view.makeToast("이메일이 클립보드로 저장되었습니다.", duration: 1.0, position: .center)
-                } else {
-                    self.view.makeToast("유저가 이메일을 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
-                }
+            if emailString != "" && emailString != nil {
+                UIPasteboard.general.string = emailString
+                self.view.makeToast("이메일이 클립보드로 저장되었습니다.", duration: 1.0, position: .center)
             } else {
-                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
+                self.view.makeToast("유저가 이메일을 아직 등록하지 않았습니다.", duration: 1.0, position: .center)
             }
-
+            
         case gitHubButton:
-            if loginType != .no {
                 if let githubString = githubString {
                     if let url = URL(string: githubString) {
                         if githubString == "https://github.com/" {
@@ -262,19 +253,24 @@ class MyPageViewController: UIViewController {
                     } else {
                         self.view.makeToast("깃허브 주소가 올바르지 않습니다.", duration: 1.0, position: .center)
                     }
+                } else {
+                    view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
                 }
-            } else {
-                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
-            }
+            
         case cancelBarButtonItem:
             self.navigationController?.popViewController(animated: true)
         case reportBarButtonItem:
-            self.reportAlert { [weak self] report in
-                guard let self = self else { return }
-                MyAlamofireManager.shared.reportUser(userId: self.userId, reason: report) {
-                    self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
+            if loginType == .no {
+                view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
+            } else {
+                self.reportAlert { [weak self] report in
+                    guard let self = self else { return }
+                    MyAlamofireManager.shared.reportUser(userId: self.userId, reason: report) {
+                        self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
+                    }
                 }
             }
+            
         default:
             break
         }

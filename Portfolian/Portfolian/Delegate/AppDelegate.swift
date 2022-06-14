@@ -55,11 +55,10 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 }
 extension AppDelegate : MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        if loginType != .no {
-            if fcmToken != nil {
-                fcm = fcmToken!
-                reportFcm?(fcm!)
-            }
+        if fcmToken != nil {
+            KeychainManager.shared.create(key: "fcmToken", token: fcmToken!)
+        } else {
+            print("\(String(describing: fcmToken))= nil 이거아님")
         }
     }
 }

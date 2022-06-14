@@ -35,15 +35,10 @@ class BookmarkViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        MyAlamofireManager.shared.getBookmarkList { result in
-            switch result {
-            case .success(let projectListInfo):
-                self.bookmarkListInfo = projectListInfo
-            default:
-                break
-            }
+        MyAlamofireManager.shared.getBookmarkList { [weak self] projectListInfo in
+            guard let self = self else { return }
+            self.bookmarkListInfo = projectListInfo
             self.tableView.reloadData()
-            self.tableView.setNeedsLayout()
         }
     }
     
@@ -111,8 +106,7 @@ extension BookmarkViewController: BookmarkButtonDelegate {
         }
         tableView.deleteRows(at: [indexPath!], with: .fade)
         let bookmark = Bookmark(projectId: projectId, bookMarked: false)
-        MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { _ in
-        }
+        MyAlamofireManager.shared.postBookmark(bookmark: bookmark)
     }
 }
 
@@ -209,25 +203,10 @@ extension BookmarkViewController: UITableViewDelegate, UITableViewDataSource {
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
         recruitWriting.newProjectID = projectId
-        MyAlamofireManager.shared.getProject(projectID: projectId) { result in
-            switch result {
-            case .success:
-                writingTeamTag.names = []
-                writingOwnerTag.names = []
-                for tag in projectInfo.stackList{
-                    guard let tagName = Tag.Name(rawValue: tag) else { return }
-                    writingTeamTag.names.append(tagName)
-                }
-                guard let tagName = Tag.Name(rawValue: projectInfo.leader.stack) else { return }
-                writingOwnerTag.names.append(tagName)
-
-                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                self.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                
-            case .failure(let error):
-                //                self.view.makeToast(error.rawValue, duration: 5.0, position: .center)
-                print("\(error)######")
-            }
+        MyAlamofireManager.shared.getProject(projectID: projectId) { [weak self] in
+            guard let self = self else { return }
+            let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+            self.navigationController?.pushViewController(WritingSaveVC, animated: true)
         }
     }
     

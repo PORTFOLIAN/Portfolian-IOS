@@ -50,7 +50,7 @@ class ChatRoomViewController: UIViewController {
         UIBarButtonItem.tintColor = ColorPortfolian.baseBlack
     }
     
-    var sendButton = UIButton().then { UIButton in
+    lazy var sendButton = UIButton().then { UIButton in
         UIButton.setImage(UIImage(named: "send")?.withTintColor(ColorPortfolian.gray2, renderingMode: .alwaysOriginal), for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
@@ -284,24 +284,19 @@ class ChatRoomViewController: UIViewController {
             self.receiverId = projectInfo.leader.userId
             headerLabel.text = projectInfo.title
             navigationItem.title = projectInfo.leader.nickName
-            MyAlamofireManager.shared.fetchRoomId(userId: self.receiverId, projectId: projectInfo.projectId) { [weak self] result in
+            MyAlamofireManager.shared.fetchRoomId(userId: self.receiverId, projectId: projectInfo.projectId) { [weak self] roomId in
                 guard let self = self else { return }
-                switch result {
-                case let .success(roomId):
-                    self.chatRoomId = roomId
-                    MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: self.chatRoomId) { [weak self] chatMessageList in
-                        guard let self = self else { return }
-                        self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
-                        self.index = self.myChat.count
-                        self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
-                        if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
-                            self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date), at: self.index)
-                        }
-                        SocketIOManager.shared.readMessage(self.chatRoomId)
-                        self.scrollToMiddle()
+                self.chatRoomId = roomId
+                MyAlamofireManager.shared.fetchChatMessageList(chatRoomId: self.chatRoomId) { [weak self] chatMessageList in
+                    guard let self = self else { return }
+                    self.makeOldBubbleChat(chatList: chatMessageList.chatList.oldChatList)
+                    self.index = self.myChat.count
+                    self.makeNewBubbleChat(chatList: chatMessageList.chatList.newChatList)
+                    if self.myChat.count != 1 && self.myChat.last?.messageType != "Notice" && self.myChat.last?.sender != JwtToken.shared.userId && self.myChat.count != self.index && self.index != 1 {
+                        self.myChat.insert(ChatType(chatRoomId: self.chatRoomId, sender: "", receiver: self.receiverId, messageContent: "여기까지 읽으셨습니다.", messageType: "Notice", date: date), at: self.index)
                     }
-                case .failure:
-                    break
+                    SocketIOManager.shared.readMessage(self.chatRoomId)
+                    self.scrollToMiddle()
                 }
             }
         } else {

@@ -322,9 +322,7 @@ extension HomeViewController: BookmarkButtonDelegate {
                 self.tableView.reloadData()
             }
 
-            MyAlamofireManager.shared.postBookmark(bookmark: bookmark) { _ in
-                
-            }
+            MyAlamofireManager.shared.postBookmark(bookmark: bookmark)
         }
     }
 }
@@ -472,17 +470,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let articleInfo = articleList[indexPath[1]]
         let projectId = articleInfo.projectId
         recruitWriting.newProjectID = projectId
-        MyAlamofireManager.shared.getProject(projectID: projectId) { result in
-            switch result {
-            case .success:
-                let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
-                self.navigationController?.pushViewController(WritingSaveVC, animated: true)
-                
-            case .failure(let error):
-                print("\(error)######")
-            }
+        MyAlamofireManager.shared.getProject(projectID: projectId) { [weak self] in
+            guard let self = self else { return }
+            let WritingSaveVC = UIStoryboard(name: "WritingSave", bundle: nil).instantiateViewController(withIdentifier: "WritingSaveVC")
+            self.navigationController?.pushViewController(WritingSaveVC, animated: true)
         }
-        
     }
     
     

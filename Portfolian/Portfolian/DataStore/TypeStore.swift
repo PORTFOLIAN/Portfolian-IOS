@@ -8,9 +8,10 @@
 import Foundation
 
 enum LoginType: Int {
+    case first
+    case no
     case kakao
     case apple
-    case no
 }
 
 enum RegistrationType {

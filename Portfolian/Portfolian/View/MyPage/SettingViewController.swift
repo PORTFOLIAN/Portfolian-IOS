@@ -110,43 +110,41 @@ extension SettingViewController: UITableViewDelegate {
                 print(error)
             }
             else {
-                MyAlamofireManager.shared.patchLogout { result in
-                    print("logout() success.")
+                MyAlamofireManager.shared.patchLogout {
+                    let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                    let request = PersistenceManager.shared.fetch(request: requestWriting)
+                    if !request.isEmpty {
+                        PersistenceManager.shared.deleteAll(request: requestWriting)
+                    }
+                    KeychainManager.shared.delete(key: "refreshToken")
+                    KeychainManager.shared.delete(key: "accessToken")
+                    KeychainManager.shared.delete(key: "userId")
+                    writingTeamTag.names = []
+                    writingOwnerTag.names = []
+                    JwtToken.shared = JwtToken()
+                    SocketIOManager.shared.closeConnection()
+                    self.goToApp()
                 }
-                let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
-                let request = PersistenceManager.shared.fetch(request: requestWriting)
-                if !request.isEmpty {
-                    PersistenceManager.shared.deleteAll(request: requestWriting)
-                }
-                KeychainManager.shared.delete(key: "refreshToken")
-                KeychainManager.shared.delete(key: "accessToken")
-                KeychainManager.shared.delete(key: "userId")
-                writingTeamTag.names = []
-                writingOwnerTag.names = []
-                JwtToken.shared = JwtToken()
-                SocketIOManager.shared.closeConnection()
-                self.goToApp()
             }
         }
     }
     
     func logoutApple() {
-        MyAlamofireManager.shared.patchLogout { result in
-            print("logout() success.")
+        MyAlamofireManager.shared.patchLogout {
+            let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+            let request = PersistenceManager.shared.fetch(request: requestWriting)
+            if !request.isEmpty {
+                PersistenceManager.shared.deleteAll(request: requestWriting)
+            }
+            KeychainManager.shared.delete(key: "refreshToken")
+            KeychainManager.shared.delete(key: "accessToken")
+            KeychainManager.shared.delete(key: "userId")
+            writingTeamTag.names = []
+            writingOwnerTag.names = []
+            JwtToken.shared = JwtToken()
+            SocketIOManager.shared.closeConnection()
+            self.goToApp()
         }
-        let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
-        let request = PersistenceManager.shared.fetch(request: requestWriting)
-        if !request.isEmpty {
-            PersistenceManager.shared.deleteAll(request: requestWriting)
-        }
-        KeychainManager.shared.delete(key: "refreshToken")
-        KeychainManager.shared.delete(key: "accessToken")
-        KeychainManager.shared.delete(key: "userId")
-        writingTeamTag.names = []
-        writingOwnerTag.names = []
-        JwtToken.shared = JwtToken()
-        SocketIOManager.shared.closeConnection()
-        self.goToApp()
     }
     
     func unlinkKakao() {
@@ -155,7 +153,6 @@ extension SettingViewController: UITableViewDelegate {
                 print(error)
             }
             else {
-                print("kakaoTalk unlink() success.")
                 let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
                 let request = PersistenceManager.shared.fetch(request: requestWriting)
                 if !request.isEmpty {
@@ -163,8 +160,7 @@ extension SettingViewController: UITableViewDelegate {
                 }
                 writingTeamTag.names = []
                 writingOwnerTag.names = []
-                MyAlamofireManager.shared.deleteUserId { result in
-                    print("unlink() success.")
+                MyAlamofireManager.shared.deleteUserId {
                     KeychainManager.shared.delete(key: "refreshToken")
                     KeychainManager.shared.delete(key: "accessToken")
                     KeychainManager.shared.delete(key: "userId")
@@ -177,7 +173,6 @@ extension SettingViewController: UITableViewDelegate {
     }
     
     func unlinkApple() {
-        loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
         let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
         let request = PersistenceManager.shared.fetch(request: requestWriting)
         if !request.isEmpty {
@@ -185,8 +180,7 @@ extension SettingViewController: UITableViewDelegate {
         }
         writingTeamTag.names = []
         writingOwnerTag.names = []
-        MyAlamofireManager.shared.deleteUserId { result in
-            print("unlink() success.")
+        MyAlamofireManager.shared.deleteUserId {
             KeychainManager.shared.delete(key: "refreshToken")
             KeychainManager.shared.delete(key: "accessToken")
             KeychainManager.shared.delete(key: "userId")

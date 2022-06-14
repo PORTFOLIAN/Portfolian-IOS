@@ -12,9 +12,9 @@ let SPACINGROW = 20
 let SPACINGCOL = 10
 let IDENTIFIER = "TagCollectionViewCell"
 var SEARCHTOGGLE : Bool = true
-var fcm: String?
-var reportFcm : ((String)->Void)?
 var chatTitle = String()
+var realNew = true
+
 enum API {
     static let BASE_URL : String = "https://api.portfolian.site:443/"
     static let USER_ID : String = "test1"
