@@ -131,7 +131,7 @@ class MyPageViewController: UIViewController {
                 self.view.setNeedsLayout()
             }
         }
-        if !(profileType == .myProfile && loginType == .no) {
+        if profileType != .myProfile {
             profileCorrectionButton.snp.updateConstraints { make in
                 make.height.equalTo(0)
             }
