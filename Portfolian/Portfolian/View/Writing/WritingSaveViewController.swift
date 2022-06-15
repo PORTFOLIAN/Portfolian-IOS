@@ -323,7 +323,7 @@ class WritingSaveViewController: UIViewController {
         
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.trailing.equalTo(titleLabel)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
         }
         
         lineViewFirst.snp.makeConstraints { make in
