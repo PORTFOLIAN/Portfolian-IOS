@@ -186,7 +186,7 @@ class WritingViewController: UIViewController {
         UITextView.isEditable = false
         UITextView.isUserInteractionEnabled = true
         UITextView.sizeToFit()
-        UITextView.isScrollEnabled = false
+        UITextView.isScrollEnabled = true
         UITextView.layer.borderColor = ColorPortfolian.baseBlack.cgColor
         UITextView.layer.borderWidth = 0.3
         UITextView.layer.cornerRadius = 20
@@ -441,7 +441,7 @@ class WritingViewController: UIViewController {
         detailMarkdownTextView.snp.makeConstraints { make in
             make.top.equalTo(detailLabel.snp.bottom).offset(10)
             make.leading.trailing.equalTo(contentView)
-            make.height.lessThanOrEqualTo(300)
+            make.height.equalTo(150)
         }
         
         detailTextView.snp.makeConstraints { make in
