@@ -95,13 +95,13 @@ let markdownInit = """
             Indented code blocks (spaces or tabs)
 
         [Links](http://voyagetravelapps.com/)
-        ![Images](<Name of asset in bundle>)
+        ![Images](<Web hosting image url>)
 
         [Referenced Links][1]
         ![Referenced Images][2]
 
         [1]: http://voyagetravelapps.com/
-        [2]: <Name of asset in bundle>
+        [2]: <Web hosting image url>
 
         > Blockquotes
 
