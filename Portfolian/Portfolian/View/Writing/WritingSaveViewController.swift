@@ -105,7 +105,6 @@ class WritingSaveViewController: UIViewController {
     })
     var optionTitleLabel = UILabel().then({ UILabel in
         UILabel.text = "모집 조건"
-        UILabel.textColor = ColorPortfolian.baseBlack
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
     })
     var optionLabel = UILabel().then({ UILabel in
