@@ -147,34 +147,6 @@ class ProfileViewController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
-        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] user in
-            guard let self = self else { return }
-                self.nicknameTextField.text = user.nickName
-                self.githubTextField.text = user.github
-                self.emailTextField.text = user.mail
-                self.introduceTextView.text = user.description
-                URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
-                    (data, response, error) -> Void in
-                    DispatchQueue.main.async {
-                        if let data = data {
-                            let image = UIImage(data: data)
-                            self.profileButton.setImage(image, for: .normal)
-                            if self.profileButton.currentImage != nil {
-                                self.beforeImage = self.profileButton.currentImage!
-                            }
-                        }
-                    }
-                }).resume()
-                DispatchQueue.main.async {
-                    self.tagCollectionView.reloadData()
-
-                    let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-                    self.tagCollectionView.snp.updateConstraints {
-                        $0.height.equalTo(height)
-                    }
-                }
-                self.view.setNeedsLayout()
-        }
     }
     
     override func viewDidLoad() {
@@ -290,6 +262,35 @@ class ProfileViewController: UIViewController {
         tagCollectionView.dataSource = self
         introduceTextView.delegate = self
         hideKeyboard()
+        
+        MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] user in
+            guard let self = self else { return }
+                self.nicknameTextField.text = user.nickName
+                self.githubTextField.text = user.github
+                self.emailTextField.text = user.mail
+                self.introduceTextView.text = user.description
+                URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
+                    (data, response, error) -> Void in
+                    DispatchQueue.main.async {
+                        if let data = data {
+                            let image = UIImage(data: data)
+                            self.profileButton.setImage(image, for: .normal)
+                            if self.profileButton.currentImage != nil {
+                                self.beforeImage = self.profileButton.currentImage!
+                            }
+                        }
+                    }
+                }).resume()
+                DispatchQueue.main.async {
+                    self.tagCollectionView.reloadData()
+
+                    let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+                    self.tagCollectionView.snp.updateConstraints {
+                        $0.height.equalTo(height)
+                    }
+                }
+                self.view.setNeedsLayout()
+        }
     }
 
     func alert(_ title: String){

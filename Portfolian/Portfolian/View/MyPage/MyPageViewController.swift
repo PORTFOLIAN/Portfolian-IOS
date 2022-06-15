@@ -25,8 +25,8 @@ class MyPageViewController: UIViewController {
     }
     lazy var introduceLabel = UILabel().then { UILabel in
         UILabel.textAlignment = .left
-        UILabel.sizeToFit()
         UILabel.font = UIFont(name: "NotoSansKR-Regular", size: 16)
+        UILabel.numberOfLines = 0
     }
     
     lazy var profileImageView = UIImageView().then { UIImageView in
@@ -197,8 +197,7 @@ class MyPageViewController: UIViewController {
         }
         introduceLabel.snp.makeConstraints { make in
             make.top.equalTo(descriptionLineView.snp.bottom).offset(10)
-            make.leading.equalTo(tagCollectionView)
-            
+            make.leading.trailing.equalTo(tagCollectionView)
         }
         tagCollectionView.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: identifier)
         tagCollectionView.delegate = self
