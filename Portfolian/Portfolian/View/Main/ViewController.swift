@@ -27,7 +27,7 @@ class ViewController: UITabBarController {
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "tabbarChat"), selectedIcon: UIImage(named: "tabbarChatFill"), tag: 3),
             initNavigationTabViewController("MyPage", identifier: "MyPageVC", icon: UIImage(named: "tabbarMyPage"), selectedIcon: UIImage(named: "tabbarMyPageFill"), tag: 4)
         ]
-        
+
         switch loginType {
         case .kakao:
             kakaoAutoLogin(viewControllers: viewControllers)

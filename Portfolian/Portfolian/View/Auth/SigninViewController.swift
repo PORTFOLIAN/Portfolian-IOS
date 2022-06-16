@@ -39,7 +39,6 @@ class SigninViewController: UIViewController {
     let kakaoLoginButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "kakaoLogin"), for: .normal)
-        button.imageView?.contentMode = .scaleToFill
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -47,7 +46,7 @@ class SigninViewController: UIViewController {
     let noLoginButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = UIFont(name: "NotoSansKR-Regular", size: 14)
-        button.setTitle("로그인 없이 시작하기", for: .normal)
+        button.setTitle("로그인없이 시작하기", for: .normal)
         button.setUnderline()
         button.setTitleColor(ColorPortfolian.gray1, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -60,16 +59,26 @@ class SigninViewController: UIViewController {
         return button
     }()
     
+    let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(containerView)
         containerView.addSubview(logoImageView)
         containerView.addSubview(introduceLabel)
-        containerView.addSubview(kakaoLoginButton)
         containerView.addSubview(noLoginButton)
-        containerView.addSubview(appleLoginButton)
-        
+        containerView.addSubview(stackView)
+        stackView.addArrangedSubview(kakaoLoginButton)
+        stackView.addArrangedSubview(appleLoginButton)
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             containerView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
@@ -86,14 +95,11 @@ class SigninViewController: UIViewController {
             noLoginButton.topAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 50),
             noLoginButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             noLoginButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            kakaoLoginButton.topAnchor.constraint(equalTo: noLoginButton.bottomAnchor, constant: 50),
-            kakaoLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 3),
-            kakaoLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -3),
-            kakaoLoginButton.heightAnchor.constraint(equalToConstant: 45),
-            appleLoginButton.topAnchor.constraint(equalTo: kakaoLoginButton.bottomAnchor, constant: 10),
-            appleLoginButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 3),
-            appleLoginButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -3),
-            appleLoginButton.heightAnchor.constraint(equalToConstant: 45),
+            
+            stackView.topAnchor.constraint(equalTo: noLoginButton.bottomAnchor, constant: 50),
+            stackView.centerXAnchor.constraint(equalTo: noLoginButton.centerXAnchor),
+            stackView.widthAnchor.constraint(equalToConstant: 300),
+            stackView.heightAnchor.constraint(equalToConstant: 100),
         ])
         // Do any additional setup after loading the view.
         kakaoLoginButton.addTarget(self, action: #selector(LoginButtonHandler(_:)), for: .touchUpInside)
