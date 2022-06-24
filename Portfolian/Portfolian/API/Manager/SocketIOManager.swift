@@ -25,9 +25,6 @@ class SocketIOManager: NSObject {
         self.socket.on("connection") { _, _ in
             
             completion(true)
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                completion(false)
-//            }
         }
     }
 

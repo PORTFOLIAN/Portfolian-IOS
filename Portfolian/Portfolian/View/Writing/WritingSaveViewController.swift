@@ -460,6 +460,10 @@ class WritingSaveViewController: UIViewController {
         scrollView.delegate = self
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         switch editType {
@@ -468,10 +472,6 @@ class WritingSaveViewController: UIViewController {
             writingOwnerTag.names = []
         default:
             break
-        }
-        
-        if isMovingFromParent {
-            self.tabBarController?.tabBar.isHidden = false
         }
     }
     

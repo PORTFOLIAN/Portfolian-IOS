@@ -6,57 +6,56 @@
 //
 
 import UIKit
-
 class BaseNavigationController: UINavigationController {
-    
-    private var duringTransition = false
-    private var disabledPopVCs = [ViewController.self]
-    
+    var isSwipe = true
+
     override func viewDidLoad() {
         super.viewDidLoad()
         interactivePopGestureRecognizer?.delegate = self
         self.delegate = self
+        
     }
-    
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        duringTransition = true
-
-        super.pushViewController(viewController, animated: animated)
-    }
-    
 }
 
 extension BaseNavigationController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        
-        if viewControllers.count > 1 {
-            navigationController.tabBarController?.tabBar.isHidden = true
+        if isSwipe {
+            if viewControllers.count > 1 {
+                viewController.tabBarController?.tabBar.isHidden = true
+            }
+            if viewControllers.count == 1 {
+                navigationController.tabBarController?.tabBar.isHidden = false
+            }
+        } else {
+            // 화면이 변하는가?
+            if let coordinator = navigationController.topViewController?.transitionCoordinator {
+                // 제스쳐가 변화하면 알려주는 메소드
+                coordinator.notifyWhenInteractionChanges({ [weak self] (context) in
+                    guard let self = self else { return }
+                    if context.isCancelled {
+                        self.isSwipe = true
+                    } else {
+                        if self.viewControllers.count == 1 {
+                            navigationController.tabBarController?.tabBar.isHidden = false
+                        }
+                    }
+                })
+            }
         }
     }
+
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        if viewControllers.count == 1 {
-            navigationController.tabBarController?.tabBar.isHidden = false
-        }
-        self.duringTransition = false
+        isSwipe = true
     }
 }
 
 extension BaseNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == interactivePopGestureRecognizer,
-              let topVC = topViewController else {
+        if viewControllers.count > 1 {
+            isSwipe = false
             return true
+        } else {
+            return false
         }
-        
-        return viewControllers.count > 1 && duringTransition == false && isPopGestureEnable(topVC)
-    }
-
-    private func isPopGestureEnable(_ topVC: UIViewController) -> Bool {
-        for vc in disabledPopVCs {
-            if String(describing: type(of: topVC)) == String(describing: vc) {
-                return false
-            }
-        }
-        return true
     }
 }

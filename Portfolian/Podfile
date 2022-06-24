@@ -5,7 +5,6 @@ target 'Portfolian' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-pod 'GoogleSignIn'
 pod 'Then'
 pod 'SnapKit'
 pod 'KakaoSDKCommon'
@@ -18,7 +17,7 @@ pod 'SwiftyJSON'
 pod 'SwiftyMarkdown'
 pod 'Firebase/Analytics'
 pod 'Firebase/Messaging'
-pod 'MessageKit'
+pod 'Firebase/Crashlytics'
 pod 'Socket.IO-Client-Swift'
 # pod 'Firebase'
   # Pods for Portfolian`

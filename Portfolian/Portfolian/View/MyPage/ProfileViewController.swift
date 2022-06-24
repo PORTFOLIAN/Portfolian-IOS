@@ -120,67 +120,55 @@ class ProfileViewController: UIViewController {
     }
     var estimateHeight: CGFloat = 0
     
-    lazy var configuration: UIButton.Configuration = {
-        var configuration = UIButton.Configuration.plain()
-        var attributedTitle = AttributedString("사용 기술을 선택해주세요. (최대 7개)")
-        attributedTitle.font = UIFont(name: "NotoSansKR-Bold", size: 16)
-        let icon = UIImage(systemName: "chevron.right")
-        configuration.attributedTitle = attributedTitle
-        configuration.image = icon
-        configuration.imagePlacement = .trailing
-        configuration.baseForegroundColor = ColorPortfolian.thema
-        return configuration
-    }()
+    lazy var stackButton = UIButton().then { UIButton in
+        UIButton.setTitle("사용 기술을 선택해주세요. (최대 7개)", for: .normal)
+        UIButton.titleLabel?.font = UIFont(name: "NotoSansKR-Bold", size: 16)
+        UIButton.contentHorizontalAlignment = .leading
+        UIButton.setTitleColor(ColorPortfolian.thema, for: .normal)
+        UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+    }
     
-    lazy var stackButton = UIButton(configuration: configuration, primaryAction: nil).then { UIButton in
+    lazy var chevronButton = UIButton().then { UIButton in
+        UIButton.setImage(UIImage(systemName: "chevron.right")?.withTintColor(ColorPortfolian.thema, renderingMode: .alwaysOriginal), for: .normal)
         UIButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
     }
     
     lazy var cancelBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
         
     }
+    
+    lazy var saveBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(buttonPressed(_:))).then { UIBarButtonItem in
+        
+    }
+
 
     var beforeImage = UIImage()
         
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        navigationController?.navigationBar.prefersLargeTitles = false
-        registrationType = .MyPage
-        
         MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] user in
             guard let self = self else { return }
-                self.nicknameTextField.text = user.nickName
-                self.githubTextField.text = user.github
-                self.emailTextField.text = user.mail
-                self.introduceTextView.text = user.description
-                URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
-                    (data, response, error) -> Void in
-                    DispatchQueue.main.async {
-                        if let data = data {
-                            let image = UIImage(data: data)
-                            self.profileButton.setImage(image, for: .normal)
-                            if self.profileButton.currentImage != nil {
-                                self.beforeImage = self.profileButton.currentImage!
-                            }
-                        }
-                    }
-                }).resume()
-                DispatchQueue.main.async {
-                    self.tagCollectionView.reloadData()
-
-                    let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-                    self.tagCollectionView.snp.updateConstraints {
-                        $0.height.equalTo(height)
-                    }
+            
+            DispatchQueue.main.async {
+                self.tagCollectionView.reloadData()
+                
+                let height = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+                self.tagCollectionView.snp.updateConstraints {
+                    $0.height.equalTo(height)
                 }
-                self.view.setNeedsLayout()
+            }
+            self.view.setNeedsLayout()
         }
+
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = cancelBarButtonItem
+        navigationItem.rightBarButtonItem = saveBarButtonItem
+        navigationController?.navigationBar.prefersLargeTitles = false
+        registrationType = .MyPage
+        
         view.addSubview(scrollView)
         scrollView.addSubview(profileButton)
         scrollView.addSubview(profileTextButton)
@@ -198,6 +186,7 @@ class ProfileViewController: UIViewController {
         scrollView.addSubview(githubLineView)
         scrollView.addSubview(emailLineView)
         scrollView.addSubview(stackButton)
+        scrollView.addSubview(chevronButton)
         scrollView.addSubview(tagCollectionView)
         
         scrollView.snp.makeConstraints { make in
@@ -278,7 +267,13 @@ class ProfileViewController: UIViewController {
 
         stackButton.snp.makeConstraints { make in
             make.top.equalTo(introduceTextView.snp.bottom).offset(20)
-            make.leading.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalTo(introduceLabel)
+            make.trailing.equalTo(introduceTextView).offset(20)
+        }
+        
+        chevronButton.snp.makeConstraints { make in
+            make.centerY.equalTo(stackButton)
+            make.trailing.equalTo(introduceTextView)
         }
         
         tagCollectionView.snp.makeConstraints { make in
@@ -294,7 +289,23 @@ class ProfileViewController: UIViewController {
         
         MyAlamofireManager.shared.getProfile(userId: JwtToken.shared.userId ) { [weak self] user in
             guard let self = self else { return }
-                
+            self.nicknameTextField.text = user.nickName
+            self.githubTextField.text = user.github
+            self.emailTextField.text = user.mail
+            self.introduceTextView.text = user.description
+            
+            URLSession.shared.dataTask( with: NSURL(string: user.photo)! as URL, completionHandler: {
+                    (data, response, error) -> Void in
+                    DispatchQueue.main.async {
+                        if let data = data {
+                            let image = UIImage(data: data)
+                            self.profileButton.setImage(image, for: .normal)
+                            if self.profileButton.currentImage != nil {
+                                self.beforeImage = self.profileButton.currentImage!
+                            }
+                        }
+                    }
+                }).resume()
                 DispatchQueue.main.async {
                     self.tagCollectionView.reloadData()
 
@@ -306,7 +317,7 @@ class ProfileViewController: UIViewController {
                 self.view.setNeedsLayout()
         }
     }
-
+    
     func alert(_ title: String){
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         let library = UIAlertAction(title: "사진 앨범", style: .default) { _ in
@@ -336,43 +347,37 @@ class ProfileViewController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    func saveAlert(_ title: String) {
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        let library = UIAlertAction(title: "저장", style: .default) { _ in
-                self.saveProfile()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
-            self.navigationController?.popViewController(animated: true)
-        }
-        alert.addAction(library)
-        alert.addAction(cancelAction)
-        self.present(alert, animated: true)
-    }
-    
     func saveProfile() {
         if beforeImage != profileButton.currentImage! && isValidEmail(testStr: emailTextField.text!) {
-            MyAlamofireManager.shared.patchMyPhoto(profileImage: profileButton.currentImage!) { [weak self] in
+            self.view.makeToast("성공적으로 저장했습니다 :)", duration: 0.5, position: .center) { [weak self] didTap in
+                guard let self = self else { return }
+                MyAlamofireManager.shared.patchMyPhoto(profileImage: self.profileButton.currentImage!) { [weak self] in
+                    var stringTags: [String] = []
+                    for tag in myTag.names {
+                        stringTags.append(tag.rawValue)
+                    }
+                    
+                    let myInfo = UserProfile(nickName: (self?.nicknameTextField.text)!, description: (self?.introduceTextView.text)!, stack: stringTags, github: (self?.githubTextField.text)!, mail: (self?.emailTextField.text)!)
+                    MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] in
+                        guard let self = self else { return }
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            }
+        } else if isValidEmail(testStr: emailTextField.text!) {
+            self.view.makeToast("성공적으로 저장했습니다 :)", duration: 0.5, position: .center) { [weak self] didTap in
+                guard let self = self else { return }
+                
                 var stringTags: [String] = []
                 for tag in myTag.names {
                     stringTags.append(tag.rawValue)
                 }
                 
-                let myInfo = UserProfile(nickName: (self?.nicknameTextField.text)!, description: (self?.introduceTextView.text)!, stack: stringTags, github: (self?.githubTextField.text)!, mail: (self?.emailTextField.text)!)
+                let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
                 MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] in
                     guard let self = self else { return }
                     self.navigationController?.popViewController(animated: true)
                 }
-            }
-        } else if isValidEmail(testStr: emailTextField.text!) {
-            var stringTags: [String] = []
-            for tag in myTag.names {
-                stringTags.append(tag.rawValue)
-            }
-            
-            let myInfo = UserProfile(nickName: self.nicknameTextField.text!, description: self.introduceTextView.text!, stack: stringTags, github: self.githubTextField.text!, mail: self.emailTextField.text!)
-            MyAlamofireManager.shared.patchMyProfile(myInfo: myInfo) { [weak self] in
-                guard let self = self else { return }
-                self.navigationController?.popViewController(animated: true)
             }
         } else {
             self.view.makeToast("올바르지 않은 이메일 형식입니다.", duration: 1.5, position: .center)
@@ -389,15 +394,16 @@ class ProfileViewController: UIViewController {
         switch sender {
         case profileButton, profileTextButton:
             alert("프로필 사진을 선택해주세요 :)")
-        case stackButton:
+        case stackButton, chevronButton:
             registrationType = .MyPage
             view.endEditing(true)
             let FilterVC = UIStoryboard(name: "Filter", bundle: nil).instantiateViewController(withIdentifier: "FilterVC")
             self.navigationController?.pushViewController(FilterVC, animated: true)
         case cancelBarButtonItem:
-            DispatchQueue.main.async {
-                self.saveAlert("변경 사항을 저장하시겠습니까?")
-            }
+            self.navigationController?.popViewController(animated: true)
+        case saveBarButtonItem:
+            self.saveProfile()
+
         default:
             break
         }

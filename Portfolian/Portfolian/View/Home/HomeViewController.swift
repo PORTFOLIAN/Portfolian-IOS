@@ -76,21 +76,11 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         UIRefreshControl.tintColor = ColorPortfolian.thema
     }
     var projectSearch = ProjectSearch(stack: "default", sort: "default", keyword: "default")
-    var searchKeyword = ""
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        guard let viewController = navigationController?.topViewController else { return }
-        if String(describing: type(of: viewController)) == "WritingSaveViewController" ||
-            String(describing: type(of: viewController)) == "WritingViewController"{
-            self.tabBarController?.tabBar.isHidden = true
-        }
-    }
-    
+    var searchKeyword = ""    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         setUpItem()
         setUpLogo()
         cache = NSCache()
@@ -119,19 +109,17 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        //        self.navigationController?.navigationBar.prefersLargeTitles = true
-        //        self.navigationItem.largeTitleDisplayMode = .automatic
         setUpLogo()
         setUpItem()
+        subview()
+        constraints()
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        subview()
-        constraints()
         initRefresh()
         self.tableView.separatorStyle = .none
     }
+    
     
     // Mark: SetupLogo
     func setUpLogo() {

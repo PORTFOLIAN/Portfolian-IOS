@@ -26,6 +26,7 @@ class ChatViewController: UIViewController {
     var chatRoomList = ChatRoomList()
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         MyAlamofireManager.shared.fetchChatRoomList { [weak self] chatRoomList in
             guard let self = self else { return }
@@ -39,7 +40,6 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
@@ -59,10 +59,6 @@ class ChatViewController: UIViewController {
                 }
             }
         }
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
     }
 }
 

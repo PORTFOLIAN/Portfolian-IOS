@@ -48,20 +48,6 @@ class WritingViewController: UIViewController {
         return button
     }()
     
-    lazy var teamConfiguration: UIButton.Configuration = {
-        var configuration = UIButton.Configuration.plain()
-        let title = "팀원들의 사용 기술을 선택해주세요."
-        let icon = UIImage(systemName: "chevron.right")
-        configuration.title = title
-        configuration.image = icon
-        //        configuration.imagePadding = 30
-        configuration.imagePlacement = .trailing
-        configuration.baseForegroundColor = ColorPortfolian.baseBlack
-        configuration.buttonSize = .medium
-        configuration.baseBackgroundColor = .white
-        return configuration
-    }()
-    
     lazy var teamStackButton : UIButton = {
         var button = UIButton()
         button.setTitle("팀원들의 사용 기술을 선택해주세요.", for: .normal)
@@ -238,7 +224,8 @@ class WritingViewController: UIViewController {
         } else if isMovingToParent == true {
             fetchWriting()
             
-            configureLabel(fromTextView: detailTextView, toTextView: detailMarkdownTextView)        }
+            configureLabel(fromTextView: detailTextView, toTextView: detailMarkdownTextView)
+        }
         
         DispatchQueue.main.async {
             self.tagCollectionView.reloadData()
@@ -448,13 +435,6 @@ class WritingViewController: UIViewController {
             make.top.equalTo(detailMarkdownTextView.snp.bottom).offset(5)
             make.leading.trailing.equalTo(contentView)
             make.height.equalTo(300)
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if isMovingFromParent {
-            self.tabBarController?.tabBar.isHidden = false
         }
     }
     

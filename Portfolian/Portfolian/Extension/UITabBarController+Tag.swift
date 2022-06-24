@@ -18,9 +18,8 @@ extension UITabBarController {
         let viewController = UIStoryboard(name: bundleName, bundle: nil).instantiateViewController(withIdentifier: identifier)
         let navigationController = BaseNavigationController(rootViewController: viewController)
         navigationController.tabBarItem = UITabBarItem(title: "", image: icon, tag: tag)
-         
         navigationController.tabBarItem.selectedImage = selectedIcon?.withRenderingMode(.alwaysOriginal)
-        
+
         return navigationController
     }
 }

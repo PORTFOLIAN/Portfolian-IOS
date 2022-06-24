@@ -1,10 +1,5 @@
 PODS:
   - Alamofire (5.4.4)
-  - AppAuth (1.4.0):
-    - AppAuth/Core (= 1.4.0)
-    - AppAuth/ExternalUserAgent (= 1.4.0)
-  - AppAuth/Core (1.4.0)
-  - AppAuth/ExternalUserAgent (1.4.0)
   - Firebase/Analytics (9.0.0):
     - Firebase/Core
   - Firebase/Core (9.0.0):
@@ -12,6 +7,9 @@ PODS:
     - FirebaseAnalytics (~> 9.0.0)
   - Firebase/CoreOnly (9.0.0):
     - FirebaseCore (= 9.0.0)
+  - Firebase/Crashlytics (9.0.0):
+    - Firebase/CoreOnly
+    - FirebaseCrashlytics (~> 9.0.0)
   - Firebase/Messaging (9.0.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 9.0.0)
@@ -45,6 +43,13 @@ PODS:
     - nanopb (~> 2.30908.0)
   - FirebaseCoreInternal (9.0.0):
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
+  - FirebaseCrashlytics (9.0.0):
+    - FirebaseCore (~> 9.0)
+    - FirebaseInstallations (~> 9.0)
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (~> 2.1)
   - FirebaseInstallations (9.0.0):
     - FirebaseCore (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -83,10 +88,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleSignIn (6.0.2):
-    - AppAuth (~> 1.4)
-    - GTMAppAuth (~> 1.0)
-    - GTMSessionFetcher/Core (~> 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -106,13 +107,6 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.2.2):
-    - AppAuth/Core (~> 1.4)
-    - GTMSessionFetcher/Core (~> 1.5)
-  - GTMSessionFetcher/Core (1.7.0)
-  - InputBarAccessoryView (5.4.0):
-    - InputBarAccessoryView/Core (= 5.4.0)
-  - InputBarAccessoryView/Core (5.4.0)
   - KakaoSDKAuth (2.8.2):
     - KakaoSDKCommon (= 2.8.2)
   - KakaoSDKCommon (2.8.2):
@@ -129,8 +123,6 @@ PODS:
     - KakaoSDKCommon/Common (= 2.8.2)
   - KakaoSDKUser (2.8.2):
     - KakaoSDKAuth (= 2.8.2)
-  - MessageKit (3.7.0):
-    - InputBarAccessoryView (~> 5.4.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -149,13 +141,12 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - Firebase/Analytics
+  - Firebase/Crashlytics
   - Firebase/Messaging
-  - GoogleSignIn
   - KakaoSDKAuth
   - KakaoSDKCommon
   - KakaoSDKTalk
   - KakaoSDKUser
-  - MessageKit
   - SnapKit
   - Socket.IO-Client-Swift
   - SwiftyJSON
@@ -166,27 +157,22 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
-    - AppAuth
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCoreInternal
+    - FirebaseCrashlytics
     - FirebaseInstallations
     - FirebaseMessaging
     - GoogleAppMeasurement
     - GoogleDataTransport
-    - GoogleSignIn
     - GoogleUtilities
-    - GTMAppAuth
-    - GTMSessionFetcher
-    - InputBarAccessoryView
     - KakaoSDKAuth
     - KakaoSDKCommon
     - KakaoSDKTalk
     - KakaoSDKTemplate
     - KakaoSDKUser
-    - MessageKit
     - nanopb
     - PromisesObjC
     - SnapKit
@@ -199,27 +185,22 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
-  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   Firebase: a876fadc5ea653a377693376fd4f885c62704512
   FirebaseAnalytics: ea4f6f4b604a20b4de4d3c7f7a2cb51d9a989040
   FirebaseCore: e4c0b5d9727eaee0b43f9ed00baff7500c188d7b
   FirebaseCoreDiagnostics: 54410e5d156bf406a764c2722d9f77d682723b4c
   FirebaseCoreInternal: 5b8f4f2e2970a4cb9bd1cf7ada16c8ba69a29530
+  FirebaseCrashlytics: 08561398868790fc9694b85efb4c080940926fcc
   FirebaseInstallations: e693c0dfe404af44afbd553de42498b2ca1ca189
   FirebaseMessaging: 411a61cde991cbd00b5b11c7a25e0c8f28c44990
   GoogleAppMeasurement: 2c2792d43ebdea0524adbc90cba9139721f3039b
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
-  GoogleSignIn: fd381840dbe7c1137aa6dc30849a5c3e070c034a
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
-  GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
-  InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
   KakaoSDKAuth: 2b7e6998d7028cabd037ef8d0d2f987b4eec9f89
   KakaoSDKCommon: 1b5dc1c785688bed6d6747d05f2c8e08420f09ff
   KakaoSDKTalk: ce1e863c3fa689745192caf36b30a3e4c34afbca
   KakaoSDKTemplate: a5b84073ce3fa521d26c2531346bf866e7775025
   KakaoSDKUser: 937f1acc1380192d38483480d5bf01b141471829
-  MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
@@ -230,6 +211,6 @@ SPEC CHECKSUMS:
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
 
-PODFILE CHECKSUM: 2041b71592b76c350b263c1485e30d16bd43fde1
+PODFILE CHECKSUM: 098cdc3369bca1dbd7fb582d6fed0bfbae07a70d
 
 COCOAPODS: 1.11.2

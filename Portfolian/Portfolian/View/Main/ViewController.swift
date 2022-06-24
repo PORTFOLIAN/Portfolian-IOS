@@ -15,13 +15,14 @@ class ViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        let viewControllers: [UIViewController] = [
+        
+        let viewControllers: [UINavigationController] = [
             initNavigationTabViewController("Home", identifier: "HomeVC", icon: UIImage(named: "tabbarHome"), selectedIcon: UIImage(named: "tabbarHomeFill"), tag: 1),
             initNavigationTabViewController("Bookmark", identifier: "BookmarkVC", icon: UIImage(named: "tabbarBookmark"), selectedIcon: UIImage(named: "tabbarBookmarkFill"), tag: 2),
             initNavigationTabViewController("Chat", identifier: "ChatVC", icon: UIImage(named: "tabbarChat"), selectedIcon: UIImage(named: "tabbarChatFill"), tag: 3),
@@ -46,8 +47,14 @@ class ViewController: UITabBarController {
                 guard let fcmToken = KeychainManager.shared.read(key: "fcmToken") else {
                     self.goToSiginIn()
                 return }
-                MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
-                    self.setViewControllers(viewControllers, animated: true)
+                MyAlamofireManager.shared.renewAccessToken { Bool in
+                    if Bool {
+                        MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
+                            self.setViewControllers(viewControllers, animated: true)
+                        }
+                    } else {
+                        self.goToSiginIn()
+                    }
                 }
             }
         }
@@ -69,8 +76,14 @@ class ViewController: UITabBarController {
                             guard let fcmToken = KeychainManager.shared.read(key: "fcmToken") else {
                                 self.goToSiginIn()
                             return }
-                            MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
-                                self.setViewControllers(viewControllers, animated: true)
+                            MyAlamofireManager.shared.renewAccessToken { Bool in
+                                if Bool {
+                                    MyAlamofireManager.shared.patchFcm(fcm: fcmToken) {
+                                        self.setViewControllers(viewControllers, animated: true)
+                                    }
+                                } else {
+                                    self.goToSiginIn()
+                                }
                             }
                         }
                     }

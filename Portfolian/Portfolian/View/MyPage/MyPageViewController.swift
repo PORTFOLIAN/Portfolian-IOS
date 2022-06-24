@@ -81,7 +81,6 @@ class MyPageViewController: UIViewController {
     var userId: String = ""
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         navigationController?.navigationBar.prefersLargeTitles = false
         registrationType = .MyPage
         if profileType == .yourProfile {

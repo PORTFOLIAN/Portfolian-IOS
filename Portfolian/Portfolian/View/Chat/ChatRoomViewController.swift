@@ -125,7 +125,6 @@ class ChatRoomViewController: UIViewController {
         UIView.animate(withDuration: duration, delay: 0, options: [UIView.AnimationOptions(rawValue: curve)], animations: { [self] in
             self.view.layoutIfNeeded()
             tableView.isHidden = true
-            print(myChat.count)
             if self.myChat.count > 3 {
                 var lastIndex = IndexPath(row: self.myChat.count - 2, section: 0)
                 self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: false)
@@ -194,8 +193,8 @@ class ChatRoomViewController: UIViewController {
         }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         chatRoomId = ""
         myChat = []
         chatTitle = ""
@@ -263,7 +262,7 @@ class ChatRoomViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        myChat = []
         let photo = chatRootType == .project ? projectInfo.leader.photo : chatRoom.user.photo
         URLSession.shared.dataTask(with: NSURL(string: photo)! as URL, completionHandler: {
             (data, response, error) -> Void in
@@ -425,8 +424,6 @@ extension ChatRoomViewController: UITableViewDataSource {
             yourProfileChatCell.dateLabel.text = convertStr
 
         }
-
-        print(cellId, indexPath)
         return cell
     }
 }

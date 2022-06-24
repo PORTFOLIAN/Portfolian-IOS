@@ -42,14 +42,8 @@ class BookmarkViewController: UIViewController {
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        guard let viewController = navigationController?.topViewController else { return }
-        if String(describing: type(of: viewController)) == "WritingSaveViewController" ||
-            String(describing: type(of: viewController)) == "WritingViewController"{
-            self.tabBarController?.tabBar.isHidden = true
-
-        }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
     }
     
     // Mark: SetupLogo

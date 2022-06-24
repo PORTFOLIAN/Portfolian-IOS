@@ -7,14 +7,13 @@
 
 import Foundation
 import UIKit
-import GoogleSignIn
+
 let SPACINGROW = 20
 let SPACINGCOL = 10
 let IDENTIFIER = "TagCollectionViewCell"
 var SEARCHTOGGLE : Bool = true
 var chatTitle = String()
 var realNew = true
-
 enum API {
     static let BASE_URL : String = "https://api.portfolian.site:443/"
     static let USER_ID : String = "test1"
