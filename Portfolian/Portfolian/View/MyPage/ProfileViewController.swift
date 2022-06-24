@@ -61,6 +61,7 @@ class ProfileViewController: UIViewController {
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)
         UILabel.textColor = ColorPortfolian.thema
     }
+    
     lazy var githubAddressLabel = UILabel().then { UILabel in
         UILabel.text = "https://github.com/"
         UILabel.font = UIFont(name: "NotoSansKR-Bold", size: 16)

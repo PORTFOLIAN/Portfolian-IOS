@@ -23,6 +23,7 @@ class SettingViewController: UIViewController {
     
     let settingMenu = [
         "버전",
+        "개인정보 처리방침",
         "문의하기",
         "로그아웃",
         "회원 탈퇴"
@@ -62,9 +63,13 @@ extension SettingViewController: UITableViewDelegate {
         
         switch (indexPath.row) {
         case 0:
-            let version = "1.0.0"
+            let version = "1.0.1"
             view.makeToast("현재 버전은 \(version)입니다.😶‍🌫️", duration: 1.0, position: .center)
         case 1:
+            let safariViewController = WebViewController()
+            safariViewController.url = URL(string: "https://yi-sang.github.io/privacy")
+            present(safariViewController, animated: true, completion: nil)
+        case 2:
             if checkEmailAvailability()
             {
                 let composeVC = MFMailComposeViewController()
@@ -78,7 +83,7 @@ extension SettingViewController: UITableViewDelegate {
                 showSendMailErrorAlert()
             }
             
-        case 2:
+        case 3:
             UserDefaults.standard.set(LoginType.no.rawValue, forKey: "loginType")
             switch loginType {
             case .kakao:
