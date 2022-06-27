@@ -23,7 +23,7 @@ class SettingViewController: UIViewController {
     
     let settingMenu = [
         "버전",
-        "개인정보 처리방침",
+        "개인정보 처리 방침",
         "문의하기",
         "로그아웃",
         "회원 탈퇴"
@@ -63,8 +63,8 @@ extension SettingViewController: UITableViewDelegate {
         
         switch (indexPath.row) {
         case 0:
-            let version = "1.0.1"
-            view.makeToast("현재 버전은 \(version)입니다.😶‍🌫️", duration: 1.0, position: .center)
+            guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { return }
+            view.makeToast("현재 버전은 \(appVersion) 입니다.😶‍🌫️", duration: 1.0, position: .center)
         case 1:
             let safariViewController = WebViewController()
             safariViewController.url = URL(string: "https://yi-sang.github.io/privacy")

@@ -22,9 +22,16 @@ class SocketIOManager: NSObject {
     }
     
     func connectCheck(completion: @escaping (Bool) -> Void) {
-        self.socket.on("connection") { _, _ in
-            
+        var flag = false
+        self.socket.on("connect") { _, _ in
+            flag = true
             completion(true)
+        }
+        let time = DispatchTime.now() + .milliseconds(1000)
+        DispatchQueue.main.asyncAfter(deadline: time) {
+            if !flag {
+                completion(false)
+            }
         }
     }
 
@@ -38,7 +45,9 @@ class SocketIOManager: NSObject {
     }
     
     func establishConnection() {
-        socket.connect()
+        if socket.status != .connected {
+            socket.connect()
+        }
     }
     
     func closeConnection() {

@@ -11,6 +11,7 @@ import KakaoSDKUser
 import SwiftyJSON
 import AuthenticationServices
 import Toast_Swift
+import CoreData
 
 class SigninViewController: UIViewController {
     let logoImageView: UIImageView = {
@@ -149,15 +150,18 @@ class SigninViewController: UIViewController {
                     SocketIOManager.shared.connectCheck { [weak self] Bool in
                         guard let self = self else { return }
                         if Bool {
-                            SocketIOManager.shared.sendAuth()
                             if Jwt.shared.isNew == true {
                                 self.setNickName()
                             } else {
                                 self.goHome()
                             }
+                        } else {
+                            self.logoutKakao()
                         }
                     }
                 }
+            } else {
+                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
             }
         }
     }
@@ -178,15 +182,18 @@ class SigninViewController: UIViewController {
                     SocketIOManager.shared.connectCheck { [weak self] Bool in
                         guard let self = self else { return }
                         if Bool {
-                            SocketIOManager.shared.sendAuth()
                             if Jwt.shared.isNew == true {
                                 self.setNickName()
                             } else {
                                 self.goHome()
                             }
+                        } else {
+                            self.logoutKakao()
                         }
                     }
                 }
+            } else {
+                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
             }
         }
     }
@@ -202,6 +209,56 @@ class SigninViewController: UIViewController {
         let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "NicknameVC")
         nicknameVC.modalPresentationStyle = .fullScreen
         self.present(nicknameVC, animated: true)
+    }
+    
+    private func logoutKakao() {
+        UserApi.shared.logout {(error) in
+            if let error = error {
+                print(error)
+            }
+            else {
+                MyAlamofireManager.shared.patchFcm(fcm: "") {
+                    MyAlamofireManager.shared.patchLogout { [weak self] in
+                        guard let self = self else { return }
+                        let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                        let request = PersistenceManager.shared.fetch(request: requestWriting)
+                        if !request.isEmpty {
+                            PersistenceManager.shared.deleteAll(request: requestWriting)
+                        }
+                        KeychainManager.shared.delete(key: "refreshToken")
+                        KeychainManager.shared.delete(key: "accessToken")
+                        KeychainManager.shared.delete(key: "userId")
+                        writingTeamTag.names = []
+                        writingOwnerTag.names = []
+                        JwtToken.shared = JwtToken()
+                        KeychainManager.shared.create(key: "fcmToken", token: "")
+                        SocketIOManager.shared.closeConnection()
+                        self.view.makeToast("일시적인 오류입니다. 다시 시도해주세요 :)", duration: 0.75, position: .center)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func logoutApple() {
+        MyAlamofireManager.shared.patchFcm(fcm: "") {
+            MyAlamofireManager.shared.patchLogout { [weak self] in
+                guard let self = self else { return }
+                let requestWriting: NSFetchRequest<Writing> = Writing.fetchRequest()
+                let request = PersistenceManager.shared.fetch(request: requestWriting)
+                if !request.isEmpty {
+                    PersistenceManager.shared.deleteAll(request: requestWriting)
+                }
+                KeychainManager.shared.delete(key: "refreshToken")
+                KeychainManager.shared.delete(key: "accessToken")
+                KeychainManager.shared.delete(key: "userId")
+                writingTeamTag.names = []
+                writingOwnerTag.names = []
+                JwtToken.shared = JwtToken()
+                SocketIOManager.shared.closeConnection()
+                self.view.makeToast("일시적인 오류입니다. 다시 시도해주세요 :)", duration: 0.75, position: .center)
+            }
+        }
     }
 }
 
@@ -225,14 +282,16 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
                 JwtToken.shared.refreshToken = refreshToken
                 JwtToken.shared.userId = Jwt.shared.userId
                 SocketIOManager.shared.establishConnection()
-                SocketIOManager.shared.connectCheck { Bool in
+                SocketIOManager.shared.connectCheck { [weak self] Bool in
+                    guard let self = self else { return }
                     if Bool {
-                        SocketIOManager.shared.sendAuth()
                         if Jwt.shared.isNew == true {
                             self.setNickName()
                         } else {
                             self.goHome()
                         }
+                    } else {
+                        self.logoutApple()
                     }
                 }
             }

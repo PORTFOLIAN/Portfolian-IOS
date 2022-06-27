@@ -192,7 +192,6 @@ class MyPageViewController: UIViewController {
             make.top.equalTo(tagCollectionView.snp.bottom).offset(10)
             make.height.equalTo(1)
             make.leading.trailing.equalTo(tagCollectionView)
-            
         }
         introduceLabel.snp.makeConstraints { make in
             make.top.equalTo(descriptionLineView.snp.bottom).offset(10)
