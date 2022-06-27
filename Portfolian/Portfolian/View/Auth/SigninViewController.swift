@@ -274,7 +274,6 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
         switch authorization.credential {
             // Apple ID
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
-            
             let userIdentifier = appleIDCredential.user
             MyAlamofireManager.shared.postAppleToken(userId: userIdentifier) {
                 guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }

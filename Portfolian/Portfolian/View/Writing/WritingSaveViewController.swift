@@ -223,6 +223,12 @@ class WritingSaveViewController: UIViewController {
                 dynamicButton.setTitle("  모집 진행  ", for: .normal)
             }
             dynamicButton.setTitleColor(.white, for: .normal)
+        } else {
+            if projectInfo.status ==  1 {
+                dynamicButton.layer.borderColor = UIColor.clear.cgColor
+                dynamicButton.backgroundColor = ColorPortfolian.gray2
+                dynamicButton.setTitleColor(.white, for: .normal)
+            }
         }
         
         let md = SwiftyMarkdown(string: "\n" + projectInfo.contents.description)
@@ -551,16 +557,16 @@ class WritingSaveViewController: UIViewController {
         case reportBarButtonItem:
             self.reportAlert { report in
                 if loginType == .no {
-                    self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+                    self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
                 } else {
                     MyAlamofireManager.shared.reportProject(projectID: projectInfo.projectId, reason: report) {
-                        self.view.makeToast("성공적으로 신고되었습니다.", duration: 1, position: .center)
+                        self.view.makeToast("성공적으로 신고되었습니다.", duration:  0.75, position: .center)
                     }
                 }
             }
         case bookmarkButton:
             if loginType == .no {
-                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
             } else {
                 bookmarkToggle.toggle()
 
@@ -576,13 +582,19 @@ class WritingSaveViewController: UIViewController {
             
         case dynamicButton:
             if loginType == .no {
-                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
             } else {
                 if sender.titleLabel?.text?.trimmingCharacters(in: [" "]) == "채팅하기" {
-                    chatRootType = .project
-                    profileType = .yourProjectProfile
-                    let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
-                    self.navigationController?.pushViewController(chatRoomVC, animated: true)
+                    if sender.backgroundColor == ColorPortfolian.gray2 {
+                        self.view.makeToast("😅 모집이 완료된 프로젝트입니다.", duration:  0.75, position: .center)
+                    } else {
+                        chatRootType = .project
+                        profileType = .yourProjectProfile
+                        let chatRoomVC = UIStoryboard(name: "Chat", bundle: nil).instantiateViewController(withIdentifier: "ChatRoomVC")
+                        self.navigationController?.pushViewController(chatRoomVC, animated: true)
+                    }
+
+                    
                 } else {
                     MyAlamofireManager.shared.finishProject(projectID: projectInfo.projectId, complete: complete) { [weak self] in
                         guard let self = self else { return }

@@ -158,7 +158,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         switch sender {
         case writeButton:
             if loginType == .no {
-                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+                self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
             } else {
                 let WritingVC = UIStoryboard(name: "Writing", bundle: nil).instantiateViewController(withIdentifier: "WritingVC")
                 self.navigationController?.pushViewController(WritingVC, animated: true)
@@ -295,7 +295,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
 extension HomeViewController: BookmarkButtonDelegate {
     func didTouchBookmarkButton(didClicked: Bool, sender: UIButton) {
         if loginType == .no {
-            self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 1.5, position: .center)
+            self.view.makeToast("😅 로그인 후 이용해주세요.", duration: 0.75, position: .center)
         } else {
             let buttonPosition: CGPoint = sender.convert(CGPoint(x: 5, y: 5), to: self.tableView)
             let indexPath = self.tableView.indexPathForRow(at: buttonPosition)
