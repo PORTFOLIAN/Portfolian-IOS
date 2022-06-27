@@ -74,6 +74,7 @@ class WritingViewController: UIViewController {
     
     lazy var recruitTextField = UITextField().then({ UITextField in
         UITextField.placeholder = "모집 인원"
+        UITextField.sizeToFit()
         UITextField.leftView = leftUIView
         UITextField.leftViewMode = .always
         UITextField.font = UIFont(name: "NotoSansKR-Regular", size: 18)
@@ -82,6 +83,7 @@ class WritingViewController: UIViewController {
     
     lazy var periodTextView = UITextView().then({ UITextView in
         UITextView.text = periodInit
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 2
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
@@ -92,6 +94,7 @@ class WritingViewController: UIViewController {
     
     lazy var explainTextView = UITextView().then({ UITextView in
         UITextView.text = explainInit
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
@@ -102,6 +105,7 @@ class WritingViewController: UIViewController {
     
     lazy var optionTextView = UITextView().then({ UITextView in
         UITextView.text = optionInit
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
@@ -112,6 +116,7 @@ class WritingViewController: UIViewController {
     
     lazy var proceedTextView = UITextView().then({ UITextView in
         UITextView.text = proceedInit
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 5
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
@@ -122,6 +127,7 @@ class WritingViewController: UIViewController {
     
     lazy var detailTextView = UITextView().then({ UITextView in
         UITextView.text = detailInit
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.textColor = ColorPortfolian.gray2
         UITextView.textContainer.maximumNumberOfLines = 0
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 16)
@@ -168,6 +174,7 @@ class WritingViewController: UIViewController {
     
     var detailMarkdownTextView = UITextView().then ({ UITextView in
         UITextView.textColor = ColorPortfolian.baseBlack
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 14)
         UITextView.isEditable = false
         UITextView.isUserInteractionEnabled = true
@@ -276,6 +283,7 @@ class WritingViewController: UIViewController {
         contentView.addSubview(markdownButton)
         
         titleTextField.delegate = self
+        recruitTextField.delegate = self
         periodTextView.delegate = self
         explainTextView.delegate = self
         optionTextView.delegate = self
@@ -438,16 +446,15 @@ class WritingViewController: UIViewController {
         }
     }
     
-    func alert(_ title: String){
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        //        let titleAttributes = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Bold", size: 25)!, NSAttributedStringKey.foregroundColor: UIColorColorPortfolian.baseBlack]
-        let saveAction = UIAlertAction(title: "저장하기", style: .default) { _ in
+    func alert(){
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let saveAction = UIAlertAction(title: "로컬에 저장하기", style: .default) { _ in
             self.saveWriting()
             self.navigationController?.popViewController(animated: true)
             
         }
         
-        let refuseAction = UIAlertAction(title: "저장하지않고 나가기", style: .destructive) { _ in
+        let refuseAction = UIAlertAction(title: "저장하지 않고 나가기", style: .destructive) { _ in
             self.deleteWriting()
             self.navigationController?.popViewController(animated: true)
         }
@@ -613,7 +620,7 @@ class WritingViewController: UIViewController {
             }
         case cancelBarButtonItem:
             if editType == .yet {
-                self.alert("임시 저장하시겠습니까?")
+                self.alert()
             } else {
                 MyAlamofireManager.shared.getProject(projectID: recruitWriting.newProjectID) { [weak self] in
                     guard let self = self else { return }
@@ -784,16 +791,40 @@ extension WritingViewController: UICollectionViewDataSource {
 extension WritingViewController: UITextFieldDelegate {
     //MARK: - Limit 10 letters
     private func limitLetters(_ textField: UITextField, text: String) {
-        let titleCharacterLimit = 32
-        let endIndex: String.Index = text.index(text.startIndex, offsetBy: titleCharacterLimit)
-        textField.text = String(text[..<endIndex])
+        switch textField {
+        case titleTextField:
+            let titleCharacterLimit = 32
+            let endIndex: String.Index = text.index(text.startIndex, offsetBy: titleCharacterLimit)
+            textField.text = String(text[..<endIndex])
+        case recruitTextField:
+            if Int(String(text))! > 16 {
+                textField.text = "16"
+            }
+        default:
+            break
+        }
+        
         
     }
     
     internal func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let titleText = textField.text else { return }
-        if titleText.count >= 32 {
-            limitLetters(textField, text: titleText)
+        switch textField {
+        case titleTextField:
+            guard let titleText = textField.text else { return }
+            if titleText.count >= 32 {
+                limitLetters(textField, text: titleText)
+            }
+        case recruitTextField:
+            guard let titleText = textField.text else { return }
+            if Int(titleText) != nil {
+                if titleText.count >= 2 {
+                    limitLetters(textField, text: titleText)
+                }
+            } else {
+                textField.text = ""
+            }
+        default:
+            break
         }
     }
 }

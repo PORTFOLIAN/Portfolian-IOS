@@ -41,6 +41,7 @@ class ChatRoomViewController: UIViewController {
     var footerView = UIView().then { _ in }
     
     var textView = UITextView().then { UITextView in
+        UITextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         UITextView.backgroundColor = .white
         UITextView.font = UIFont(name: "NotoSansKR-Regular", size: 18)
         UITextView.layer.cornerRadius = 20
