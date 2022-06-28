@@ -206,9 +206,9 @@ class SigninViewController: UIViewController {
     
     // 닉네임설정화면으로 전환
     private func setNickName() {
-        let nicknameVC = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "NicknameVC")
-        nicknameVC.modalPresentationStyle = .fullScreen
-        self.present(nicknameVC, animated: true)
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.goToNicname()
+        }
     }
     
     private func logoutKakao() {
@@ -297,6 +297,10 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
         default:
             break
         }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
     }
 }
 

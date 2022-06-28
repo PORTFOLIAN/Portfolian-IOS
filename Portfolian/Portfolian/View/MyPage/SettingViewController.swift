@@ -152,7 +152,6 @@ extension SettingViewController: UITableViewDelegate {
                 writingOwnerTag.names = []
                 JwtToken.shared = JwtToken()
                 SocketIOManager.shared.closeConnection()
-                
                 self.goToApp()
             }
         }
@@ -201,9 +200,7 @@ extension SettingViewController: UITableViewDelegate {
                 JwtToken.shared = JwtToken()
             }
             SocketIOManager.shared.closeConnection()
-            MyAlamofireManager.shared.patchFcm(fcm: "") {
-                self.goToApp()
-            }
+            self.goToApp()
         }
     }
     

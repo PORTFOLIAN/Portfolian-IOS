@@ -78,6 +78,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
+    func goToNicname() {
+      window?.rootViewController = NicknameViewController()
+      window?.makeKeyAndVisible()
+    }
+    
     func goToSignIn() {
       window?.rootViewController = SigninViewController()
       window?.makeKeyAndVisible()
