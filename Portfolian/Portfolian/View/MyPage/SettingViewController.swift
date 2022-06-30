@@ -84,31 +84,26 @@ extension SettingViewController: UITableViewDelegate {
             }
             
         case 3:
-            UserDefaults.standard.set(LoginType.no.rawValue, forKey: "loginType")
             switch loginType {
             case .kakao:
-                loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
                 logoutKakao()
             case .apple:
-                loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
                 logoutApple()
             default:
                 break
             }
         default:
-            UserDefaults.standard.set(LoginType.no.rawValue, forKey: "loginType")
             switch loginType {
             case .apple:
-                loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
                 unlinkApple()
             case .kakao:
-                loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
                 unlinkKakao()
             default:
                 break
             }
         }
     }
+    
     func logoutKakao() {
         UserApi.shared.logout {(error) in
             if let error = error {
@@ -128,7 +123,6 @@ extension SettingViewController: UITableViewDelegate {
                         writingTeamTag.names = []
                         writingOwnerTag.names = []
                         JwtToken.shared = JwtToken()
-                        KeychainManager.shared.create(key: "fcmToken", token: "")
                         SocketIOManager.shared.closeConnection()
                         self.goToApp()
                     }

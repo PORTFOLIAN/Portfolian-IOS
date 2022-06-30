@@ -67,7 +67,11 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         // Do any additional setup after loading the view.
         nicknameTextField.delegate = self
         nextButton.addTarget(self, action: #selector(ButtonHandler(_:)), for: .touchUpInside)
-        swipeRecognizer()
+        nicknameTextField.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        nicknameTextField.resignFirstResponder()
     }
     
     //MARK: - Buttonhandler
@@ -78,24 +82,6 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-    }
-        
-    //MARK: - swipeGesture
-    func swipeRecognizer() {
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture(_:)))
-        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
-        self.view.addGestureRecognizer(swipeRight)
-    }
-    
-    @objc func respondToSwipeGesture(_ gesture: UIGestureRecognizer){
-        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-            switch swipeGesture.direction{
-            case UISwipeGestureRecognizer.Direction.right:
-                // 스와이프 시, 뒤로가기
-                self.dismiss(animated: true, completion: nil)
-            default: break
-            }
-        }
     }
     
     //MARK: Change Button TintColor
@@ -123,6 +109,7 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
             return true
         }
     }
+    
     private func goToHome() {
       if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
         sceneDelegate.goHome()
@@ -134,13 +121,3 @@ class NicknameViewController: UIViewController, UITextFieldDelegate {
         view.endEditing(true)
     }
 }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-

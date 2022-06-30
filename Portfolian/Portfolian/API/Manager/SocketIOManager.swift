@@ -21,17 +21,9 @@ class SocketIOManager: NSObject {
         
     }
     
-    func connectCheck(completion: @escaping (Bool) -> Void) {
-        var flag = false
+    func connectCheck(completion: @escaping () -> Void) {
         self.socket.on("connect") { _, _ in
-            flag = true
-            completion(true)
-        }
-        let time = DispatchTime.now() + .milliseconds(1000)
-        DispatchQueue.main.asyncAfter(deadline: time) {
-            if !flag {
-                completion(false)
-            }
+            completion()
         }
     }
 

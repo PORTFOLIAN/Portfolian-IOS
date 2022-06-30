@@ -57,13 +57,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-        loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
         if !(loginType == .no || loginType == .first) {
             SocketIOManager.shared.establishConnection()
-            SocketIOManager.shared.connectCheck { Bool in
-                if Bool {
-                    SocketIOManager.shared.sendAuth()
-                }
+            SocketIOManager.shared.connectCheck {
+                SocketIOManager.shared.sendAuth()
             }
         }
     }

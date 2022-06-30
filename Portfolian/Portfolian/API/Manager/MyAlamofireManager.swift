@@ -324,6 +324,8 @@ final class MyAlamofireManager {
                 let message = codeMessage.message
 
                 if code == 1 {
+                    UserDefaults.standard.set(LoginType.first.rawValue, forKey: "loginType")
+                    loginType = LoginType.first
                     completion()
                 } else {
                     self.toast(message)
@@ -362,6 +364,8 @@ final class MyAlamofireManager {
                 let code = codeMessage.code
                 let message = codeMessage.message
                 if code == 1 {
+                    UserDefaults.standard.set(LoginType.first.rawValue, forKey: "loginType")
+                    loginType = LoginType.first
                     return completion()
                 } else {
                     self.toast(message)

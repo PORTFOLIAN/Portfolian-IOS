@@ -115,8 +115,10 @@ class SigninViewController: UIViewController {
         case kakaoLoginButton:
             // 카카오톡으로 로그인
             if (UserApi.isKakaoTalkLoginAvailable()) {
+                SocketIOManager.shared.closeConnection()
                 loginAppKakao()
             } else {
+                SocketIOManager.shared.closeConnection()
                 loginWebKakao()
             }
         case noLoginButton:
@@ -124,8 +126,8 @@ class SigninViewController: UIViewController {
             loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
             self.goHome()
         case appleLoginButton:
+            SocketIOManager.shared.closeConnection()
             let request = ASAuthorizationAppleIDProvider().createRequest()
-            
             let authorizationController = ASAuthorizationController(authorizationRequests: [request])
             authorizationController.delegate = self as ASAuthorizationControllerDelegate
             authorizationController.presentationContextProvider = self as ASAuthorizationControllerPresentationContextProviding
@@ -139,7 +141,9 @@ class SigninViewController: UIViewController {
     // 카카오톡 앱으로 로그인하기
     func loginAppKakao() {
         UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-            if error == nil {
+            if error != nil {
+                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
+            } else {
                 guard let accessToken = oauthToken?.accessToken else { return }
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken) {
                     guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
@@ -147,21 +151,16 @@ class SigninViewController: UIViewController {
                     JwtToken.shared.refreshToken = refreshToken
                     JwtToken.shared.userId = Jwt.shared.userId
                     SocketIOManager.shared.establishConnection()
-                    SocketIOManager.shared.connectCheck { [weak self] Bool in
+                    SocketIOManager.shared.connectCheck { [weak self] in
                         guard let self = self else { return }
-                        if Bool {
-                            if Jwt.shared.isNew == true {
-                                self.setNickName()
-                            } else {
-                                self.goHome()
-                            }
+                        SocketIOManager.shared.sendAuth()
+                        if Jwt.shared.isNew == true {
+                            self.setNickName()
                         } else {
-                            self.logoutKakao()
+                            self.goHome()
                         }
                     }
                 }
-            } else {
-                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
             }
         }
     }
@@ -170,8 +169,9 @@ class SigninViewController: UIViewController {
     func loginWebKakao() {
         UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
             guard let self = self else { return }
-            if error == nil {
-                print("loginWithKakaoAccount() success.")
+            if error != nil {
+                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
+            } else {
                 guard let accessToken = oauthToken?.accessToken else { return }
                 MyAlamofireManager.shared.postKaKaoToken(token: accessToken) {
                     guard let refreshToken = KeychainManager.shared.read(key: "refreshToken") else { return }
@@ -179,21 +179,16 @@ class SigninViewController: UIViewController {
                     JwtToken.shared.refreshToken = refreshToken
                     JwtToken.shared.userId = Jwt.shared.userId
                     SocketIOManager.shared.establishConnection()
-                    SocketIOManager.shared.connectCheck { [weak self] Bool in
+                    SocketIOManager.shared.connectCheck { [weak self] in
                         guard let self = self else { return }
-                        if Bool {
-                            if Jwt.shared.isNew == true {
-                                self.setNickName()
-                            } else {
-                                self.goHome()
-                            }
+                        SocketIOManager.shared.sendAuth()
+                        if Jwt.shared.isNew == true {
+                            self.setNickName()
                         } else {
-                            self.logoutKakao()
+                            self.goHome()
                         }
                     }
                 }
-            } else {
-                self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
             }
         }
     }
@@ -281,16 +276,14 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
                 JwtToken.shared.refreshToken = refreshToken
                 JwtToken.shared.userId = Jwt.shared.userId
                 SocketIOManager.shared.establishConnection()
-                SocketIOManager.shared.connectCheck { [weak self] Bool in
+                SocketIOManager.shared.connectCheck { [weak self] in
                     guard let self = self else { return }
-                    if Bool {
-                        if Jwt.shared.isNew == true {
-                            self.setNickName()
-                        } else {
-                            self.goHome()
-                        }
+                    SocketIOManager.shared.sendAuth()
+                    if Jwt.shared.isNew == true {
+                        self.setNickName()
                     } else {
-                        self.logoutApple()
+                        self.goHome()
+                        
                     }
                 }
             }

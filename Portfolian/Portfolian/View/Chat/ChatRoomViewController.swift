@@ -457,25 +457,3 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
-
-//        footerView.frame.origin.y = view.bounds.height - keyboardHeight - footerView.bounds.height
-//        let activeRect = tableView.convert(tableView.bounds, to: tableView)
-//        print(activeRect)
-//        let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight, right: 0.0)
-//        tableView.contentInset = contentInsets
-//        tableView.verticalScrollIndicatorInsets = contentInsets
-//        let activeRect = tableView.convert(tableView.bounds, to: tableView)
-//        tableView.scrollRectToVisible(activeRect, animated: true)
-//        tableView.verticalScrollIndicatorInsets.bottom = -keyboardHeight
-
-//        footerView.frame.origin.y = view.bounds.height - view.safeAreaInsets.bottom - footerView.bounds.height
-//        tableView.contentInset = UIEdgeInsets.zero
-//        tableView.verticalScrollIndicatorInsets = tableView.contentInset
-
-//맨 처음 시작 NewChatList에 "대화가 시작되었습니다."만 있고
-//여기까지 읽으셨습니다 없어야됨
-//
-//그대로 다시 들어갔을 때 oldChatList에 "대화가 시작되었습니다."만 있고
-//여기까지 읽으셨습니다 없어야됨
-//
-//다 읽고 나와서 그대로 다시 들어갔을 때 "여기까지 읽으셨습니다" 없어야됨
