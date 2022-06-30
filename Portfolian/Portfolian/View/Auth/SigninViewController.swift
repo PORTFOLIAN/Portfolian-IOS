@@ -123,7 +123,7 @@ class SigninViewController: UIViewController {
             }
         case noLoginButton:
             UserDefaults.standard.set(LoginType.no.rawValue, forKey: "loginType")
-            loginType = LoginType(rawValue: UserDefaults.standard.integer(forKey: "loginType"))
+            loginType = LoginType.no
             self.goHome()
         case appleLoginButton:
             SocketIOManager.shared.closeConnection()
@@ -140,7 +140,8 @@ class SigninViewController: UIViewController {
     
     // 카카오톡 앱으로 로그인하기
     func loginAppKakao() {
-        UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
+            guard let self = self else { return }
             if error != nil {
                 self.view.makeToast("다시 시도해주세요 :)", duration: 0.75, position: .center)
             } else {
@@ -283,7 +284,6 @@ extension SigninViewController: ASAuthorizationControllerDelegate, ASAuthorizati
                         self.setNickName()
                     } else {
                         self.goHome()
-                        
                     }
                 }
             }
