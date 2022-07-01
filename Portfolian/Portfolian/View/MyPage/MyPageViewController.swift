@@ -321,7 +321,17 @@ class MyPageViewController: UIViewController {
         alert.addAction(report4)
         
         alert.addAction(cancelAction)
-        self.present(alert, animated: false)
+        if UIDevice.current.userInterfaceIdiom == .pad { //디바이스 타입이 iPad일때
+          if let popoverController = alert.popoverPresentationController {
+              // ActionSheet가 표현되는 위치를 저장해줍니다.
+              popoverController.sourceView = self.view
+              popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY/2, width: 0, height: 0)
+              popoverController.permittedArrowDirections = []
+              self.present(alert, animated: true, completion: nil)
+          }
+        } else {
+          self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 

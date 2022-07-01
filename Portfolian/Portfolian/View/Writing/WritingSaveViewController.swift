@@ -316,10 +316,17 @@ class WritingSaveViewController: UIViewController {
             make.trailing.equalTo(bookmarkButton.snp.leading).offset(-10)
             make.top.equalTo(view.safeAreaLayoutGuide)
         }
-
-        bookmarkButton.snp.makeConstraints { make in
-            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
-            make.top.equalTo(titleLabel)
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bookmarkButton.snp.makeConstraints { make in
+                make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
+                make.top.equalTo(titleLabel)
+            }
+        } else {
+            bookmarkButton.snp.makeConstraints { make in
+                make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
+                make.top.equalTo(titleLabel)
+            }
         }
         
         viewsLabel.snp.makeConstraints { make in
@@ -500,7 +507,17 @@ class WritingSaveViewController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(editAction)
         alert.addAction(refuseAction)
-        self.present(alert, animated: false)
+        if UIDevice.current.userInterfaceIdiom == .pad { //디바이스 타입이 iPad일때
+          if let popoverController = alert.popoverPresentationController {
+              // ActionSheet가 표현되는 위치를 저장해줍니다.
+              popoverController.sourceView = self.view
+              popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY/2, width: 0, height: 0)
+              popoverController.permittedArrowDirections = []
+              self.present(alert, animated: true, completion: nil)
+          }
+        } else {
+          self.present(alert, animated: true, completion: nil)
+        }
     }
     
     func reportAlert(completion: @escaping (String)->Void) {
@@ -545,7 +562,17 @@ class WritingSaveViewController: UIViewController {
         alert.addAction(report6)
         alert.addAction(report7)
         alert.addAction(cancelAction)
-        self.present(alert, animated: false)
+        if UIDevice.current.userInterfaceIdiom == .pad { //디바이스 타입이 iPad일때
+          if let popoverController = alert.popoverPresentationController {
+              // ActionSheet가 표현되는 위치를 저장해줍니다.
+              popoverController.sourceView = self.view
+              popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY/2, width: 0, height: 0)
+              popoverController.permittedArrowDirections = []
+              self.present(alert, animated: true, completion: nil)
+          }
+        } else {
+          self.present(alert, animated: true, completion: nil)
+        }
     }
     
     @objc func buttonPressed(_ sender : UIButton){
