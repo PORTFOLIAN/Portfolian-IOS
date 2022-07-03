@@ -14,6 +14,62 @@ class BaseNavigationController: UINavigationController {
         interactivePopGestureRecognizer?.delegate = self
         self.delegate = self
         
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture))
+        swipeLeft.direction = .left
+        self.view.addGestureRecognizer(swipeLeft)
+    }
+    
+    @objc func handleSwipeGesture(_  gesture: UISwipeGestureRecognizer) {
+        if viewControllers.count == 1 {
+            guard let tabBarController = tabBarController else { return }
+            var toIndex = 0
+            if gesture.direction == .left {
+                if (tabBarController.selectedIndex) < 3 {
+                    toIndex = tabBarController.selectedIndex + 1
+                } else {
+                    toIndex = 0
+                }
+                animateToTab(toIndex: toIndex, direction: .left)
+            } else if gesture.direction == .right {
+                if (tabBarController.selectedIndex) > 0 {
+                    toIndex = tabBarController.selectedIndex - 1
+                } else {
+                    toIndex = 3
+                }
+                animateToTab(toIndex: toIndex, direction: .right)
+            }
+        }
+    }
+    func animateToTab(toIndex: Int, direction: UISwipeGestureRecognizer.Direction) {
+        guard let selectedVC = tabBarController!.selectedViewController,
+              let tabViewControllers = tabBarController!.viewControllers,
+              let fromView = selectedVC.view,
+              let toView = tabViewControllers[toIndex].view,
+              let fromIndex = tabViewControllers.firstIndex(of: selectedVC),
+              fromIndex != toIndex else { return }
+        fromView.superview?.addSubview(toView)
+        
+        let screenWidth = UIScreen.main.bounds.size.width
+        var scrollRight = true
+        if direction == .right {
+            scrollRight = false
+        }
+        let offset = (scrollRight ? screenWidth : -screenWidth)
+        toView.center = CGPoint(x: fromView.center.x + offset, y: toView.center.y)
+        view.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut) {
+            fromView.center = CGPoint(x: fromView.center.x - offset, y: fromView.center.y)
+            toView.center = CGPoint(x: toView.center.x - offset, y: toView.center.y)
+        } completion: { [weak self] finished in
+            guard let self = self else { return }
+            fromView.removeFromSuperview()
+            self.tabBarController!.selectedIndex = toIndex
+            self.view.isUserInteractionEnabled = true
+        }
     }
 }
 
